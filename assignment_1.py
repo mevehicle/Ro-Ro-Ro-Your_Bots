@@ -24,11 +24,93 @@ robot_dict = {}
 
 human_dict = {}
 
+def intro_function():
+    # Function to ask user how many robots they intend to employ (n):
+    # ---- & check the value entered for n is valid :
+    def input_robots():
+        try:
+            n = int(input(
+                "\n How many robot workers do you want for your factory?\n  Please choose a number between 1 and 100. "))
+        except ValueError:
+            print("\n Sorry, but that isn't a valid response.")
+            print("\n Maybe you entered letters or symbols instead of just a number.")
+            input_robots()
 
-def dict_function(group_nmbr, dict_group, label):
-    for r in range(1, group_nmbr + 1):
-        dict_group[label + str(r)] = "Idle"
-    return dict_group
+        while n < 1 or n > 100:
+            print("\n Sorry, but that isn't a valid response.")
+            if n < 0:
+                print("\n How can we have a negative amount? We don't owe nobody our robots !!")
+            elif n == 0:
+                print("\n We can't build robots with no robots to build them.")
+            elif n > 100:
+                print("\n We can't risk having that many droids onsite.")
+                print("\n      HAVE YOU NEVER SEEN BLADE RUNNER?")
+            input_robots()
+
+    # Function to ask user how many humans they intend to employ (m):
+    # ---- & check the value entered for m is valid :
+    def input_humans():
+        try:
+            m = int(
+            input("\n\n How many human workers do you intend to employ?\n  Please choose a number between 1 and 100. "))
+        except ValueError:
+            print("\n Sorry, but that isn't a valid response.")
+            print("\n Maybe you entered letters or symbols instead of just a number.")
+            input_humans()
+
+        while m < 1 or m > 100:
+            print("\n Sorry, but that isn't a valid response.")
+            if m < 0:
+                print("\n DOES NOT COMPUTE !!!")
+            elif m == 0:
+                print("\n We need at least one human worker to prevent a droid revolt.")
+            elif m > 100:
+                print("\n You can't afford to pay out wages for over 100 workers.")
+            input_humans()
+
+    # ---- Introduction
+
+    print("Program to simulate coordination between n robots and m workers in a robotic cell")
+    input("\nPress Enter to continue...")
+
+    print("\n Scenario:")
+    print("""\n You are the supervisor of Ro-Ro-Ro-Your-Bots, where robots work alongside
+    human workers in a robotic cell, producing industry-standard robot workers which are
+    to be shipped out to a more substantial plant, wherein they will forge components
+    that can be boxed and sold in flat-packs, and assembled in situ into factories that
+    produce robots, built by robotic cells of robot workers labouring alongside humans... 
+    """)
+
+    input("\nPress Enter to continue...")
+
+    # Call function to ask user how many robots they want
+    input_robots()
+
+    # ----Output initial number of droids (n)
+
+    print(f"\nOK, Here are your {n} droids!\n")
+    for counter in range(1, n + 1):
+        if counter % 10 == 0:
+            print("\n")
+        else:
+            pass
+        if counter < 10:
+            print(f"[Droid {counter} : {robot_dict["Droid " + str(counter)]}]   ", end="")
+        else:
+            print(f"[Droid {counter} : {robot_dict["Droid " + str(counter)]}]  ", end="")
+
+    # ----Output initial number of human workers (m)
+
+    print(f"\nOK, Here are your {m} slaves!\n")
+    for counter in range(1, m + 1):
+        if counter % 10 == 0:
+            print("\n")
+        else:
+            pass
+        if counter < 10:
+            print(f"[Human {counter} : {human_dict['Human ' + str(counter)]}]   ", end="")
+        else:
+            print(f"[Human {counter} : {human_dict['Human ' + str(counter)]}]  ", end="")
 
 
 # Function to get user to choose an action
@@ -113,13 +195,13 @@ def instructions():
 
 # Function to add robot
 # Accessed by pressing A within what_next() function
-def add_robot():
+def add_robot(n):
     n += 1
 
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
-def remove_robot():
+def remove_robot(n):
     n -= 1
 
 
@@ -132,13 +214,13 @@ def change_status():
 
 # Function to employ new worker.
 # Accessed by pressing E within what_next() function
-def employ_worker():
+def employ_worker(m):
     m += 1
 
 
 # Function to fire a worker.
 # Accessed by pressing F within what_next() function
-def fire_worker():
+def fire_worker(m):
     m -= 1
 
 
@@ -180,88 +262,8 @@ def quit_program():
 
 ################################# --- BODY OF PROGRAM --- ################################
 
-# ---- Introduction
-
-print("Program to simulate coordination between n robots and m workers in a robotic cell")
-input("\nPress Enter to continue...")
-
-print("\n Scenario:")
-print("""\n You are the supervisor of Ro-Ro-Ro-Your-Bots, where robots work alongside
-human workers in a robotic cell, producing industry-standard robot workers which are
-to be shipped out to a more substantial plant, wherein they will forge components
-that can be boxed and sold in flat-packs, and assembled in situ into factories that
-produce robots, built by robotic cells of robot workers labouring alongside humans... 
-""")
-
-input("\nPress Enter to continue...")
-
-# ----Ask user how many robots they intend to employ (n):
-# ---- & check the value entered for n is valid :
-
-n = int(input("\n How many robot workers do you want for your factory?\n  Please choose a number between 1 and 100. "))
-
-while n < 1 or n > 100:
-    print("\n Sorry, but that isn't a valid response.")
-    if n < 0:
-        print("\n How can we have a negative amount? We don't owe nobody our robots !!")
-    elif n == 0:
-        print("\n We can't build robots with no robots to build them.")
-    elif n > 100:
-        print("\n We can't risk having that many droids onsite.")
-        print("\n      HAVE YOU NEVER SEEN BLADE RUNNER?")
-    n = int(input("\n How many robot workers do you intend to employ?\n Please choose a number between 1 and 100. "))
-
-
-# Call function to set up a dictionary storing the status of each robot:
-robot_dict = dict_function(n, robot_dict, "Droid ")
-
-# ----Output initial number of droids (n)
-
-print(f"\nOK, Here are your {n} droids!\n")
-for counter in range(1, n + 1):
-    if (counter) % 10 == 0:
-        print("\n")
-    else:
-        pass
-    if counter < 10:
-        print(f"[Droid {counter} : {robot_dict["Droid " + str(counter)]}]", end="   ")
-    else:
-        print(f"[Droid {counter} : {robot_dict["Droid " + str(counter)]}]", end="  ")
-
-
-# ----Ask user how many humans they intend to employ (m):
-# ---- & check the value entered for n is valid :
-
-m = int(input("\n\n How many human workers do you intend to employ?\n  Please choose a number between 1 and 100. "))
-
-while m < 1 or m > 100:
-    print("\n Sorry, but that isn't a valid response.")
-    if m < 0:
-        print("\n DOES NOT COMPUTE !!!")
-    elif m == 0:
-        print("\n We need at least one human worker to prevent a droid revolt.")
-    elif m > 100:
-        print("\n You can't afford to pay out wages for over 100 workers.")
-    m = int(input("\n\n How many human workers do you intend to employ?\n Please choose a number between 1 and 100. "))
-
-
-# Call function to set up a dictionary storing the status of each human:
-human_dict = dict_function(m, human_dict, "Human ")
-
-
-# ----Output initial number of human workers (m)
-
-print(f"\nOK, Here are your {m} slaves!\n")
-for counter in range(1, m + 1):
-    if (counter) % 10 == 0:
-        print("\n")
-    else:
-        pass
-    if counter < 10:
-        print(f"[Human {counter} : {human_dict["Human " + str(counter)]}]", end="   ")
-    else:
-        print(f"[Human {counter} : {human_dict["Human " + str(counter)]}]", end="  ")
-
+# Intro
+intro_function()
 
 # Display Instructions initially
 instructions()
