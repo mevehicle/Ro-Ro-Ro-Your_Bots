@@ -70,7 +70,7 @@ def intro_function():
     input("\nPress Enter to continue...")
 
     print("\n Scenario:")
-    print("""\n You are the supervisor of Ro-Ro-Ro-Your-Bots, where robots work alongside
+    print("""\n You are the supervisor of Ro-Ro-Ro-Your-Bots\u00AE, where robots work alongside
     human workers in a robotic cell, producing industry-standard robot workers which are
     to be shipped out to a more substantial plant, wherein they will forge components
     that can be boxed and sold in flat-packs, and assembled in situ into factories that
@@ -127,41 +127,49 @@ def what_next():
         to cope with such long instructions.""")
         what_next()
 
-    # HELP
-    elif next_action == "H":
-        instructions()
-
-    # QUIT
-    elif next_action == "Q":
-        quit_program()
-
     # ADD
     elif next_action == "A":
-        add_robot()
+        add_robot(n)
 
     # REMOVE
     elif next_action == "R":
-        remove_robot()
-
-    # EMPLOY
-    elif next_action == "E":
-        employ_worker()
+        remove_robot(n)
 
     # CHANGE
     elif next_action == "C":
         change_status()
 
+    # EMPLOY
+    elif next_action == "E":
+        employ_worker(m)
+
     # FIRE
     elif next_action == "F":
-        fire_worker()
+        fire_worker(m)
 
     # MANAGE
     elif next_action == "M":
         monitor_status()
 
+    # ORDER
+    elif next_action == "O":
+        order()
+
     # LOG
     elif next_action == "L":
         log_tasks()
+
+    # TRACK
+    elif next_action == "T":
+        track_progress()
+
+    # HELP
+    elif next_action == "H":
+        get_help()
+
+    # QUIT
+    elif next_action == "Q":
+        quit_program()
 
     else:
         print("Sorry, I don't think that's a valid option.")
@@ -196,8 +204,8 @@ def instructions():
     '      Log Tasks                   Track progress            \n'
     '\n                                                          \n'
     '[H] = HELP !!!              [Q] = QUIT                      \n'
-    '      Display these               Resign your position      \n'
-    '       instructions                & END PROGRAM !        \n'))
+    '      Display further             Resign your position      \n'
+    '       instructions                & END PROGRAM !          \n'))
 
 
 # Function to add robot
@@ -260,7 +268,28 @@ def monitor_status():
 # Function to get help
 # Accessed by pressing H within what_next() function
 def get_help():
-    pass
+    print(("\n As supervisor at Ro-Ro-Ro-Your-Bots Incorporated\u00AE, you are charged with ensuring the production"
+           " of premium-quality robots.\n"
+           " You need to manage operations, including assigning tasks, monitoring the status of robots and work-ers,"
+           " and to track the progress of assembly.\n""
+           " Please memorise the following list of the tasks involved in manufacturing a Z-57-PrimBot:\n\n"
+           "   - SCREW the arms on\n"
+           "   - WELD the legs on\n"
+           "   - HAMMER the head on\n"
+           "   - POLISH the eyes\n"
+           "   - DRILL the ears\n"
+           "   - ATTACH the waste hose\n"
+           "   - TEST the functioning\n\n"
+           " (NB. It may occasionally be necessary to KNOCK some sense into the thing.)\n\n"
+           " Other tasks involved in running the plant include:\n\n"
+           "   - UNLOAD trucks using forklift\n"
+           "   - OPERATE the conveyor belt\n"
+           "   - BOX and ship the product\n"
+           "   - SWEEP the floors\n"
+           "   - MAKE cups of tea\n\n"
+           " At least once an hour someone is also required to stand on the balcony above the factory floor and"
+           " shout at everyone to work faster.\n"
+           " That particular job cannot be delegated.\n"
 
 
 # Function to quit program
