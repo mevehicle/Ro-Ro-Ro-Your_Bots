@@ -14,11 +14,7 @@ n = 0
 # m = number of workers
 m = 0
 
-""" Set up dictionaries to store current status of robots or humans.
-    - This function's parameters allow it to be used for both
-   robots and humans, as it is being passed the variables n or m
-   and robot_status or human_status 
-"""
+# Set up dictionaries to store current status of robots or humans.
 
 robot_dict = {}
 
@@ -34,8 +30,7 @@ def intro_function():
         except ValueError:
             print("\n Sorry, but that isn't a valid response.")
             print("\n Maybe you entered letters or symbols instead of just a number.")
-            input_robots()
-
+            n = input_robots()
         while n < 1 or n > 100:
             print("\n Sorry, but that isn't a valid response.")
             if n < 0:
@@ -45,7 +40,8 @@ def intro_function():
             elif n > 100:
                 print("\n We can't risk having that many droids onsite.")
                 print("\n      HAVE YOU NEVER SEEN BLADE RUNNER?")
-            input_robots()
+            n = input_robots()
+        return n
 
     # Function to ask user how many humans they intend to employ (m):
     # ---- & check the value entered for m is valid :
@@ -56,8 +52,7 @@ def intro_function():
         except ValueError:
             print("\n Sorry, but that isn't a valid response.")
             print("\n Maybe you entered letters or symbols instead of just a number.")
-            input_humans()
-
+            m = input_humans()
         while m < 1 or m > 100:
             print("\n Sorry, but that isn't a valid response.")
             if m < 0:
@@ -66,7 +61,8 @@ def intro_function():
                 print("\n We need at least one human worker to prevent a droid revolt.")
             elif m > 100:
                 print("\n You can't afford to pay out wages for over 100 workers.")
-            input_humans()
+            m = input_humans()
+        return m
 
     # ---- Introduction
 
@@ -84,33 +80,42 @@ def intro_function():
     input("\nPress Enter to continue...")
 
     # Call function to ask user how many robots they want
-    input_robots()
+    n = input_robots()
 
     # ----Output initial number of droids (n)
 
     print(f"\nOK, Here are your {n} droids!\n")
+    robot_list = ["robot_" + str(counter) for counter in range(1, n + 1)]
+    robot_dict = {robot: "Idle" for robot in robot_list}
     for counter in range(1, n + 1):
-        if counter % 10 == 0:
+        if (counter -1) % 5 == 0:
             print("\n")
         else:
             pass
         if counter < 10:
-            print(f"[Droid {counter} : {robot_dict["Droid " + str(counter)]}]   ", end="")
+            print(f"[Droid {counter}  : Idle]  ", end="")
         else:
-            print(f"[Droid {counter} : {robot_dict["Droid " + str(counter)]}]  ", end="")
+            print(f"[Droid {counter} : Idle]  ", end="")
+
+    # Call function to ask user how many humans they want
+    m = input_humans()
 
     # ----Output initial number of human workers (m)
 
     print(f"\nOK, Here are your {m} slaves!\n")
+    human_list = ["Human_" + str(counter) for counter in range(1, m + 1)]
+    human_dict = {human: "Idle" for human in human_list}
     for counter in range(1, m + 1):
-        if counter % 10 == 0:
+        if (counter - 1) % 5 == 0:
             print("\n")
         else:
             pass
         if counter < 10:
-            print(f"[Human {counter} : {human_dict['Human ' + str(counter)]}]   ", end="")
+            print(f"[Human {counter}  : Idle]  ", end="")
         else:
-            print(f"[Human {counter} : {human_dict['Human ' + str(counter)]}]  ", end="")
+            print(f"[Human {counter} : Idle]  ", end="")
+
+    input("\n\nPress Enter to continue...")
 
 
 # Function to get user to choose an action
@@ -118,7 +123,7 @@ def what_next():
     print()
     next_action = input("Please choose an action (or press H to get Help)").upper()
     if len(next_action) > 8:
-        print("""Sorry, this user interface has not been designed\n
+        print("""Sorry, this user interface has not been designed
         to cope with such long instructions.""")
         what_next()
 
@@ -166,31 +171,33 @@ def what_next():
 # Instructions for Supervisor
 # Accessed by pressing H within what_next() function
 def instructions():
-    print(('\n\n    - - Instructions for how to oversee production - -            ' 
-    '                    at                                      '
-    '    - -  Ro-Ro-Ro-Your-Bots Incorporated: - -                 '
-    '\n                                                          '
-    ' When prompted as to what options are available to you,     '
-    '     press a key from these available alternatives          '
-    '          to select from its sub-menu:                      '
-    '\n                                                          ' 
-    '[A] = ADD                   [R] = REMOVE                    '
-    '     Add Robot(s)                 Remove Robot(s)           '
-    '\n                                                          '
-    '[E] = EMPLOY                [F] = FIRE                      '
-    '      Employ Worker(s)            Fire Worker(s)            '
-    '\n                                                          '
-    '[C] = CHANGE                [M] = MANAGE                    '
-    '      Change Robot                Manage Worker             '
-    '                Status                      Status          '
-    '\n                                                          '
-    '[L] = LOG                   [H] = HELP !!!                  '
-    '      Log Tasks                   Display these instructions'
-    '\n                                                          '
-    '                [Q] = QUIT                                  '
-    '                      Resign your position                  '
-    '                               &                            '
-    '                         END PROGRAM !\n                    '))
+    print((
+    '\n\n    - - Instructions for how to oversee production - -  \n' 
+    '                    at                                      \n'
+    '    - -  Ro-Ro-Ro-Your-Bots Incorporated: - -               \n'
+    '\n                                                          \n'
+    ' When prompted as to what options are available to you,     \n'
+    '     press a key from these available alternatives          \n'
+    '          to select from its sub-menu:                      \n'
+    '\n                                                          \n'
+    '[A] = ADD                   [E] = EMPLOY                    \n'
+    '      Add Robot(s)                Employ Worker(s)          \n'
+    '\n                                                          \n'
+    '[R] = REMOVE                [F] = FIRE                      \n'
+    '      Remove Robot(s)             Fire Worker(s)            \n'
+    '\n                                                          \n'
+    '[C] = CHANGE                [M] = MANAGE                    \n'
+    '      Change Robot Status         Manage Worker Status      \n'
+    '\n                                                          \n'
+    '[O] = ORDER                                                 \n'
+    '      Order To Carry Out Task                               \n'
+    '\n                                                          \n'
+    '[L] = LOG                   [T] = TRACK                     \n'
+    '      Log Tasks                   Track progress            \n'
+    '\n                                                          \n'
+    '[H] = HELP !!!              [Q] = QUIT                      \n'
+    '      Display these               Resign your position      \n'
+    '       instructions                & END PROGRAM !        \n'))
 
 
 # Function to add robot
@@ -224,10 +231,10 @@ def fire_worker(m):
     m -= 1
 
 
-# Function to track worker
-# Accessed by pressing T within what_next() function
+# Function to manage worker
+# Accessed by pressing M within what_next() function
 # statuses available = idle / working / finished task
-def track_worker():
+def manage_worker():
     pass
 
 # Function to order available robots and workers to carry out tasks.
@@ -243,15 +250,21 @@ def log_tasks():
     pass
 
 
-# Function to monitor progress of robots, workers and tasks
-# Accessed by pressing M within what_next() function
+# Function to track progress of robots, workers and tasks
+# Accessed by pressing T within what_next() function
 # Should regularly update status and identify problems
 # eg. Idle robots, idle workers, incomplete tasks.
 def monitor_status():
     pass
 
+# Function to get help
+# Accessed by pressing H within what_next() function
+def get_help():
+    pass
+
 
 # Function to quit program
+# Accessed by pressing Q within what_next() function
 def quit_program():
     quit = input("Are you sure you want to quit? (Y/N)").upper()
     if quit == "Y":

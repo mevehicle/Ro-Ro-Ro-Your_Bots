@@ -1,0 +1,41 @@
+n = 52
+m = 40
+
+robot_dict = {}
+
+human_dict = {}
+
+
+""" Set up dictionaries to store current status of robots or humans.
+    - This function's parameters allow it to be used for both
+   robots and humans, as it is being passed the variables n or m
+   and robot_status or human_status 
+"""
+
+def dict_function(class_nmbr, dict_class):
+    # check correct arguments passed:
+    print(f"class_nmbr = {class_nmbr}, dict_class = {dict_class}")
+    for r in range(class_nmbr):
+        dict_class[r] =  "Idle"
+        # check loop is working:
+        print(f"\n dict_class(r) = {dict_class[r]}")
+
+    return dict_class
+
+
+""" Call function to set up a dictionary
+   storing the status of each robot:
+"""
+
+robot_dict = dict_function(n, robot_dict)
+
+
+
+""" Call function to set up a dictionary
+   storing the status of each human:
+"""
+
+human_dict = dict_function(m, human_dict)
+
+print(f"\nrobot_dict = {robot_dict}")
+print(f"\nhuman_dict = {human_dict}")

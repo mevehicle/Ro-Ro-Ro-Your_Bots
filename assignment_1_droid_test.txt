@@ -1,0 +1,44 @@
+n = 0
+
+
+# ----Ask user how many robots they intend to employ (n):
+# ---- & check the value entered for n is valid :
+
+def how_many_robots():
+    n = 0
+    print("\n How many robot workers do you want for your factory?")
+    while n < 1 or n > 100:
+        try:
+            n = int(input("\n  Please choose a number between 1 and 100. "))
+        except ValueError:
+            print("\n Sorry, that's not a valid response.")
+            continue
+        if n < 0:
+           print("\n How can we have a negative amount? We don't owe anybody our robots !!")
+           continue
+        elif n == 0:
+            print("\n We can't build robots with no robots to build them.")
+            continue
+        elif n > 100:
+            print("\n We can't risk having that many droids onsite.")
+            print("\n Have you never seen Blade Runner?")
+            continue
+    return n
+
+
+# ----Output initial number of droids (n)
+
+def display_droid_team(n):
+    print(f"\n OK, Here are your {n} droids!")
+    for counter in range(1, n + 1):
+        if (counter - 1) % 10 == 0:
+            print("\n")
+        if counter <= 10:
+            print(f"[{counter}]", end="   ")
+        else:
+            print(f"[{counter}]", end="  ")
+
+
+n = how_many_robots()
+display_droid_team(n)
+
