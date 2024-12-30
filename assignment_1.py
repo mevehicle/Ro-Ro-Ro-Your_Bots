@@ -4,7 +4,11 @@
 
 # Import modules
 
-pass
+from time import sleep
+
+# Use this to get program to sleep for 10 milliseconds:
+# sleep(0.01)
+
 
 # ---- Initialise main variables
 
@@ -14,11 +18,9 @@ n = 0
 # m = number of workers
 m = 0
 
-# Set up dictionaries to store current status of robots or humans.
-
-robot_dict = {}
-
-human_dict = {}
+# Set up lists to store status codes of robots and humans:
+robot_list = []
+human_list = []
 
 def intro_function():
     # Function to ask user how many robots they intend to employ (n):
@@ -64,13 +66,39 @@ def intro_function():
             m = input_humans()
         return m
 
+    # Helper function to print out status of a robot or human
+    def get_status(stat_code):
+        if stat_code == 0:
+            status = "Idle"
+        elif stat_code == 1:
+            status = "SCREWing"
+        elif stat_code == 2:
+            status = "WELDing"
+        elif stat_code == 3:
+            status = "HAMMERing"
+        elif stat_code == 4:
+            status = "POLISHing"
+        elif stat_code == 5:
+            status = "DRILLing"
+        elif stat_code == 6:
+            status = "ATTACHing"
+        elif stat_code == 7:
+            status = "TESTing"
+        elif stat_code == 8:
+            status = "UNLOADing"
+        elif stat_code == 9:
+            status = "BOXing"
+        elif stat_code == 10:
+            status = "MAKing"
+        return status
+
     # ---- Introduction
 
     print("Program to simulate coordination between n robots and m workers in a robotic cell")
     input("\nPress Enter to continue...")
 
     print("\n Scenario:")
-    print("""\n You are the supervisor of Ro-Ro-Ro-Your-Bots\u00AE, where robots work alongside
+    print("""\n     You are the supervisor of Ro-Ro-Ro-Your-Bots\u00AE, where robots work alongside
     human workers in a robotic cell, producing industry-standard robot workers which are
     to be shipped out to a more substantial plant, wherein they will forge components
     that can be boxed and sold in flat-packs, and assembled in situ into factories that
@@ -85,17 +113,14 @@ def intro_function():
     # ----Output initial number of droids (n)
 
     print(f"\nOK, Here are your {n} droids!\n")
-    robot_list = ["robot_" + str(counter) for counter in range(1, n + 1)]
-    robot_dict = {robot: "Idle" for robot in robot_list}
-    for counter in range(1, n + 1):
-        if (counter -1) % 5 == 0:
+    for counter in range(0, n):
+        robot_list.append(0)
+        if (counter) % 5 == 0:
             print("\n")
-        else:
-            pass
         if counter < 10:
-            print(f"[Droid {counter}  : Idle]  ", end="")
+            print(f"[Droid {counter + 1}  : {get_status(robot_list[counter])}]", end="  ")
         else:
-            print(f"[Droid {counter} : Idle]  ", end="")
+            print(f"[Droid {counter + 1} : {get_status(robot_list[counter])}]", end="  ")
 
     # Call function to ask user how many humans they want
     m = input_humans()
@@ -103,17 +128,14 @@ def intro_function():
     # ----Output initial number of human workers (m)
 
     print(f"\nOK, Here are your {m} slaves!\n")
-    human_list = ["Human_" + str(counter) for counter in range(1, m + 1)]
-    human_dict = {human: "Idle" for human in human_list}
-    for counter in range(1, m + 1):
-        if (counter - 1) % 5 == 0:
+    for counter in range(0, m):
+        human_list.append(0)
+        if (counter) % 5 == 0:
             print("\n")
-        else:
-            pass
         if counter < 10:
-            print(f"[Human {counter}  : Idle]  ", end="")
+            print(f"[Human {counter + 1}  : {get_status(human_list[counter])}]", end="  ")
         else:
-            print(f"[Human {counter} : Idle]  ", end="")
+            print(f"[Human {counter + 1} : {get_status(human_list[counter])}]", end="  ")
 
     input("\n\nPress Enter to continue...")
 
@@ -122,6 +144,7 @@ def intro_function():
 def what_next():
     print()
     next_action = input("Please choose an action (or press H to get Help)").upper()
+    sleep(5)
     if len(next_action) > 8:
         print("""Sorry, this user interface has not been designed
         to cope with such long instructions.""")
@@ -271,25 +294,22 @@ def get_help():
     print(("\n As supervisor at Ro-Ro-Ro-Your-Bots Incorporated\u00AE, you are charged with ensuring the production"
            " of premium-quality robots.\n"
            " You need to manage operations, including assigning tasks, monitoring the status of robots and work-ers,"
-           " and to track the progress of assembly.\n""
+           " and to track the progress of assembly.\n"
            " Please memorise the following list of the tasks involved in manufacturing a Z-57-PrimBot:\n\n"
-           "   - SCREW the arms on\n"
-           "   - WELD the legs on\n"
-           "   - HAMMER the head on\n"
-           "   - POLISH the eyes\n"
-           "   - DRILL the ears\n"
-           "   - ATTACH the waste hose\n"
-           "   - TEST the functioning\n\n"
-           " (NB. It may occasionally be necessary to KNOCK some sense into the thing.)\n\n"
-           " Other tasks involved in running the plant include:\n\n"
-           "   - UNLOAD trucks using forklift\n"
-           "   - OPERATE the conveyor belt\n"
-           "   - BOX and ship the product\n"
-           "   - SWEEP the floors\n"
-           "   - MAKE cups of tea\n\n"
+           "   - SCREW the arms on\n"       # Status = 1
+           "   - WELD the legs on\n"        # Status = 2
+           "   - HAMMER the head on\n"      # Status = 3
+           "   - POLISH the eyes\n"         # Status = 4
+           "   - DRILL the ears\n"          # Status = 5 
+           "   - ATTACH the waste hose\n"   # Status = 6
+           "   - TEST the functioning\n\n"  # Status = 7
+           " Other tasks involved in running the plant include:\n"
+           "   - UNLOAD trucks with forklift\n" # Status = 8
+           "   - BOX and ship the product\n"    # Status = 9
+           "   - MAKE cups of tea\n\n"          # Status = 10
            " At least once an hour someone is also required to stand on the balcony above the factory floor and"
            " shout at everyone to work faster.\n"
-           " That particular job cannot be delegated.\n"
+           " That particular job cannot be delegated.\n"))
 
 
 # Function to quit program
@@ -303,6 +323,10 @@ def quit_program():
 
 
 ################################# --- BODY OF PROGRAM --- ################################
+
+# Set console colours using ANSI escape codes:
+print("\u001b[43m")
+print("\u001b[30m")
 
 # Intro
 intro_function()
