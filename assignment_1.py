@@ -18,17 +18,29 @@ n = 0
 # m = number of workers
 m = 0
 
-# Set up lists to store status codes of robots and humans:
+# Set up lists to store status codes of individual robots and humans, in order.
 robot_list = []
 human_list = []
+
+# The status codes will be deciphered by
+# using them as the index numbers of a global tuple
+# called status_tuple, containing corresponding activities
+
+status_tuple = ("IDLE", "SCREWing", "WELDing", "HAMMERing", "POLISHing", "DRILLing", "ATTACHing", "TESTing", "UNLOADing", "BOXing", "MAKing")
 
 def intro_function():
     # Function to ask user how many robots they intend to employ (n):
     # ---- & check the value entered for n is valid :
     def input_robots():
+        sleep(2)
+        n = input(
+            "\n How many robot workers do you want for your factory?\n  Please choose a number between 1 and 100. ")
+        if not n:
+            sleep(2)
+            print("\n Excuse me, but I asked you a question!")
+            n = input_robots()
         try:
-            n = int(input(
-                "\n How many robot workers do you want for your factory?\n  Please choose a number between 1 and 100. "))
+            n = int(n)
         except ValueError:
             print("\n Sorry, but that isn't a valid response.")
             print("\n Maybe you entered letters or symbols instead of just a number.")
@@ -41,6 +53,7 @@ def intro_function():
                 print("\n We can't build robots with no robots to build them.")
             elif n > 100:
                 print("\n We can't risk having that many droids onsite.")
+                sleep(0.5)
                 print("\n      HAVE YOU NEVER SEEN BLADE RUNNER?")
             n = input_robots()
         return n
@@ -48,12 +61,17 @@ def intro_function():
     # Function to ask user how many humans they intend to employ (m):
     # ---- & check the value entered for m is valid :
     def input_humans():
+        sleep(2)
+        m = input(
+            ("\n\n How many human workers do you intend to employ? \n  Please choose a number between 1 and 100. "))
+        if not m:
+            print("\n Speak into the microphone, please - \n I can't hear you ! ")
+            m = input_humans()
         try:
-            m = int(
-            input("\n\n How many human workers do you intend to employ?\n  Please choose a number between 1 and 100. "))
+            m = int(m)
         except ValueError:
-            print("\n Sorry, but that isn't a valid response.")
-            print("\n Maybe you entered letters or symbols instead of just a number.")
+            print("\n Sorry, but that isn't a valid response. ")
+            print("\n Maybe you entered letters or symbols instead of just a number. ")
             m = input_humans()
         while m < 1 or m > 100:
             print("\n Sorry, but that isn't a valid response.")
@@ -62,92 +80,67 @@ def intro_function():
             elif m == 0:
                 print("\n We need at least one human worker to prevent a droid revolt.")
             elif m > 100:
-                print("\n You can't afford to pay out wages for over 100 workers.")
+                print("\n You can't afford to pay out wages for over 100 workers. ")
             m = input_humans()
         return m
 
-    # Helper function to print out status of a robot or human
-    def get_status(stat_code):
-        if stat_code == 0:
-            status = "Idle"
-        elif stat_code == 1:
-            status = "SCREWing"
-        elif stat_code == 2:
-            status = "WELDing"
-        elif stat_code == 3:
-            status = "HAMMERing"
-        elif stat_code == 4:
-            status = "POLISHing"
-        elif stat_code == 5:
-            status = "DRILLing"
-        elif stat_code == 6:
-            status = "ATTACHing"
-        elif stat_code == 7:
-            status = "TESTing"
-        elif stat_code == 8:
-            status = "UNLOADing"
-        elif stat_code == 9:
-            status = "BOXing"
-        elif stat_code == 10:
-            status = "MAKing"
-        return status
-
     # ---- Introduction
 
-    print("Program to simulate coordination between n robots and m workers in a robotic cell")
-    input("\nPress Enter to continue...")
+    print("Program to simulate coordination between n robots and m workers in a robotic cell ")
+    input("\nPress Enter to continue... ")
+    sleep(2)
 
-    print("\n Scenario:")
+    print("\n Scenario: ")
     print("""\n     You are the supervisor of Ro-Ro-Ro-Your-Bots\u00AE, where robots work alongside
     human workers in a robotic cell, producing industry-standard robot workers which are
     to be shipped out to a more substantial plant, wherein they will forge components
     that can be boxed and sold in flat-packs, and assembled in situ into factories that
-    produce robots, built by robotic cells of robot workers labouring alongside humans... 
+    produce robots, built by robotic cells of robot workers labouring alongside humans...  
     """)
-
-    input("\nPress Enter to continue...")
+    sleep(2)
+    input("\nPress Enter to continue... ")
 
     # Call function to ask user how many robots they want
     n = input_robots()
-
+    sleep(2)
     # ----Output initial number of droids (n)
 
-    print(f"\nOK, Here are your {n} droids!\n")
+    print(f"\nOK, Here are your {n} droids! \n")
     for counter in range(0, n):
         robot_list.append(0)
         if (counter) % 5 == 0:
             print("\n")
         if counter < 10:
-            print(f"[Droid {counter + 1}  : {get_status(robot_list[counter])}]", end="  ")
+            print(f"[Droid {counter + 1}  : {status_tuple[robot_list[counter]]}]", end="  ")
         else:
-            print(f"[Droid {counter + 1} : {get_status(robot_list[counter])}]", end="  ")
+            print(f"[Droid {counter + 1} : {status_tuple[robot_list[counter]]}]", end="  ")
 
     # Call function to ask user how many humans they want
     m = input_humans()
-
+    sleep(2)
     # ----Output initial number of human workers (m)
 
-    print(f"\nOK, Here are your {m} slaves!\n")
+    print(f"\nOK, Here are your {m} slaves! \n")
     for counter in range(0, m):
         human_list.append(0)
         if (counter) % 5 == 0:
             print("\n")
         if counter < 10:
-            print(f"[Human {counter + 1}  : {get_status(human_list[counter])}]", end="  ")
+            print(f"[Human {counter + 1}  : {status_tuple[human_list[counter]]}]", end="  ")
         else:
-            print(f"[Human {counter + 1} : {get_status(human_list[counter])}]", end="  ")
+            print(f"[Human {counter + 1}  : {status_tuple[human_list[counter]]}]", end="  ")
 
-    input("\n\nPress Enter to continue...")
-
+    input("\n\nPress Enter to continue... ")
+    sleep(2)
 
 # Function to get user to choose an action
 def what_next():
     print()
-    next_action = input("Please choose an action (or press H to get Help)").upper()
-    sleep(5)
-    if len(next_action) > 8:
+    next_action = input("Please choose an action (or press H to get Help) ").upper()
+    sleep(2)
+    if len(next_action) > 1:
         print("""Sorry, this user interface has not been designed
-        to cope with such long instructions.""")
+        to cope with such long instructions. """)
         what_next()
 
     # ADD
@@ -291,31 +284,31 @@ def monitor_status():
 # Function to get help
 # Accessed by pressing H within what_next() function
 def get_help():
-    print(("\n As supervisor at Ro-Ro-Ro-Your-Bots Incorporated\u00AE, you are charged with ensuring the production"
-           " of premium-quality robots.\n"
-           " You need to manage operations, including assigning tasks, monitoring the status of robots and work-ers,"
-           " and to track the progress of assembly.\n"
-           " Please memorise the following list of the tasks involved in manufacturing a Z-57-PrimBot:\n\n"
-           "   - SCREW the arms on\n"       # Status = 1
-           "   - WELD the legs on\n"        # Status = 2
-           "   - HAMMER the head on\n"      # Status = 3
-           "   - POLISH the eyes\n"         # Status = 4
-           "   - DRILL the ears\n"          # Status = 5 
-           "   - ATTACH the waste hose\n"   # Status = 6
-           "   - TEST the functioning\n\n"  # Status = 7
-           " Other tasks involved in running the plant include:\n"
-           "   - UNLOAD trucks with forklift\n" # Status = 8
-           "   - BOX and ship the product\n"    # Status = 9
-           "   - MAKE cups of tea\n\n"          # Status = 10
-           " At least once an hour someone is also required to stand on the balcony above the factory floor and"
-           " shout at everyone to work faster.\n"
-           " That particular job cannot be delegated.\n"))
+    print(("\n As supervisor at Ro-Ro-Ro-Your-Bots Incorporated\u00AE, you are charged with "
+           "ensuring the production of premium-quality robots. \n"
+           " You need to manage operations, including assigning tasks, monitoring the status "
+           "of robots and work-ers, and tracking the progress of assembly. \n"
+           " Please memorise the following list of the tasks involved in manufacturing a Z-57-PrimBot: \n\n"
+           "   - SCREW the arms on \n"       # Status = 1
+           "   - WELD the legs on \n"        # Status = 2
+           "   - HAMMER the head on \n"      # Status = 3
+           "   - POLISH the eyes \n"         # Status = 4
+           "   - DRILL the ears \n"          # Status = 5 
+           "   - ATTACH the waste hose \n"   # Status = 6
+           "   - TEST the functioning \n\n"  # Status = 7
+           " Other tasks involved in running the plant include: \n"
+           "   - UNLOAD trucks with forklift \n" # Status = 8
+           "   - BOX and ship the product \n"    # Status = 9
+           "   - MAKE cups of tea \n\n"          # Status = 10
+           " At least once an hour someone is also required to stand on the balcony above the factory floor and "
+           "shout at everyone to work faster. \n"
+           " That particular job cannot be delegated. \n"))
 
 
 # Function to quit program
 # Accessed by pressing Q within what_next() function
 def quit_program():
-    quit = input("Are you sure you want to quit? (Y/N)").upper()
+    quit = input("Are you sure you want to quit? (Y/N) ").upper()
     if quit == "Y":
         exit()
     elif quit == "N":
