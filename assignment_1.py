@@ -267,7 +267,8 @@ def ask_finished_to_idle(phrase, list):
     if list.count(0) ==1:
         ask = input(f"Would you like to make the {phrase} that has finished its task available for more work? \n")
     elif list.count(0) > 1 :
-        ask = input(f"Would you like to make any of the {phrase}s that have finished their tasks available for more work? \n")")
+        ask = input(f"Would you like to make any of the {phrase}s that " 
+                    "have finished their tasks available for more work? \n")
     pass
 
 
@@ -354,7 +355,7 @@ def employ_worker(m, human_list):
 def fire_worker(m, human_list):
     print("\u001b[2J")
     sleep(3)
-    print("\n You have selected \"FIRE a worker\" "\n)
+    print("\n You have selected \"FIRE a worker\" \n")
     sleep(1.5)
     for i in range(m, -1, -1 ):
         if human_list[i] == 0:
@@ -387,7 +388,7 @@ def order_to_task():
     # Helper function to ask what task
     def what_task():
         # Helper function to show options for assigning tasks
-        def task_options()
+        def task_options():
             print(('\n These are the options for the tasks: \n'
                    'Press [S] for SCREWing arms on          \n' # Status = 1
                    'Press [W] for WELDing legs on           \n' # Status = 2
@@ -404,7 +405,7 @@ def order_to_task():
             pass
 
         ask = input((" What task would you like to assign to them? \n "
-                     "              (Press [O] to see the options)\n")
+                     "              (Press [O] to see the options)\n"))
         sleep(2)
         if len(ask) > 1:
             print("""\nSorry, this user interface has not been designed
@@ -421,35 +422,46 @@ def order_to_task():
                 case "S":
                     # SCREW arms on
                     # Status becomes 1
+                    pass
                 case "W":
                     # WELD legs on \n"
                     # Status becomes 2
+                    pass
                 case "H":
                     # HAMMER the head on \n"
                     #   Status = 3
+                    pass
                 case "P":
                     # POLISH the eyes \n"
                     #    Status = 4
+                    pass
                 case "D":
                     # DRILL the ears
                     # Status = 5
+                    pass
                 case "A":
                     #  ATTACH the waste hose"
                     # Status = 6
+                    pass
                 case "T":
                     #  TEST the functioning \n\n"
                     # Status = 7
+                    pass
                 case "U":
                     #   - UNLOAD trucks with forklift \n"
                     # Status = 8
+                    pass
                 case "B":
                     # BOX and ship the product \n"
                     # Status = 9
+                    pass
                 case "F":
                     # FETCH cups of tea \n\n"
                     # Status = 10
-                case X:
+                    pass
+                case "X":
                     # Exit from task options
+                    pass
                 case _:
                     # wildcard case to catch bad inputs
                     print("\n Instruction not recognised")
