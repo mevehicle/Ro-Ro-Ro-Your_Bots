@@ -227,14 +227,30 @@ def instructions():
 # Function to add robot
 # Accessed by pressing A within what_next() function
 def add_robot(n):
+    sleep(2)
     n += 1
+    # 0 is added to end of list, indicating an idle robot
+    robot_list.append(0)
+    print("\n You have added an extra 'bot to the crew. \n\n")
 
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
-def remove_robot(n):
-    n -= 1
-
+def remove_robot(n, robot_list):
+    sleep(3)
+    for i in range(n, -1, -1):
+        if robot_list[i] == 0:
+            robot_list.pop(i)
+            n -= 1
+            print("\n You have sent a robot to the recycling plant ! \n\n")
+            return n, robot_list
+        else:
+            continue
+    print(('\n  Unable to scrap a droid while they\'re all carrying out tasks. \n'
+           '  Switch one off first -                                           \n'
+           ' eg. select M for MANAGE to change a robot\'s status to IDLE,      \n'
+           'then you won\'t have to look it in the sensors when you consign it \n'
+           'to the junkyard.                                                 \n\n'))
 
 # Function to change status of a robot:
 # Accessed by pressing C within what_next() function
@@ -246,24 +262,42 @@ def change_status():
 # Function to employ new worker.
 # Accessed by pressing E within what_next() function
 def employ_worker(m):
+    sleep(2)
     m += 1
-
+    human_list.append(0)
+    print("\n You have hired one more worker. \n"
+          " Press M for MANAGE to get them straight to work ! \n\n")
+    # Adds an IDLE human (0 status code)
 
 # Function to fire a worker.
 # Accessed by pressing F within what_next() function
-def fire_worker(m):
-    m -= 1
-
+def fire_worker(m, human_list):
+    sleep(3)
+    for i in range(m, -1, -1 ):
+        if human_list[i] == 0:
+            human_list.pop(i)
+            m -= 1
+            print("\n Give him his P45 - \n"
+                  " and that's one more benefit claimant ! \n\n")
+            return m, human_list
+        else:
+            continue
+    print(('\n Unable to dismiss a worker while they\'re all carrying out tasks. \n'
+           '  Tell the worker you\'re firing to come to your office -            \n'
+           ' eg. select M for MANAGE to change a worker\'s status to IDLE,       \n'
+           'then you can [come back here and] fire them for being idle!        \n\n'))
 
 # Function to manage worker
 # Accessed by pressing M within what_next() function
 # statuses available = idle / working / finished task
 def manage_worker():
+    sleep(1)
     pass
 
 # Function to order available robots and workers to carry out tasks.
 # Accessed by pressing O within what_next() function
 def order_to_task():
+    sleep(2)
     pass
 
 
