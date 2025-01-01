@@ -6,8 +6,8 @@
 
 from time import sleep
 
-# Use this to get program to sleep for 10 milliseconds:
-# sleep(0.01)
+# Use this to get program to sleep for 1 second:
+# sleep(1)
 
 
 # ---- Initialise main variables
@@ -18,12 +18,12 @@ n = 0
 # m = number of workers
 m = 0
 
-# Set up lists to store status codes of individual robots and humans, in order.
-robot_list = []
-human_list = []
+# Set up dictionaries to store status codes of individual robots and humans, in order.
+robot_dict = {}
+human_dict = {}
 
-# The status codes will be deciphered by
-#  using them as the index numbers of a global tuple
+# The status codes can be deciphered by
+#  using them as the index numbers of a tuple
 #   called status_tuple, containing corresponding activities
 
 # ----- Status codes are as follows:
@@ -79,13 +79,13 @@ def intro_function():
         while n < 1 or n > 100:
             print("\n Sorry, but that isn't a valid response. \n")
             if n < 0:
-                print("\n How can we have a negative amount? We don't owe nobody our robots !!" \n)
+                print("\n How can we have a negative amount? We don't owe nobody our robots !!\n")
             elif n == 0:
                 print("\n We can't build robots with no robots to build them. \n")
             elif n > 100:
                 print("\n We can't risk having that many droids onsite. \n")
                 sleep(0.5)
-                print("\n      HAVE YOU NEVER SEEN BLADE RUNNER? \n)
+                print("\n      HAVE YOU NEVER SEEN BLADE RUNNER? \n")
             n = input_robots()
         return n
 
@@ -150,16 +150,11 @@ def intro_function():
 
     # ----Output initial number of droids (n)
     print(f"\nOK, Here are your {n} droids! \n")
-
+    robot_list = ["robot_" + str(counter) for counter in range(1, n + 1)]
+    robot_dict = {robot: "IDLE" for robot in robot_list}
     sleep(2,5)
-    for counter in range(0, n):
-        robot_list.append(0)
-        if (counter) % 5 == 0:
-            print("\n")
-        if counter < 10:
-            print(f"[Droid {counter + 1}  : {status_tuple[robot_list[counter]]}]", end="  ")
-        else:
-            print(f"[Droid {counter + 1} : {status_tuple[robot_list[counter]]}]", end="  ")
+    for robot, status in robot_dict.items():
+        print(robot, status)
 
     sleep(3)
     input("\n\nPress Enter to continue... ")
@@ -176,16 +171,11 @@ def intro_function():
     # ----Output initial number of human workers (m)
 
     print(f"\nOK, Here are your {m} slaves! \n")
-
+    human_list = ["human_" + str(counter) for counter in range(1, n + 1)]
+    human_dict = {human: "IDLE" for human in human_list}
     sleep(2.5)
-    for counter in range(0, m):
-        human_list.append(0)
-        if (counter) % 5 == 0:
-            print("\n")
-        if counter < 10:
-            print(f"[Human {counter + 1}  : {status_tuple[human_list[counter]]}]", end="  ")
-        else:
-            print(f"[Human {counter + 1}  : {status_tuple[human_list[counter]]}]", end="  ")
+    for human, status in human_dict.items():
+        print(human, status)
 
     sleep(3)
     input("\n\nPress Enter to continue... ")
@@ -194,7 +184,7 @@ def intro_function():
     print("\u001b[2J")
 
 # Helper function to check input is a single character
-def get_length(ask)
+def get_length(ask):
     if len(ask) > 1:
         print("""\n Sorry, this user interface has not been designed
                 to cope with such long instructions. \n""")
@@ -215,35 +205,35 @@ def what_next():
     if get_length(next_action):
         match next_action:
         # ADD
-            case "A:
-                add_robot(n, robot_list)
+            case "A":
+                add_robot(n, robot_dict)
          # REMOVE
             case "R":
-                remove_robot(n, robot_list)
+                remove_robot(n, robot_dict)
          # CHANGE
             case "C":
-                change_status(robot_list)
+                change_status(robot_dict)
          # PROGRAM
             case "P":
-                program_robot(robot_list, scheduler, status_tuple)
+                program_robot(robot_dict, scheduler, status_tuple)
          # EMPLOY
             case "E":
-                employ_worker(m, human_list)
+                employ_worker(m, human_dict)
          # FIRE
             case "F":
-                fire_worker(m, human_list)
+                fire_worker(m, human_dict)
          # MANAGE
             case "M":
-                manage_worker(human_list)
+                manage_worker(human_dict)
          # ORDER
             case "O":
-                order_worker(human_list, scheduler, status_tuple)
+                order_worker(human_dict, scheduler, status_tuple)
          # LOG
             case "L":
                 log_tasks(scheduler)
          # TRACK
             case "T":
-                track_progress(robot_list, human_list, status_tuple, scheduler)
+                track_progress(robot_dict, human_dict, status_tuple, scheduler)
          # HELP
             case "H":
                 get_help()
@@ -255,7 +245,7 @@ def what_next():
                 print("Sorry, I don't think that's a valid option.\n")
                 sleep(3)
                 print("Any feedback should be directed to our team.")
-                sleep(5))
+                sleep(5)
                 what_next()
     else:
         what_next()
@@ -300,7 +290,7 @@ def instructions():
 
 
 # Helper function to determine what task
-def what_task(phrase="worker", list, scheduler):
+def what_task(phrase="worker", dict="human_dict", scheduler="scheduler"):
     next_task = input((" What task would you like to assign to them? \n "
                  "              (Press [O] to see the options)\n"))
     sleep(2)
@@ -386,7 +376,7 @@ def show_task_options():
 # Function to ask user whether they want to
 #  change status of robots or workers
 #   from finished to idle
-def ask_finished_to_idle(phrase="worker", list):
+def ask_finished_to_idle(phrase="worker", dict="human_dict"):
     sleep(1)
     if list.count(0) ==1:
         reassign = input(f"Would you like to make the {phrase} "
@@ -435,7 +425,7 @@ def how_many(phrase="workers"):
 # Function to add robot
 # Accessed by pressing A within what_next() function
 # Adds an IDLE robot (0 status code)
-def add_robot(n, robot_list):
+def add_robot(n, robot_dict):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -444,15 +434,15 @@ def add_robot(n, robot_list):
 
     print("\n You have selected \"ADD a robot\" \n")
     sleep(1.5)
-
-    robot_list.append(0)
+    robot_dict[n] = 0
+    n += 1
     print("\n You have added an extra 'bot to the crew. \n"
           "Press C to CHANGE their status and get them mechanised !\n")
-    return robot_list, lambda n:n + 1
+    return n, robot_dict
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
-def remove_robot(n, robot_list):
+def remove_robot(n, robot_dict):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -462,10 +452,11 @@ def remove_robot(n, robot_list):
     print("\n You have selected \"REMOVE a robot\" \n")
     sleep(1.5)
     for i in range(n, -1, -1):
-        if robot_list[i] == 0:
-            robot_list.pop(i)
+        if robot_dict[i] == 0:
+            robot_dict.pop(i)
+            n -= 1
             print("\n You have sent a robot to the recycling plant ! \n\n")
-            return robot_list, lambda n:n - 1
+            return n, robot_dict
         else:
             continue
     print(('\n  Unable to scrap a droid while they\'re all carrying out tasks. \n'
@@ -478,7 +469,7 @@ def remove_robot(n, robot_list):
 # Function to change status of a robot:
 # Accessed by pressing C within what_next() function
 # statuses available = idle / working / finished task
-def change_status(n, robot_list):
+def change_status(n, robot_dict):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -493,7 +484,7 @@ def change_status(n, robot_list):
 
 # Function to assign task to robot
 # Accessed by pressing P within what_next() function
-def program_robot(n, robot_list, status_tuple):
+def program_robot(n, robot_dict, status_tuple):
     # Clear Screen
     print("\u001b[2J")
     # Cursor to Home
@@ -504,34 +495,34 @@ def program_robot(n, robot_list, status_tuple):
     sleep(3)
 
     # Check if any robots are IDLE
-    if not robot_list.count(0) and robot_list.count(11):
+    if not robot_dict.count(0) and robot_dict.count(11):
         print(" but you have no IDLE robots to execute your programs.\n")
         # Suggest user switches some statuses from FINISHED to IDLE
-        ask_finished_to_idle("droid", robot_list)
-    elif not robot_list.count(0) and not robot_list.count(11):
+        ask_finished_to_idle("droid", robot_dict)
+    elif not robot_dict.count(0) and not robot_dict.count(11):
         print(" but you have no IDLE robots to execute further programs.\n")
         print("\n You will have to switch some from the tasks they're WORKING on \n"
               "or wait til they're FINISHED. \n")
         sleep(5)
         what_next()
     else:
-        if robot_list.count(0) == 1:
-            print("\n You have 1 robot IDLE. \n"
+        if robot_dict.count(0) == 1:
+            print("\n You have 1 robot IDLE. \n")
             sleep(0.5)
-            robot_list.insert(what_task("robot", robot_list, scheduler))
-            robot_list.remove(0)
+            robot_dict.insert(what_task("robot", robot_dict, scheduler))
+            robot_dict.remove(0)
             return
-        elif robot_list.count(0) > 1:
-            print(f" You currently have {robot_list.count(0)} IDLE robots to assign tasks to.\n")
+        elif robot_dict.count(0) > 1:
+            print(f" You currently have {robot_dict.count(0)} IDLE robots to assign tasks to.\n")
             y = how_many("robots")
-            next_task = what_task("robot", robot_list, scheduler)
+            next_task = what_task("robot", robot_dict, scheduler)
         pass
 
 
 # Function to employ new worker.
 # Accessed by pressing E within what_next() function
 # Adds an IDLE human (0 status code)
-def employ_worker(m, human_list):
+def employ_worker(m, human_dict):
     # Clear Screen
     print("\u001b[2J")
     # Cursor to home
@@ -539,17 +530,17 @@ def employ_worker(m, human_list):
     sleep(2)
 
     print("\n You have selected \"EMPLOY a new worker\" \n")
+    human_dict[m] = 0
     m += 1
-    human_list.append(0)
     print("\n You have hired one more worker. \n"
           " Press M for MANAGE to get them straight to work. \n"
           "\n Before they try'n join the union already ! \n\n")
-    return m, human_list
+    return m, human_dict
 
 
 # Function to fire a worker.
 # Accessed by pressing F within what_next() function
-def fire_worker(m, human_list):
+def fire_worker(m, human_dict):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -559,19 +550,19 @@ def fire_worker(m, human_list):
     print("\n You have selected \"FIRE a worker\" \n")
     sleep(1.5)
     for i in range(m, -1, -1 ):
-        if human_list[i] == 0:
-            human_list.pop(i)
+        if human_dict[i] == 0:
+            human_dict.pop(i)
             m -= 1
             print("\n Give him his P45 - \n"
                   " and that's one more benefit claimant ! \n\n")
-            return m, human_list
+            return m, human_dict
         else:
             continue
     print(('\n Unable to dismiss a worker while they\'re all carrying out tasks. \n'
            '  Tell the worker you\'re firing to come to your office -            \n'
            ' eg. select M for MANAGE to change a worker\'s status to IDLE,       \n'
            'then you can [come back here and] fire them for being idle!        \n\n'))
-    return m, human_list
+    return m, human_dict
 
 # Function to manage worker
 # Accessed by pressing M within what_next() function
@@ -589,7 +580,7 @@ def manage_worker():
 
 # Function to order available workers to carry out tasks.
 # Accessed by pressing O within what_next() function
-def order_worker(m, human_list, status_tuple):
+def order_worker(m, human_dict, status_tuple):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -599,26 +590,26 @@ def order_worker(m, human_list, status_tuple):
     print("\n You have selected \"ORDER worker to task\" \n")
     sleep(1.5)
 
-    if not human_list.count(0) and human_list.count(11):
+    if not human_dict.count(0) and human_dict.count(11):
         print(" but you have no IDLE lackeys to boss around.\n")
-        ask_finished_to_idle("human", human_list)
+        ask_finished_to_idle("human", human_dict)
         return
-    elif not human_list.count(0) and not human_list.count(11):
+    elif not human_dict.count(0) and not human_dict.count(11):
         print(" but you have no IDLE lackeys to boss around.\n")
         print("\n You will have to switch some from the tasks they're WORKING on, \n"
               "pressing M for MANAGE from the main menu \n"
               "or wait til they've FINISHED what they're doing. \n")
         return
-    elif human_list.count(0) == 1:
+    elif human_dict.count(0) == 1:
         print(f" You only have 1 IDLE human to assign a task to.\n")
         sleep(0.5)
-        human_list.insert(what_task("human", human_list, scheduler))
-        human_list.remove(0)
+        human_dict.insert(what_task("human", human_dict, scheduler))
+        human_dict.remove(0)
         return
-    elif human_list.count(0) > 1:
-        print(f" You currently have {human_list.count(0)} IDLE humans to assign tasks to.\n")
+    elif human_dict.count(0) > 1:
+        print(f" You currently have {human_dict.count(0)} IDLE humans to assign tasks to.\n")
         y = how_many("humans")
-        next_task = what_task("human", human_list, scheduler)
+        next_task = what_task("human", human_dict, scheduler)
 
 
 # Log tasks
@@ -672,7 +663,7 @@ def log_tasks(task_log):
 # Accessed by pressing T within what_next() function
 # Should regularly update status and identify problems
 # eg. Idle robots, idle workers, incomplete tasks.
-def track_progress(robot_list, human_list, status_tuple, scheduler):
+def track_progress(robot_dict, human_dict, status_tuple, scheduler):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -728,62 +719,71 @@ def get_help():
 
     print(' From the main menu, the options you can select are detailed below:\n')
     sleep(3)
-    print(('\n\n Press [A] to add extra robots to the workforce :- \n'
-           '\n            - don\'t worry about having money to pay for them, \n'
-           '                or whether you\'ve built enough; \n''
-           '                let\'s just say, "Here\'s one I prepared earlier" \n'))
-    sleep(3)
-    print(('\n\n Press [R] to remove robots from the workforce :- \n'
-           '              - you can always replace them later. \n'
-           '\n               Uh,wWhy are these instructions sounding so creepy?! \n\n'))
-    sleep(3)
-    print(('\n\n Press [C] to change the status of a robot. \n'
-           '\n            - To begin with, any robots you have will be [IDLE] \n'
+    print(('\n\n Press [A] to add extra robots to the workforce :-       \n'
+           '\n            - don\'t fret about having the money for them, \n'
+           '                or whether you\'ve built enough;             \n'
+           '                let\'s just say,                             \n'
+           '                 "Here\'s one I prepared earlier"            \n'
+           ))
+    sleep(5)
+    print(('\n\n Press [R] to remove robots from the workforce :-        \n'
+           '              - you can always replace them later.           \n'
+           '\n               Uh,why are these instructions sounding      \n'
+           '                so creepy?!                                  \n'
+           ))
+    sleep(5)
+    print(('\n\n Press [C] to change the status of a robot.              \n'
+           '\n            - In the beginning they will all be [IDLE]     \n'
            '\n            - You can change their status to [WORKING],    \n'
            ))
-    sleep(3)
+    sleep(5)
     print(('\n\n Press [P] to program a robot: \n'
            '\n            - that translates to giving it a task to do.   \n'
            '\n            - You choose from the varied tasks carried out \n'
            '\n                                   at                      \n'
            '\n                           Ro-Ro-Ro-Your-Bots\u00AE        \n'
          ))
-    sleep(3)
-# "P":
-# program_robot(robot_list, scheduler, status_tuple)
-# # EMPLOY
-# case
-# "E":
-# employ_worker(m, human_list)
-# # FIRE
-# case
-# "F":
-# fire_worker(m, human_list)
-# # MANAGE
-# case
-# "M":
-# manage_worker(human_list)
-# # ORDER
-# case
-# "O":
-# order_worker(human_list, scheduler, status_tuple)
-# # LOG
-# case
-# "L":
-# log_tasks(scheduler)
-# # TRACK
-# case
-# "T":
-# track_progress(robot_list, human_list, status_tuple, scheduler)
-# # HELP
-# case
-# "H":
-# get_help()
-# # QUIT
-# case
-# "Q":
-# quit_program()
-    ))
+    sleep(5)
+    print(('\n\n Press [E] to employ (human) workers:                    \n'
+           '\n            - This allows you to grow your workforce.      \n'
+           '\n            - Humans work out more costly than robots,     \n'
+           '               but never yet have I come across a machine    \n'
+           '               that can make a decent cup of tea !           \n'
+           ))
+    sleep(5)
+    print(('\n\n Press [F] to fire (human) workers:                      \n'
+           '\n            - If you\'ve got more staff than you need      \n'
+           '               don\'t feel bad about laying some off:-       \n'
+           '                People are just too expensive to maintain    \n'
+           '               These days.                                   \n'
+           ))
+    sleep(5)
+    print(('\n\n Press [M] to manage the status of humans.               \n'
+           '              - Just like you change the robots\' statuses.  \n'
+           '\n            - The human workers are just the same mostly.  \n'
+           '\n              - IDLE, WORKING or FINISHED                  \n'
+           ))
+    sleep(5)
+    print(('\n\n Press [O] to order humans to perform tasks.             \n'
+           '\n            - It\'s the same as programming them.          \n'
+           ))
+    sleep(5)
+    print(('\n\n Press [L] to log tasks as not started, in progress      \n'
+           '                                          or completed.      \n'
+           '\n   - For each task you can see how many occurrences of it  \n'
+           '      remain to be started, how many are in progress and     \n'
+           '      how many have been completed.                          \n'
+           '\n     You will have the option of giving tasks new states   \n'
+           '      of completion.                                         \n'
+           ))
+    pass
+    sleep(5)
+    print(('\n\n Press [T] to track the progress of workers and robots.  \n'))
+    pass
+    sleep(5)
+    print('\n\n Press [H] when you want to see these helpful tips again. \n')
+    sleep(5)
+    print('\n\n Press [Q] when you wish to quit the simulation.          \n')
 
 
 # Function to quit program
@@ -796,15 +796,26 @@ def quit_program():
     sleep(1)
 
     quit = input("\nAre you sure you want to quit? (Y/N) \n").upper()
-    if quit == "Y":
-        exit()
-    elif quit == "N":
-        sleep(5)
-        input("\n Are you sure you don't want to quit? (Y/N) "\n).upper()
-        sleep(5)
-        print("\n This is getting confusing,\n"
-              "so let's say No just to be on the safe side.\n")
-        what_next()
+    if get_length(quit):
+        if quit == "Y":
+            exit()
+        elif quit == "N":
+            sleep(5)
+            quit = input("\n Are you sure you don't want to quit? (Y/N) \n").upper()
+                if get_length(quit):
+                    if quit == "Y":
+                        input("\n This is getting confusing,"
+                          "so shall we say No just to be on the safe side?\n").upper()
+                    if quit == "N":
+                        input("\n No, you're not sure you don't want to quit,"
+                              "or No, you don't want to quit? \n").upper()
+                    what_next()
+                else:
+                    print("\n I didn't catch that. Let's take it from the top.\n")
+                    sleep(5)
+                    what_next()
+    else:
+        quit_program()
 
 
 ################################# --- BODY OF PROGRAM --- ################################
