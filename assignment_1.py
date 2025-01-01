@@ -26,18 +26,38 @@ human_list = []
 #  using them as the index numbers of a global tuple
 #   called status_tuple, containing corresponding activities
 
+# ----- Status codes are as follows:
+# Status = 0 : IDLE
+#  "  "  = 1 : SCREWing the arms on
+#  "  "  = 2 : WELDing the legs on
+#  "  "  = 3 : HAMMERing the head on
+#  "  "  = 4 : POLISHing the eyes
+#  "  "  = 5 : DRILLing the ears
+#  "  "  = 6 : ATTACHing the waste hose
+#  "  "  = 7 : TESTing the functioning
+#  "  "  = 8 : UNLOADing trucks with forklift
+#  "  "  = 9 : BOXing and shipping product
+#  "  "  = 10: FETCHing cups of tea
+#  "  "  = 11: FINISHED task & ready for reassignment
+
 status_tuple = ("IDLE", "SCREWing", "WELDing", "HAMMERing", "POLISHing", "DRILLing",
                 "ATTACHing", "TESTing", "UNLOADing", "BOXing", "FETCHing", "FINISHED_TASK")
 
-# The task_log dictionary will be a database showing, for each task,
-# how many robots and how many workers are working on them.
+# The scheduler dictionary will be a database showing, for each task(i),
+# how many robots and how many workers are working on them,
+# eg. scheduler[i[robots, humans]
 
-task_log = {}
+scheduler = {}
 for i in range(1, 11):
+    scheduler[status_tuple[i]] = [0, 0]
+
+# The task log is a dictionary showing, for each task,
+# how many repetitions of that task have been completed
+# and whether any workers or robots are currently engaged in it
+# eg. task_log[i[completed, in progress
+task_log ={}
+for i in range(1,11):
     task_log[status_tuple[i]] = [0, 0]
-
-
-
 
 def intro_function():
     # Function to ask user how many robots they intend to employ (n):
@@ -194,55 +214,42 @@ def what_next():
     # check only 1 character was input
     if get_length(next_action):
         match next_action:
-
-         # ADD
+        # ADD
             case "A:
                 add_robot(n, robot_list)
-
          # REMOVE
             case "R":
                 remove_robot(n, robot_list)
-
          # CHANGE
             case "C":
                 change_status(robot_list)
-
          # PROGRAM
             case "P":
-                program_robot(robot_list, task_log)
-
+                program_robot(robot_list, scheduler, status_tuple)
          # EMPLOY
             case "E":
                 employ_worker(m, human_list)
-
          # FIRE
             case "F":
                 fire_worker(m, human_list)
-
          # MANAGE
             case "M":
                 manage_worker(human_list)
-
          # ORDER
             case "O":
-                order_worker(human_list, task_log)
-
+                order_worker(human_list, scheduler, status_tuple)
          # LOG
             case "L":
-                log_tasks(task_log)
-
+                log_tasks(scheduler)
          # TRACK
             case "T":
-                track_progress(task_log)
-
+                track_progress(robot_list, human_list, status_tuple, scheduler)
          # HELP
             case "H":
                 get_help()
-
          # QUIT
             case "Q":
                 quit_program()
-
         # SANITISE INPUT
             case _:
                 print("Sorry, I don't think that's a valid option.\n")
@@ -293,7 +300,7 @@ def instructions():
 
 
 # Helper function to determine what task
-def what_task(phrase="worker", list, task_log):
+def what_task(phrase="worker", list, scheduler):
     next_task = input((" What task would you like to assign to them? \n "
                  "              (Press [O] to see the options)\n"))
     sleep(2)
@@ -303,7 +310,7 @@ def what_task(phrase="worker", list, task_log):
                 # Show OPTIONS
                 # Call show_task_options function
                 show_task_options()
-                next_task = what_task(phrase, list, task_log)
+                next_task = what_task(phrase, list, scheduler)
             case "S":
                 print("\n You have selected \"SCREW arms on\". \n")
                 # Status becomes 1
@@ -353,9 +360,9 @@ def what_task(phrase="worker", list, task_log):
                 # wildcard case to catch bad inputs
                 print("\n Instruction not recognised. \n")
                 sleep(4)
-                next_task = what_task(phrase, list, task_log)
+                next_task = what_task(phrase, list, scheduler)
     else:
-        next_task = what_task(phrase, list, task_log)
+        next_task = what_task(phrase, list, scheduler)
 
 # Helper function to show options for assigning tasks
 def show_task_options():
@@ -486,7 +493,7 @@ def change_status(n, robot_list):
 
 # Function to assign task to robot
 # Accessed by pressing P within what_next() function
-def program_robot(n, robot_list):
+def program_robot(n, robot_list, status_tuple):
     # Clear Screen
     print("\u001b[2J")
     # Cursor to Home
@@ -495,7 +502,6 @@ def program_robot(n, robot_list):
 
     print("\n You have selected \"PROGRAM a robot to execute a task\" \n")
     sleep(3)
-    global status_tuple
 
     # Check if any robots are IDLE
     if not robot_list.count(0) and robot_list.count(11):
@@ -512,13 +518,13 @@ def program_robot(n, robot_list):
         if robot_list.count(0) == 1:
             print("\n You have 1 robot IDLE. \n"
             sleep(0.5)
-            robot_list.insert(what_task("robot", robot_list, task_log))
+            robot_list.insert(what_task("robot", robot_list, scheduler))
             robot_list.remove(0)
             return
         elif robot_list.count(0) > 1:
             print(f" You currently have {robot_list.count(0)} IDLE robots to assign tasks to.\n")
             y = how_many("robots")
-            next_task = what_task("robot", robot_list, task_log)
+            next_task = what_task("robot", robot_list, scheduler)
         pass
 
 
@@ -583,7 +589,7 @@ def manage_worker():
 
 # Function to order available workers to carry out tasks.
 # Accessed by pressing O within what_next() function
-def order_worker(m, human_list):
+def order_worker(m, human_list, status_tuple):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -592,8 +598,6 @@ def order_worker(m, human_list):
 
     print("\n You have selected \"ORDER worker to task\" \n")
     sleep(1.5)
-
-    global status_tuple
 
     if not human_list.count(0) and human_list.count(11):
         print(" but you have no IDLE lackeys to boss around.\n")
@@ -608,13 +612,13 @@ def order_worker(m, human_list):
     elif human_list.count(0) == 1:
         print(f" You only have 1 IDLE human to assign a task to.\n")
         sleep(0.5)
-        human_list.insert(what_task("human", human_list, task_log))
+        human_list.insert(what_task("human", human_list, scheduler))
         human_list.remove(0)
         return
     elif human_list.count(0) > 1:
         print(f" You currently have {human_list.count(0)} IDLE humans to assign tasks to.\n")
         y = how_many("humans")
-        next_task = what_task("human", human_list, task_log)
+        next_task = what_task("human", human_list, scheduler)
 
 
 # Log tasks
@@ -668,7 +672,7 @@ def log_tasks(task_log):
 # Accessed by pressing T within what_next() function
 # Should regularly update status and identify problems
 # eg. Idle robots, idle workers, incomplete tasks.
-def track_progress():
+def track_progress(robot_list, human_list, status_tuple, scheduler):
     # Clear screen
     print("\u001b[2J")
     # Cursor to home
@@ -716,7 +720,71 @@ def get_help():
     sleep(3)
     input("\nPress Enter to continue... ")
 
-    pass
+    # Clear screen
+    print("\u001b[2J")
+    # Cursor to home
+    print("\u001b[H")
+    sleep(1)
+
+    print(' From the main menu, the options you can select are detailed below:\n')
+    sleep(3)
+    print(('\n\n Press [A] to add extra robots to the workforce :- \n'
+           '\n            - don\'t worry about having money to pay for them, \n'
+           '                or whether you\'ve built enough; \n''
+           '                let\'s just say, "Here\'s one I prepared earlier" \n'))
+    sleep(3)
+    print(('\n\n Press [R] to remove robots from the workforce :- \n'
+           '              - you can always replace them later. \n'
+           '\n               Uh,wWhy are these instructions sounding so creepy?! \n\n'))
+    sleep(3)
+    print(('\n\n Press [C] to change the status of a robot. \n'
+           '\n            - To begin with, any robots you have will be [IDLE] \n'
+           '\n            - You can change their status to [WORKING],    \n'
+           ))
+    sleep(3)
+    print(('\n\n Press [P] to program a robot: \n'
+           '\n            - that translates to giving it a task to do.   \n'
+           '\n            - You choose from the varied tasks carried out \n'
+           '\n                                   at                      \n'
+           '\n                           Ro-Ro-Ro-Your-Bots\u00AE        \n'
+         ))
+    sleep(3)
+# "P":
+# program_robot(robot_list, scheduler, status_tuple)
+# # EMPLOY
+# case
+# "E":
+# employ_worker(m, human_list)
+# # FIRE
+# case
+# "F":
+# fire_worker(m, human_list)
+# # MANAGE
+# case
+# "M":
+# manage_worker(human_list)
+# # ORDER
+# case
+# "O":
+# order_worker(human_list, scheduler, status_tuple)
+# # LOG
+# case
+# "L":
+# log_tasks(scheduler)
+# # TRACK
+# case
+# "T":
+# track_progress(robot_list, human_list, status_tuple, scheduler)
+# # HELP
+# case
+# "H":
+# get_help()
+# # QUIT
+# case
+# "Q":
+# quit_program()
+    ))
+
 
 # Function to quit program
 # Accessed by pressing Q within what_next() function
