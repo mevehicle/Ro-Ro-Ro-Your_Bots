@@ -173,79 +173,85 @@ def intro_function():
     # Clear screen
     print("\u001b[2J")
 
+# Helper function to check input is a single character
+def get_length(ask)
+    if len(ask) > 1:
+        print("""\n Sorry, this user interface has not been designed
+                to cope with such long instructions. \n""")
+        return False
+    elif len(ask) < 1:
+        print("Do you need more time to think?")
+        sleep(10)
+        return False
+    elif len(ask) == 1:
+        return True
 
 # Function to get user to choose an action
 def what_next():
     sleep(1)
     next_action = input("\nPlease choose an action (or press H to get Help) \n").upper()
     sleep(2)
-    if len(next_action) > 1:
-        print("""\nSorry, this user interface has not been designed
-        to cope with such long instructions. \n""")
-        sleep(3)
+    # check only 1 character was input
+    if get_length(next_action):
+        match next_action:
+
+         # ADD
+            case "A:
+                add_robot(n, robot_list)
+
+         # REMOVE
+            case "R":
+                remove_robot(n, robot_list)
+
+         # CHANGE
+            case "C":
+                change_status(robot_list)
+
+         # PROGRAM
+            case "P":
+                program_robot(robot_list, task_log)
+
+         # EMPLOY
+            case "E":
+                employ_worker(m, human_list)
+
+         # FIRE
+            case "F":
+                fire_worker(m, human_list)
+
+         # MANAGE
+            case "M":
+                manage_worker(human_list)
+
+         # ORDER
+            case "O":
+                order_worker(human_list, task_log)
+
+         # LOG
+            case "L":
+                log_tasks(task_log)
+
+         # TRACK
+            case "T":
+                track_progress(task_log)
+
+         # HELP
+            case "H":
+                get_help()
+
+         # QUIT
+            case "Q":
+                quit_program()
+
+        # SANITISE INPUT
+            case _:
+                print("Sorry, I don't think that's a valid option.\n")
+                sleep(3)
+                print("Any feedback should be directed to our team.")
+                sleep(5))
+                what_next()
+    else:
         what_next()
-    elif len(next_action) < 1:
-        print("Do you need more time to think?")
-        sleep(10)
-        what_next()
-
-    match next_action:
-
-     # ADD
-        case "A:
-            add_robot(n, robot_list)
-
-     # REMOVE
-        case "R":
-            remove_robot(n, robot_list)
-
-     # CHANGE
-        case "C":
-            change_status(robot_list)
-
-     # PROGRAM
-        case "P":
-            program_robot(robot_list, task_log)
-
-     # EMPLOY
-        case "E":
-            employ_worker(m, human_list)
-
-     # FIRE
-        case "F":
-            fire_worker(m, human_list)
-
-     # MANAGE
-        case "M":
-            manage_worker(human_list)
-
-     # ORDER
-        case "O":
-            order_worker(human_list, task_log)
-
-     # LOG
-        case "L":
-            log_tasks(task_log)
-
-     # TRACK
-        case "T":
-            track_progress(task_log)
-
-     # HELP
-        case "H":
-            get_help()
-
-     # QUIT
-        case "Q":
-            quit_program()
-
-    # SANITISE INPUT
-        case _:
-            print("Sorry, I don't think that's a valid option.\n")
-            sleep(3)
-            print("Any feedback should be directed to our team.")
-            sleep(5))
-            what_next()
 
 
 # Basic Instructions
@@ -288,23 +294,16 @@ def instructions():
 
 # Helper function to determine what task
 def what_task(phrase="worker", list, task_log):
-    ask = input((" What task would you like to assign to them? \n "
+    next_task = input((" What task would you like to assign to them? \n "
                  "              (Press [O] to see the options)\n"))
     sleep(2)
-    if len(ask) > 1:
-        print("""\n Sorry, this user interface has not been designed
-                to cope with such long instructions. \n""")
-        new_task = what_task(phrase, list, task_log)
-    elif len(ask) < 1:
-        print("Do you need more time to think?")
-        new_task = what_task(phrase, list, task_log)
-    elif len(ask) == 1:
-        match ask:
+    if get_length(next_task):
+        match next_task:
             case "O":
                 # Show OPTIONS
                 # Call show_task_options function
                 show_task_options()
-                new_task = what_task(phrase, list, task_log)
+                next_task = what_task(phrase, list, task_log)
             case "S":
                 print("\n You have selected \"SCREW arms on\". \n")
                 # Status becomes 1
@@ -354,25 +353,26 @@ def what_task(phrase="worker", list, task_log):
                 # wildcard case to catch bad inputs
                 print("\n Instruction not recognised. \n")
                 sleep(4)
-                new_task = what_task(phrase, list, task_log)
-        pass
+                next_task = what_task(phrase, list, task_log)
+    else:
+        next_task = what_task(phrase, list, task_log)
 
 # Helper function to show options for assigning tasks
 def show_task_options():
     sleep(2)
 
     print(('\n These are the options for the tasks: \n'
-           'Press [S] for SCREWing arms on          \n' # Status = 1
-           'Press [W] for WELDing legs on           \n' # Status = 2
-           'Press [H] for HAMMERing heads on        \n' # Status = 3
-           'Press [P] = POLISH the eyes             \n' # Status = 4
-           'Press [D] = DRILL the ears              \n' # Status = 5
-           'Press [A] = ATTACH the waste hose       \n' # Status = 6
-           'Press [T] = TEST the functioning        \n' # Status = 7
-           'Press [U] for UNLOADing trucks          \n' # Status = 8
-           'Press [B] for BOX and ship the product  \n' # Status = 9
-           'Press [F] for FETCH cups of tea         \n' # Status = 10
-           'Press [X] to Exit this menu             \n'
+           '\n Press [S] for SCREWing arms on          \n' # Status = 1
+           '\n Press [W] for WELDing legs on           \n' # Status = 2
+           '\n Press [H] for HAMMERing heads on        \n' # Status = 3
+           '\n Press [P] = POLISH the eyes             \n' # Status = 4
+           '\n Press [D] = DRILL the ears              \n' # Status = 5
+           '\n Press [A] = ATTACH the waste hose       \n' # Status = 6
+           '\n Press [T] = TEST the functioning        \n' # Status = 7
+           '\n Press [U] for UNLOADing trucks          \n' # Status = 8
+           '\n Press [B] for BOX and ship the product  \n' # Status = 9
+           '\n Press [F] for FETCH cups of tea         \n' # Status = 10
+           '\n Press [X] to Exit this menu             \n'
            ))
     return
 
@@ -381,34 +381,19 @@ def show_task_options():
 #   from finished to idle
 def ask_finished_to_idle(phrase="worker", list):
     sleep(1)
-
     if list.count(0) ==1:
-        ask = input(f"Would you like to make the {phrase} "
+        reassign = input(f"Would you like to make the {phrase} "
                     "that has finished its task available for more work? (Y/N) \n")
-        if len(ask) > 1:
-            print("""\n Sorry, this user interface has not been designed
-                    to cope with such long instructions. \n""")
-            ask_finished_to_idle(phrase, list)
-        elif len(ask) < 1:
-            print("Do you need more time to think?")
-            sleep(10)
-            ask_finished_to_idle(phrase, list)
-        elif len(ask) == 1:
-            match ask:
+        if get_length(reassign):
+            match reassign:
                 pass
+        else:
+            ask_finished_to_idle(phrase, list)
     elif list.count(0) > 1 :
-        ask = input(f"Would you like to make any of the {phrase}s that " 
+        reassign = input(f"Would you like to make any of the {phrase}s that " 
                     "have finished their tasks available for more work? (Y/N)\n")
-        if len(ask) > 1:
-            print("""\n Sorry, this user interface has not been designed
-                           to cope with such long instructions. \n""")
-            ask_finished_to_idle(phrase, list)
-        elif len(ask) < 1:
-            print("\nDo you need more time to think? \n")
-            sleep(10)
-            ask_finished_to_idle(phrase, list)
-        elif len(ask) == 1:
-            match ask:
+        if get_length(reassign) > 1:
+            match reassign:
                 case "Y":
                     # Find out how many to robots or humans to transfer
                     x = how_many(phrase, list)
@@ -433,6 +418,8 @@ def ask_finished_to_idle(phrase="worker", list):
                           ' We can always build new factories / robots / people / supervisors... \n\n'))
                     sleep(10)
                     what_next()
+        else:
+            ask_finished_to_idle(phrase, list)
 
 # Function to return a quantity (of workers or robots)
 def how_many(phrase="workers"):
@@ -451,12 +438,10 @@ def add_robot(n, robot_list):
     print("\n You have selected \"ADD a robot\" \n")
     sleep(1.5)
 
-    n += 1
     robot_list.append(0)
     print("\n You have added an extra 'bot to the crew. \n"
           "Press C to CHANGE their status and get them mechanised !\n")
-    return n, robot_list
-
+    return robot_list, lambda n:n + 1
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
@@ -472,9 +457,8 @@ def remove_robot(n, robot_list):
     for i in range(n, -1, -1):
         if robot_list[i] == 0:
             robot_list.pop(i)
-            n -= 1
             print("\n You have sent a robot to the recycling plant ! \n\n")
-            return n, robot_list
+            return robot_list, lambda n:n - 1
         else:
             continue
     print(('\n  Unable to scrap a droid while they\'re all carrying out tasks. \n'
@@ -534,7 +518,7 @@ def program_robot(n, robot_list):
         elif robot_list.count(0) > 1:
             print(f" You currently have {robot_list.count(0)} IDLE robots to assign tasks to.\n")
             y = how_many("robots")
-            new_task = what_task("robot", robot_list, task_log)
+            next_task = what_task("robot", robot_list, task_log)
         pass
 
 
@@ -630,8 +614,7 @@ def order_worker(m, human_list):
     elif human_list.count(0) > 1:
         print(f" You currently have {human_list.count(0)} IDLE humans to assign tasks to.\n")
         y = how_many("humans")
-        new_task = what_task("human", human_list, task_log)
-
+        next_task = what_task("human", human_list, task_log)
 
 
 # Log tasks
@@ -644,8 +627,40 @@ def log_tasks(task_log):
     print("\u001b[H")
     sleep(1)
 
-    print("\n You have selected \"LOG tasks\" \n")
-    sleep(3)
+
+    print("\n You have selected \"LOG tasks\" ", end="")
+    sleep(5)
+
+    # Task log screen display
+
+    print('\r                      ------------                          ')
+    print((f'======================| TASK LOG |===========================\n'
+           '|                   ------------                          |\n'
+           '|                                                         |\n'
+           '|               -- FINISHED tasks --                      |\n'
+           '|                                                         |\n'
+           '|   # of arms SCREWED on (pairs)  --> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of legs WELDED on  (pairs)  --> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of heads HAMMERed on --> -> --> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of (pairs of) eyes POLISHed --> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of (pairs of) ears DRILLed --> -> --->              |\n'
+           '|                                                         |\n'
+           '|   # of waste hoses ATTACHed --> --> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of quality control TESTs completed -->              |\n'
+           '|                                                         |\n'
+           '|   # of trucks UNLOADed --> -> -> -> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of BOXes shipped   --> -> -> -> -> -->              |\n'
+           '|                                                         |\n'
+           '|   # of cups of tea FETCHed (100\'s) -> -->               |\n'
+           '|                                                         |\n'
+           '===========================================================\n'
+           ))
     pass
 
 
