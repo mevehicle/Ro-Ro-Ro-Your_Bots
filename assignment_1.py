@@ -64,12 +64,12 @@ def intro_function():
     # ---- & check the value entered for n is valid :
     def input_robots():
         sleep(2)
-        n = input(
-            "\n How many robot workers do you want for your factory?\n\n  Please choose a number between 1 and 100. \n")
-        sleep(3)
-        if not n:
-            print("\n Excuse me, but I asked you a question! \n")
-            n = input_robots()
+        while not n:
+            n = input(
+                "\n How many robot workers do you want for your factory?\n\n  Please choose a number between 1 and 100. \n")
+            sleep(3)
+            if not n:
+                print("\n Excuse me, but I asked you a question! \n")
         try:
             n = int(n)
         except ValueError:
@@ -93,11 +93,11 @@ def intro_function():
     # ---- & check the value entered for m is valid :
     def input_humans():
         sleep(2)
-        m = input(("\n\n How many human workers do you intend to employ? \n  Please choose a number between 1 and 100. \n"))
-        sleep(3)
-        if not m:
-            print("\n Speak into the microphone, please - \n I can't hear you ! \n")
-            m = input_humans()
+        while not m:
+            m = input(("\n\n How many human workers do you intend to employ? \n  Please choose a number between 1 and 100. \n"))
+            sleep(3)
+            if not m:
+                print("\n Speak into the microphone, please - \n I can't hear you ! \n")
         try:
             m = int(m)
         except ValueError:
@@ -373,6 +373,21 @@ def show_task_options():
            ))
     return
 
+# Function to return a quantity (of workers or robots)
+def how_many_labourers(drone="worker", phrase="do you want?", max):
+    while not l:
+        l = input(f"\n\n How many {drone}s {} \n\n Please choose a number between 1 and {max}. \n")
+        sleep(3)
+        if not l:
+            print("\n Was I meant to take that as an answer? \n")
+    try:
+        l = int(n)
+    except ValueError:
+        print("\n Sorry, but that isn't a valid response. \n")
+        print("\n Maybe you entered letters or symbols instead of just a number. \n")
+        input(f"\n\n How many {drone}s {} \n\n Please choose a number between 1 and {max}. \n")
+    return l
+
 # Function to ask user whether they want to
 #  change status of robots or workers
 #   from finished to idle
@@ -393,7 +408,7 @@ def ask_finished_to_idle(phrase="worker", dict="human_dict"):
             match reassign:
                 case "Y":
                     # Find out how many to robots or humans to transfer
-                    x = how_many(phrase, list)
+                    x = how_many_labourers(phrase, list)
                     if x > list.count(0):
                         print(f"\n You don't seem to have enough {phrase}s IDLE.\n")
                     else:
@@ -418,9 +433,6 @@ def ask_finished_to_idle(phrase="worker", dict="human_dict"):
         else:
             ask_finished_to_idle(phrase, list)
 
-# Function to return a quantity (of workers or robots)
-def how_many(phrase="workers"):
-    pass
 
 # Function to add robot
 # Accessed by pressing A within what_next() function
@@ -514,7 +526,7 @@ def program_robot(n, robot_dict, status_tuple):
             return
         elif robot_dict.count(0) > 1:
             print(f" You currently have {robot_dict.count(0)} IDLE robots to assign tasks to.\n")
-            y = how_many("robots")
+            y = how_many_labourers("robots")
             next_task = what_task("robot", robot_dict, scheduler)
         pass
 
@@ -608,7 +620,7 @@ def order_worker(m, human_dict, status_tuple):
         return
     elif human_dict.count(0) > 1:
         print(f" You currently have {human_dict.count(0)} IDLE humans to assign tasks to.\n")
-        y = how_many("humans")
+        z = how_many_labourers("humans")
         next_task = what_task("human", human_dict, scheduler)
 
 
