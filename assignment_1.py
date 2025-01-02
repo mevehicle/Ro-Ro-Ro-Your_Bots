@@ -381,10 +381,10 @@ def show_task_options():
     return
 
 # Function to return a quantity (of workers or robots)
-def how_many_labourers(drone="worker", phrase="do you want", max=2):
+def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
     while True:
         while not l:
-            l = input(f"\n\n How many {drone}s {phrase}? \n\n Please choose a number between 1 and {max}. \n")
+            l = input(f"\n\n How many {phrase}s {phrase_2}? \n\n Please choose a number between 1 and {max}. \n")
             sleep(3)
             if not l:
                 print("\n Was I meant to take that as an answer? \n")
@@ -406,52 +406,58 @@ def how_many_labourers(drone="worker", phrase="do you want", max=2):
 # Function to ask user whether they want to
 #  change status of robots or workers
 #   from finished to idle
-def ask_finished_to_idle(phrase="worker"):
+def ask_finished_to_idle(x_dict, phrase="worker"):
     sleep(1)
-    if list.count(0) ==1:
-        reassign = input(f"Would you like to make the {phrase} "
-                    "that has finished its task available for more work? (Y/N) \n")
-        if get_length(reassign):
-            match reassign:
-                case "Y":
-                    pass
-                case "N":
-                    pass
-                case _:
-                    pass
-        else:
-            ask_finished_to_idle(phrase, list)
-    elif list.count(0) > 1 :
-        reassign = input(f"Would you like to make any of the {phrase}s that " 
-                    "have finished their tasks available for more work? (Y/N)\n")
-        if get_length(reassign) > 1:
-            match reassign:
-                case "Y":
-                    # Find out how many to robots or humans to transfer
-                    x = how_many_labourers(phrase, list)
-                    if x > list.count(0):
-                        print(f"\n You don't seem to have enough {phrase}s IDLE.\n")
-                    else:
+    while True:
+        finished = 0
+        j = len(x_dict)
+        for i in j:
+            if x_dict[phrase + "_" + str(i - 1)]  == 11:
+                finished += 1
+        if finished == 1:
+                reassign = input(f"Would you like to make the {phrase} "
+                            "that has finished its task available for more work? (Y/N) \n")
+                if get_length(reassign):
+                    match reassign:
+                        case "Y":
+                            switch_range = len(x_dict)
+                            for switch in switch_range:
+                                if x_dict[phrase + "_" + i] == 0:
+                                    x_dict[phrase + "_" + i] = 11
+                                    return x_dict
+                        case "N":
+                            print("\nStop wasting time then!! \n")
+                            return x_dict
+                        case _:
+                            pass
+        elif finished > 1 :
+            reassign = input(f"Would you like to make any of the {phrase}s that " 
+                        "have finished their tasks available for more work? (Y/N)\n")
+            if get_length(reassign):
+                match reassign:
+                    case "Y":
+                        # Find out how many to robots or humans to transfer
+                        phrase_2 = ("How many " + phrase + "s would you like to switch \n"
+                                   "from FINISHED to IDLE ? \n")
+                        x = how_many_labourers(phrase, phrase_2, finished)
                         # Change x number of robots or workers in list from
                         #  status 0 (IDLE) to status 11 (FINISHED)
                         while x:
-                                for i in range(0, len(list)):
-                                    if list[i] == 0:
-                                        list[i] = 11
+                                for i in range(0, x):
+                                    if x_dict[phrase + "_" + i] == 0:
+                                        x_dict[phrase + "_" + i] = 11
                                         x -= 1
-                        return list
-                case "N":
-                    print("\n Selecting this will return you to the main menu. \n")
-                    sleep(6)
-                    what_next()
-                case _:
-                    print(('\n An error seems to have occurred \n'
-                          'but it\'s nothing to worry about. \n\n'
-                          ' We can always build new factories / robots / people / supervisors... \n\n'))
-                    sleep(10)
-                    what_next()
-        else:
-            ask_finished_to_idle(phrase, list)
+                        return x_dict
+                    case "N":
+                        print("\n Selecting this will return you to the main menu. \n")
+                        sleep(6)
+                        pass
+                    case _:
+                        print(('\n An error seems to have occurred \n'
+                              'but it\'s nothing to worry about. \n\n'
+                              ' We can always build new factories / robots / people / supervisors... \n\n'))
+                        sleep(10)
+                        what_next()
 
 
 # Function to add robot
