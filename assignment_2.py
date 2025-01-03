@@ -170,23 +170,29 @@ def intro_function():
 
     # Call function to ask user how many robots they want
     n = input_robots()
+    # Variable to number additional robot later
+    next_robot == n + 1
     sleep(2)
 
     # Output initial number of robot workers (n)
+    robot_dict = {}
     global robot_dict
     robot_dict = dict_maker(n, "Robot")
     dict_printer(robot_dict)
+    global last_bot
     sleep(3)
     input("\n\nPress Enter to continue... ")
     clear_screen()
 
     # Call function to ask user how many humans they want
     m = input_humans()
+    # Variable to number additional employee later
+    next_humsn = m + 1
     sleep(2)
 
     # ----Output initial number of human workers (m)
-    global human_dict
     human_dict = {}
+    global human_dict
     human_dict = dict_maker(m, "Human")
     dict_printer(human_dict)
     sleep(3)
@@ -218,7 +224,7 @@ def what_next():
         match next_action:
         # ADD
             case "A":
-                add_robot(n)
+                add_robot(n, next_robot)
          # REMOVE
             case "R":
                 remove_robot(n)
@@ -230,7 +236,7 @@ def what_next():
                 program_robot(scheduler, status_tuple)
          # EMPLOY
             case "E":
-                employ_worker(m)
+                employ_worker(m, next_human
          # FIRE
             case "F":
                 fire_worker(m)
@@ -470,18 +476,25 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
 # Function to add robot
 # Accessed by pressing A within what_next() function
 # Adds an IDLE robot (0 status code)
-def add_robot(x):
+# Number of robots n is passed in as parameter {x}
+# next_robot is passed in as parameter {y}
+def add_robot(x, y):
     clear_screen()
     print("\n You have selected \"ADD a robot\" \n")
+    sleep(1)
+    print("\n Here are the robots you currently have:-- \n\n")
+    dict_printer(robot_dict)
     sleep(2)
     to_add = how_many_labourers("robots", "do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
                                    100 - x)
     sleep(1)
-    robot_dict[x] = 0
     x += to_add
-    print("\n You have added an extra 'bot to the crew. \n"
-          "Press C to CHANGE their status and get them mechanised !\n")
-    return x
+    if to_add == 1:
+        print("\n You have added an extra 'bot to the crew. \n\n"
+              "Press C to CHANGE their status and get them mechanised !\n")
+        
+        return x
+
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
@@ -490,7 +503,7 @@ def remove_robot(x):
     clear_screen()
     print("\n You have selected \"REMOVE a robot\" \n")
     sleep(2)
-    # Check the the factory has enough robots for any to be removed
+    # Check the factory has enough robots for any to be removed
     if x == 1:
         print(("\n You only have one teeny-weeny robot left - \n\n"
               " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "))
@@ -519,6 +532,10 @@ def remove_robot(x):
         remove_robot(x)
         return x
     elif x == 2:
+        # loop backwards through robot_dict to remove the last IDLE robot
+        for key, value in reversed(robot_dict.items()):
+            if value == 0:
+                break
         print(("\n You have 2 robots, so you can only remove 1, \n"
                "because you need at least 1 droid for your robotic cell to function. \n\n"
                ))
@@ -526,9 +543,10 @@ def remove_robot(x):
         while yesno != "Y" and yesno != "N":
             yesno = input("So, press [Y] if you want to drop down to the minimum.\n"
                           "Else, press [N].\n")
+            sleep(1)
             if get_length(yesno):
                 if yesno == "Y":
-                        robot_dict.pop(2)
+                        del robot_dict[key]
                         x == 1
                         print("\n OK, you're down to your last robot now. \n\n")
                         return x
@@ -539,7 +557,17 @@ def remove_robot(x):
                     simple_error()
                     return
     elif x > 2:
-        pass
+        # loop through robot_dict to find how many robots are IDLE
+        for value in robot_dict.values():
+            if value == 0:
+                idle += 1
+        if idle < 1:
+            print(('\n  You can\'t scrap an android while they\'re all carrying out tasks. \n'
+                   '  Switch one off first, then you won\'t have to look it in the sensors'                                           \n'
+                   ' when you consign it to the junkyard. \n\n'))
+            # Suggest user switches some statuses from FINISHED to IDLE
+            ask_finished_to_idle("droid", robot_dict)
+
 
 
     to_remove = how_many_labourers("robots", "do you want to remove from the Ro-Ro-Ro-Your-Bots\u00AE workforce?", 100 - x)
@@ -548,15 +576,11 @@ def remove_robot(x):
         if robot_dict[i] == 0:
             robot_dict.pop(i)
             n -= 1
-            print("\n You have sent a robot to the recycling plant ! \n\n")
+            print("\n Congratulations! You have sent a robot to the recycling plant ! \n\n")
             return n
         else:
             continue
-    print(('\n  Unable to scrap a droid while they\'re all carrying out tasks. \n'
-           '  Switch one off first -                                           \n'
-           ' eg. select C to CHANGE a robot\'s status to IDLE,      \n'
-           'then you won\'t have to look it in the sensors when you consign it \n'
-           'to the junkyard.                                                 \n\n'))
+
 
 
 # Function to change status of a robot:
@@ -608,7 +632,9 @@ def program_robot(n, status_tuple):
 # Function to employ new worker.
 # Accessed by pressing E within what_next() function
 # Adds an IDLE human (0 status code)
-def employ_worker(m):
+# {x} holds current number of humans
+# {y} holds the number to assign to the next new worker
+def employ_worker(x, y):
     clear_screen()
     print("\n You have selected \"EMPLOY a new worker\" \n")
     human_dict[m] = 0
