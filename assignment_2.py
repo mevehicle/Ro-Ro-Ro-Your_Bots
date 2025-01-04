@@ -210,65 +210,72 @@ def get_length(ask):
         return True
 
 # Function to get user to choose an action
-def what_next(n, m, n_dict, m_dict, next_n, next_m, status_tuple, scheduler, task_log):
-    global n, m, next_n, next_m, m_dict, n_dict
-    sleep(1)
-    next_action = input("\nPlease choose an action (or press H to get Help) \n").upper()
-    sleep(1)
-    # check only 1 character was input
-    if get_length(next_action):
-        match next_action:
-        # ADD
-            case "A":
-                n, n_dict, next_n = add_robot(n, n_dict, next_n)
-         # REMOVE
-            case "R":
-                n, n_dict, next_n = remove_robot(n, n_dict, next_n)
-         # CHANGE
-            case "C":
-                n_dict = change_status(n_dict)
-         # PROGRAM
-            case "P":
-                n_dict = program_robot(n_dict)
-         # EMPLOY
-            case "E":
-                m, m_dict = employ_worker(m, m_dict)
-         # FIRE
-            case "F":
-                m, m_dict = fire_worker(m, m_dict)
-         # MANAGE
-            case "M":
-                m_dict = manage_worker(m_dict)
-         # ORDER
-            case "O":
-                m_dict = order_worker(m_dict, scheduler, status_tuple)
-         # LOG
-            case "L":
-                log_tasks(scheduler, task_log)
-         # TRACK
-            case "T":
-                track_progress(n_dict, m_dict, task_log)
-         # HELP
-            case "H":
-                get_help()
-         # QUIT
-            case "Q":
-                quit_program()
-        # SANITISE INPUT
-            case _:
-                print("Sorry, I don't think that's a valid option.\n")
-                sleep(2)
-                print("Any feedback should be directed to our team.")
-                sleep(3)
-                what_next(n, m, n_dict, m_dict, next_n, next_m, status_tuple, scheduler, task_log)
-                pass
-    else:
-        what_next(n, m, n_dict, m_dict, next_n, next_m, status_tuple, scheduler, task_log)
-        pass
+def what_next(a, b, a_dict, b_dict, next_a, next_b, statuses, schedules, tasks):
+    while True:
+        next_action = input("\nPlease choose an action : (or press H to get Help) \n").upper()
+        sleep(1)
+        # check only 1 character was input
+        if get_length(next_action):
+            match next_action:
+            # ADD
+                case "A":
+                    a, a_dict, next_a = add_robot(a, a_dict, next_a)
+                    break
+             # REMOVE
+                case "R":
+                    a, a_dict, next_a = remove_robot(a, a_dict, next_a)
+                    break
+             # CHANGE
+                case "C":
+                    a_dict = change_status(a_dict)
+                    break
+             # PROGRAM
+                case "P":
+                    a_dict = program_robot(a_dict)
+                    break
+             # EMPLOY
+                case "E":
+                    b, b_dict = employ_worker(b, b_dict)
+                    break
+             # FIRE
+                case "F":
+                    b, b_dict = fire_worker(b, b_dict)
+                    break
+             # MANAGE
+                case "M":
+                    b_dict = manage_worker(b_dict)
+                    break
+             # ORDER
+                case "O":
+                    b_dict = order_worker(b_dict, schedules, statuses)
+                    break
+             # LOG
+                case "L":
+                    log_tasks(schedules, tasks)
+                    break
+             # TRACK
+                case "T":
+                    track_progress(a_dict, b_dict, tasks)
+                    break
+             # HELP
+                case "H":
+                    get_help()
+                    break
+             # QUIT
+                case "Q":
+                    quit_program()
+                    break
+            # SANITISE INPUT
+                case _:
+                    print("Sorry, I don't think that's a valid option.\n")
+                    sleep(1)
+                    print("Any feedback should be directed to our team.\n")
+                    sleep(2)
+                    break
 
 
-# Basic Instructions
-def instructions():
+# Main Options
+def main_options():
     clear_screen()
     print((
     '\n\n    - - Instructions for how to oversee production - -  \n' 
@@ -310,89 +317,187 @@ def simple_error():
     sleep(2)
     return
 
-# Helper function to determine what task
-def what_task(phrase="worker", dict="m_dict", scheduler="scheduler"):
-    next_task = input((" What task would you like to assign to them? \n "
-                 "              (Press [O] to see the options)\n"))
-    sleep(1)
-    if get_length(next_task):
-        match next_task:
-            case "O":
-                # Show OPTIONS
-                # Call show_task_options function
-                show_task_options()
-                next_task = what_task(phrase, dict, scheduler)
-            case "S":
-                print("\n You have selected \"SCREW arms on\". \n")
-                # Status becomes 1
-                return 1
-            case "W":
-                print("\n You have selected \"WELD legs on\". \n")
-                # Status becomes 2
-                return 2
-            case "H":
-                print("\n You have selected \"HAMMER the head on\". \n")
-                # Status becomes 3
-                return 3
-            case "P":
-                print("\n You have selected \"POLISH the eyes\". \n")
-                # Status becomes 4
-                return 4
-            case "D":
-                print("\n You have selected \"DRILL the ears\". \n")
-                # Status becomes 5
-                return 5
-            case "A":
-                print("\n You have selected \"ATTACH the waste hose\". \n")
-                # Status becomes 6
-                return 6
-            case "T":
-                print("\n You have selected \"TEST the functioning\". \n")
-                # Status becomes 7
-                return 7
-            case "U":
-                print("\n You have selected \"UNLOAD trucks with forklift\". \n")
-                # Status becomes8
-                return 8
-            case "B":
-                print("\n You have selected \"BOX & ship product\". \n")
-                # Status becomes 9
-                return 9
-            case "F":
-                print("\n You have selected \"FETCH cups of tea\". \n")
-                # Status becomes 10
-                return 10
-            case "X":
-                # Exit from task options
-                print("\n Selecting this will return you to the main menu. \n")
-                sleep(6)
-                what_next(n, m, n_dict, m_dict, next_n, next_m, status_tuple, scheduler, task_log)
-            case _:
-                # wildcard case to catch bad inputs
-                print("\n Instruction not recognised. \n")
-                sleep(4)
-                next_task = what_task(phrase, dict, scheduler)
-    else:
-        next_task = what_task(phrase, dict, scheduler)
 
-# Helper function to show options for assigning tasks
+# Helper functions for changing tasks allocated:
+# Function to show options for assigning tasks
 def show_task_options():
     sleep(1)
 
-    print(('\n These are the options for the tasks: \n'
-           '\n Press [S] for SCREWing arms on          \n' # Status = 1
-           '\n Press [W] for WELDing legs on           \n' # Status = 2
-           '\n Press [H] for HAMMERing heads on        \n' # Status = 3
-           '\n Press [P] = POLISH the eyes             \n' # Status = 4
-           '\n Press [D] = DRILL the ears              \n' # Status = 5
-           '\n Press [A] = ATTACH the waste hose       \n' # Status = 6
-           '\n Press [T] = TEST the functioning        \n' # Status = 7
-           '\n Press [U] for UNLOADing trucks          \n' # Status = 8
-           '\n Press [B] for BOX and ship the product  \n' # Status = 9
-           '\n Press [F] for FETCH cups of tea         \n' # Status = 10
+    print(('\n These are the options for the tasks:    \n'
+               '\n Press [S] for SCREWing arms on          \n'  # Status = 1
+               '\n Press [W] for WELDing legs on           \n'  # Status = 2
+           '\n Press [H] for HAMMERing heads on        \n'  # Status = 3
+           '\n Press [P] = POLISH the eyes             \n'  # Status = 4
+           '\n Press [D] = DRILL the ears              \n'  # Status = 5
+           '\n Press [A] = ATTACH the waste hose       \n'  # Status = 6
+           '\n Press [T] = TEST the functioning        \n'  # Status = 7
+           '\n Press [U] for UNLOADing trucks          \n'  # Status = 8
+           '\n Press [B] for BOX and ship the product  \n'  # Status = 9
+           '\n Press [F] for FETCH cups of tea         \n'  # Status = 10
            '\n Press [X] to Exit this menu             \n'
            ))
     return
+
+# Function for SCREWing arms on
+# Accessed by pressing S within what_task() menu
+# Creates a status of 1
+def screw_arms(a_dict, b_dict, statuses):
+    print("You have selected SCREW arms on.\n")
+    statuses = 1
+    return statuses
+
+# Function for WELDing legs on
+# Accessed by pressing W within what_task() menu
+# Creates a status of 2
+def weld_legs(a_dict, b_dict, statuses):
+    print("You have selected WELD legs on.\n")
+    statuses = 2
+    return statuses
+
+# Function for HAMMERing heads on
+# Accessed by pressing H within what_task() menu
+# Creates a status of 3
+def hammer_heads(a_dict, b_dict, statuses):
+    print("You have selected HAMMER heads on\n")
+    statuses = 3
+    return statuses
+
+# Function for POLISHing the eyes
+# Accessed by pressing P within what_task() menu
+# Creates a status of 4
+def polish_eyes(a_dict, b_dict, statuses):
+    statuses = 4
+    return statuses
+
+# Function for DRILLing the ears
+# Accessed by pressing D within what_task() menu
+# Creates a status of 5
+def polish_eyes(a_dict, b_dict, statuses):
+    print("You have selected DRILL ears.\n")
+    statuses = 5
+    return statuses
+
+# Function for ATTACHing the waste hose
+# Accessed by pressing A within what_task() menu
+# Creates a status of 6
+def attach_hose(a_dict, b_dict, statuses):
+    ("You have selected ATTACH the waste hose\n")
+    statuses = 6
+    return statuses
+
+# Function for TESTing the functioning
+# Accessed by pressing T within what_task() menu
+# Creates a status of 7
+def test_functioning(a_dict, b_dict, statuses):
+    print("You have selected TEST the functioning\n")
+    statuses = 7
+    return statuses
+
+# Function for UNLOADing trucks
+# Accessed by pressing U within what_task() menu
+# Creates a status of 8
+def unload_trucks(a_dict, b_dict, statuses):
+    print("You have selected UNLOAD trucks\n")
+    statuses = 8
+    return statuses
+
+# Function for BOXing and shipping the product
+# Accessed by pressing B within what_task() menu
+# Creates a status of 9
+def box_product(a_dict, b_dict, statuses):
+    print("You have selected BOX and ship the product\n")
+    statuses = 9
+    return statuses
+
+# Function for FETCHing cups of tea
+# Accessed by pressing F within what_task() menu
+# Creates a status of 10
+def fetch_tea(a_dict, b_dict, statuses):
+    print("You have selected FETCH cups of tea\n")
+    statuses = 10
+    return statuses
+
+
+# Helper function to determine what task
+def what_task(phrase="worker", dict="m_dict", scheduler="scheduler"):
+    next = False
+    while next == False:
+        next_task = input((" What task would you like to assign to them? \n "
+                     "              (Press [O] to see the options)\n"))
+        sleep(1)
+        if get_length(next_task):
+            match next_task:
+                case "O":
+                    # Show OPTIONS
+                    # Call show_task_options function
+                    show_task_options()
+                    next = True
+                    break
+                case "S":
+                    print("\n You have selected \"SCREW arms on\". \n")
+                    next = True
+                    # Status becomes 1
+                    return 1
+                case "W":
+                    print("\n You have selected \"WELD legs on\". \n")
+                    next = True
+                    # Status becomes 2
+                    return 2
+                case "H":
+                    print("\n You have selected \"HAMMER the head on\". \n")
+                    next = True
+                    # Status becomes 3
+                    return 3
+                case "P":
+                    print("\n You have selected \"POLISH the eyes\". \n")
+                    next = True
+                    # Status becomes 4
+                    return 4
+                case "D":
+                    print("\n You have selected \"DRILL the ears\". \n")
+                    next = True
+                    # Status becomes 5
+                    return 5
+                case "A":
+                    print("\n You have selected \"ATTACH the waste hose\". \n")
+                    next = True
+                    # Status becomes 6
+                    return 6
+                case "T":
+                    print("\n You have selected \"TEST the functioning\". \n")
+                    next = True
+                    # Status becomes 7
+                    return 7
+                case "U":
+                    print("\n You have selected \"UNLOAD trucks with forklift\". \n")
+                    next = True
+                    # Status becomes 8
+                    return 8
+                case "B":
+                    print("\n You have selected \"BOX & ship product\". \n")
+                    next = True
+                    # Status becomes 9
+                    return 9
+                case "F":
+                    print("\n You have selected \"FETCH cups of tea\". \n")
+                    next = True
+                    # Status becomes 10
+                    return 10
+                case "X":
+                    # Exit from task options
+                    print("\n Selecting this will return you to the main menu. \n")
+                    next = True
+                    sleep(2)
+                    return 11
+                case _:
+                    # wildcard case to catch bad inputs
+                    print("\n Instruction not recognised. \n")
+                    sleep(2)
+                    return 12
+            continue
+    else:
+        next_task = what_task(phrase, dict, scheduler)
+
 
 # Function to return a quantity (of workers or robots)
 def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
@@ -1018,8 +1123,8 @@ print("\u001b[30m")
 # Intro
 intro_function()
 
-# Display Instructions initially
-instructions()
+# Display Main Options initially
+main_options()
 
 # Call function to ask for user action
 what_next(n, m, n_dict, m_dict, next_n, next_m, status_tuple, scheduler, task_log)
