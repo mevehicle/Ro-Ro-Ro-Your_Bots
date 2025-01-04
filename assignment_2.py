@@ -591,14 +591,30 @@ def add_robot(x, x_dict, next_x):
     to_add = how_many_labourers("robots", "do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
                                    100 - x)
     sleep(1)
-    x += to_add
     if to_add == 1:
-        print("\n You have added an extra 'bot to the crew. \n\n"
-              "Press C to CHANGE their status and get them mechanised !\n")
-        x_dict[next_x] = 0
+        x_dict["Robot_" + str(next_x)] = 0
+        x += 1
         next_x += 1
-        pass
-        return x, x_dict
+        print("\n You have added an extra 'bot to the crew.\n")
+        print(f"Its name is {x_dict["Robot_" + str(next_x)]} - cute, huh ? \n")
+        print(" --Press C to CHANGE their status and get them mechanised ! \n")
+        sleep(1)
+        return x, x_dict, next_x
+    elif to_add > 1:
+        print(f"\n You have added {to_add} extra 'bots to the crew. \n")
+        print(f"Their names are: \n")
+        for i in range(to_add):
+            x_dict["Robot_" + str(next_x + i)] = 0
+            if (next_x + i) % 5 == 0:
+                print("\n")
+            if (next_x + i) < 10:
+                print(["Robot_" + str(next_x + i)], end="  ")
+            else:
+                print(["Robot_" + str(next_x + i)], end=" ")
+        print(" --Press C to CHANGE their status and get them mechanised ! \n")
+        x += to_add
+        next_x += to_add
+        return x, x_dict, next_x
 
 
 # Function to remove robot.
@@ -774,13 +790,38 @@ def program_robot(x_dict):
 def employ_worker(x, x_dict, next_x):
     clear_screen()
     print("\n You have selected \"EMPLOY a new worker\" \n")
-    x_dict[x] = 0
-    x += 1
-    next_x += 1
-    print("\n You have hired one more worker. \n"
-          " Press M for MANAGE to get them straight to work. \n"
-          "\n Before they try'n join the union already ! \n\n")
-    return x, x_dict, next_x
+    sleep(1)
+    print("\n Here are the humans you currently have:-- \n\n")
+    dict_printer(x_dict)
+    sleep(1)
+    to_add = how_many_labourers("humans", "do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
+                                100 - x)
+    sleep(1)
+    if to_add == 1:
+        x_dict["Human_" + str(next_x)] = 0
+        x += 1
+        next_x += 1
+        print("\n You have added an extra pair of hands to the team.\n")
+        print(f" Their name is {x_dict["Human_" + str(next_x)]}. \n")
+        print(" Bet you've forgotten it already!\n")
+        print(" --Press M to MANAGE their status and get them toiling ! \n")
+        sleep(1)
+        return x, x_dict, next_x
+    elif to_add > 1:
+        print(f"\n You have added {to_add} extra bodies to the workforce. \n")
+        print(f"Their names are: \n")
+        for i in range(to_add):
+            x_dict["Human_" + str(next_x + i)] = 0
+            if (next_x + i) % 5 == 0:
+                print("\n")
+            if (next_x + i) < 10:
+                print(["Human_" + str(next_x + i)], end="  ")
+            else:
+                print(["Human_" + str(next_x + i)], end=" ")
+        print(" --Press M to MANAGE their statuses and get them toiling ! \n")
+        x += to_add
+        next_x += to_add
+        return x, x_dict, next_x
 
 
 
