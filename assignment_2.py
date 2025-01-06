@@ -86,20 +86,19 @@ hours = 0
 
 def time_sim():
     global seconds, minutes, hours
-    seconds += 10
-    if seconds == 60:
-        minutes += 1
-        seconds = 0
-    if minutes == 60:
-        hours += 1
-        minutes = 0
-        seconds = 0
+    total_time = 0
+    hours = total_time // 3600
+    minutes = (total_time // 60) - (hours * 60)
+    seconds = total_time - (hours * 3600) - (minutes * 60)
     if total_time == 86400:
         clear_screen()
         print("\n\n\n\")
         print("A whole day of factory time has ended.\n"
               "You have run out of time to complete any more tasks.\n")
         end_sequence()
+
+
+print(f"hours = {hours}, minutes = {minutes}, seconds = {seconds}")
     else:
         return
 
@@ -674,7 +673,10 @@ def show_log():
            '| FETCHed cups of tea (100s)   |               |               |               ||            |          |\n'
            '========================================================================================================|\n'
            ))
-
+    # Use escape codes to send cursor to different screen positions
+    #       \u001b[{line};{column}H
+    #  OR   \u001b[{line};{column}f
+    # Use \r and end="" to prevent new lines being added
 
 # Function to return a quantity (of workers or robots)
 def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
