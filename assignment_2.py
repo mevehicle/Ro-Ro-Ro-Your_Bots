@@ -5,80 +5,9 @@
 # Import modules
 
 from time import sleep
-# Use this to get program to sleep for 1 second --> sleep(1)
+# Use this to get program to sleep for 1 second --> sleep(1
 
-# ---- Initialise main variables
-
-# n = number of robots
-n = 0
-
-# m = number of workers
-m = 0
-
-#  As each WORKING robot or worker is assigned to a specific task,
-# a lengthier mirror of the dictionaries containing their statuses
-# contains the codes of these tasks
-
-# The task codes can be deciphered by
-#  using them as the index numbers of a tuple
-#   called task_tuple, containing corresponding activities
-
-# To print the short version of the code,
-#  access index 0 of the nested tuple (eg. task_tuple[4[0]] )
-# Or to print the long version of the code,
-#  access index 1 of the nested tuple (eg. task_tuple[4[1]] )
-
-# ----- Task codes are as follows:
-# Status = 0 : IDLE
-#  "  "  = 1 : SCREWing
-#  "  "  = 2 : WELDing
-#  "  "  = 3 : HAMMERing
-#  "  "  = 4 : POLISHing
-#  "  "  = 5 : DRILLing
-#  "  "  = 6 : ATTACHing
-#  "  "  = 7 : TESTing
-#  "  "  = 8 : UNLOADing
-#  "  "  = 9 : BOXing
-#  "  "  = 10: FETCHing
-#  "  "  = 11: FINISHED
-
-task_tuple = (("IDLE     ", "IDLE                          "),
-                ("SCREWing ", "SCREWing arms on              "),
-                ("WELDing  ", "WELDing legs on               "),
-                ("HAMMERing", "HAMMERing heads on            "),
-                ("POLISHing", "POLISHing eyes                "),
-                ("DRILLing ", "DRILLing ears                 "),
-                ("ATTACHing", "ATTACHing waste hoses         "),
-                ("TESTing  ", "TESTing the functioning       "),
-                ("UNLOADing", "UNLOADing trucks with forklift"),
-                ("BOXing   ", "BOXing and shipping product   "),
-                ("FETCHing ", "FETCHing cups of tea          "),
-                ("FINISHED ", "FINISHED_TASK                 "))
-
-
-# The scheduler dictionary will be a database showing, for each task(i),
-#  how many robots and how many workers are working on them,
-#   eg. scheduler[i[robots, humans]]
-# It is based on the short version of the task stored in index 0
-#  of task_tuple's inner nested tuple pairs
-
-scheduler = {}
-for i in range(1, 11):
-    scheduler[task_tuple[i][0]] = [0, 0]
-
-
-# The task log is a multi-dimensional list showing, for each task,
-# how many repetitions of that task have been completed
-# and whether any workers or robots are currently engaged in it
-# eg. task_log[i[completed, in progress]
-# It is based on the short version of the task stored in index 0
-#  of task_tuple's inner nested tuple pairs
-
-task_log = []
-for i in range(1,11):
-    task_log[task_tuple[i][0]] = [0, 0]
-
-
+# Global variables:
 total_time = 0
 seconds = 0
 minutes = 0
@@ -92,13 +21,10 @@ def time_sim():
     seconds = total_time - (hours * 3600) - (minutes * 60)
     if total_time == 86400:
         clear_screen()
-        print("\n\n\n\")
+        print("\n\n\n")
         print("A whole day of factory time has ended.\n"
               "You have run out of time to complete any more tasks.\n")
         end_sequence()
-
-
-print(f"hours = {hours}, minutes = {minutes}, seconds = {seconds}")
     else:
         return
 
@@ -189,13 +115,18 @@ def input_humans(m):
 
 # Function to make dictionaries of robots or humans {n} or {m}
 # Parameter {phrase} will state whether {Robot} or {Human}
+#  "   "    {x_dict} will hold either {n_dict} --> robots
+#                                  or {m_dict} --> as an argument
 # Each worker will be given an initial status of 0 (eg. IDLE)
 #  This will change to 1 when they are WORKING
 # and to 2 when they are FINISHED
-#  "   "    {x_dict} will hold either {n_dict} or {m_dict} as an argument
+
+
 def dict_maker(x, phrase):
     print(f"\n As promised, Here are your {x} {phrase}s: \n")
-    x_list = [phrase + "_" + str(counter) for counter in range(1, x + 1)]
+    #  .zfill(3) formats them as three digits,
+    # eg. "Robot_001" or "Human_043"
+    x_list = [phrase + "_" + str(counter.zfill(3)) for counter in range(1, x + 1)]
     x_dict = {phrase: 0 for phrase in x_list}
     sleep(1)
     time_sim()
@@ -217,7 +148,16 @@ def dict_printer(x, x_dict):
 def intro_function():
     #################################### Introduction ###########################################
 
+    # ---- Initialise main variables ---- #
+
+    # n = number of robots
+    n = 0
+
+    # m = number of workers
+    m = 0
+
     clear_screen()
+
     print("Program to simulate coordination between n robots and m workers in a robotic cell \n")
     input("\nPress Enter to continue... \n")
     sleep(1)
@@ -238,9 +178,9 @@ def intro_function():
     clear_screen()
 
     # Call function to ask user how many robots they want
-    global n, next_n
     n, next_n = input_robots(n)
-    # Variable to number additional robot later
+
+    # Create variable to label additional robot later
     next_n = (n + 1)
 
     # Output initial number of robot workers (n)
@@ -252,7 +192,6 @@ def intro_function():
     clear_screen()
 
     # Call function to ask user how many humans they want
-    global m, next_m
     m, next_m = input_humans(m)
     # Variable to number additional employee later
     next_m = m + 1
@@ -267,7 +206,95 @@ def intro_function():
     time_sim()
     input("\n\nPress Enter to continue... ")
     clear_screen()
+
+    #  As each WORKING robot or worker is assigned to a specific task,
+    # a lengthier mirror of the dictionaries containing their statuses
+    # contains the codes of these tasks
+    # and is itself contained within the encyclopedic task_log
+
+    # Its task codes can be deciphered by
+    #  using them as the index numbers of a tuple
+    #   called task_tuple, containing corresponding activities
+
+    # To print the short version of the code,
+    #  access index 0 of the nested tuple (eg. task_tuple[4[0]] )
+    # Or to print the long version of the code,
+    #  access index 1 of the nested tuple (eg. task_tuple[4][1] )
+
+    # ------------------------------------------------------------ Task codes are:
+    task_tuple = (("IDLE     ", "IDLE                          "), #--> 00
+                  ("SCREWing ", "SCREWing arms on              "), #--> 01
+                  ("WELDing  ", "WELDing legs on               "), #--> 02
+                  ("HAMMERing", "HAMMERing heads on            "), #--> 03
+                  ("POLISHing", "POLISHing eyes                "), #--> 04
+                  ("DRILLing ", "DRILLing ears                 "), #--> 05
+                  ("ATTACHing", "ATTACHing waste hoses         "), #--> 06
+                  ("TESTing  ", "TESTing the functioning       "), #--> 07
+                  ("UNLOADing", "UNLOADing trucks with forklift"), #--> 08
+                  ("BOXing   ", "BOXing and shipping product   "), #--> 09
+                  ("FETCHing ", "FETCHing cups of tea          "), #--> 10
+                  ("FINISHED ", "FINISHED_TASK                 ")) #--> 11
+
+    # -------------------the Task Log ----------------------------
+
+    # task_log is a multi-dimensional list showing, for each task,
+    # how many repetitions of that task have been completed
+    # and whether any workers or robots are currently engaged in it
+    #  It contains:
+    #  - - - - - [0] = a dictionary of twelve keys, one for each task code:
+    #  - - - - -    each value is a list of the robots engaged in the task
+    #               (or engaged in the IDLE-ness, for task codes 0 & 11
+    #  - - - - - [1] = another dictionary, a mirror of it where
+    #  - - - - -    each value is a list of the humans engaged in the task
+
+    task_log = []
+    for i in range(0, 2):
+        task_log.append({})
+        for j in range(0, 12):
+            task_log[i][j] = 0
+
+    # Task log also contains:
+    #  - - - - - [2] = a dictionary of 12 lists,
+    #  - - - - - - - -  each list holding the IDs of the
+    #  - - - - - - -  individual robots engaged in each task
+    #  - - - - - [3] = another dictionary of 12 lists, each holding
+    #  - - - - - - -  **SURPRISE**: the IDs of the humans
+    #  - - - - - - - - - - - - - - - engaged in that task
+
+    for i in range(2, 4):
+        task_log.append({})
+        for j in range(0, 12):
+            task_log[i][j] = []
+
+    #  - - - - - [4] = a dictionary of twelve keys, one for each task code:
+    #  - - - - -    each value holds its own dictionary, this time of
+    #  - - - - -    three keys, the values being:
+    #  - - - - -    number of tasks not started / in progress / completed
+
+    task_log[4] = {}
+    for i in range(0, 12):
+        task_log[4].append({})
+        task_log[4][i] =  {
+                           "Not started": 0,
+                           "In progress": 0,
+                           "Complete": 0,
+                          }
+
+    clear_screen()
+
+    # The scheduler dictionary will be a database showing, for each task(i),
+    #  how many robots and how many workers are working on them,
+    #   eg. scheduler[i[robots, humans]]
+    # It is based on the short version of the task stored in index 0
+    #  of task_tuple's inner nested tuple pairs
+
+    scheduler = {}
+    for i in range(1, 11):
+        scheduler[task_tuple[i][0]] = [0, 0]
+
+    # Return primary variables to main body of program
     return n, m, n_dict, m_dict, next_n, next_m, task_tuple, scheduler, task_log
+
 
 # Helper function to check input is a single character
 def get_length(ask, max=1):
@@ -972,7 +999,9 @@ def change_status(x_dict):
             for t in range(len(desired_list)):
                 desired_list[t] = int(desired_list[t])
                 # convert to text keys to match against dictionary
-                desired_list[int(t)] = "Robot" + "_" + str(desired_list[t])
+                #  .zfill(3) formats them as three digits,
+                # adding leading zeroes, as in dictionary
+                desired_list[int(t)] = "Robot" + "_" + str(desired_list[t.zfill(3)])
         except ValueError:
             print("I think you entered an invalid character.\n")
             sleep(1)

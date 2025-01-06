@@ -5,74 +5,28 @@
 # Import modules
 
 from time import sleep
-# Use this to get program to sleep for 1 second --> sleep(1)
+# Use this to get program to sleep for 1 second --> sleep(1
 
-# ---- Initialise main variables
+# Global variables:
+total_time = 0
+seconds = 0
+minutes = 0
+hours = 0
 
-# n = number of robots
-n = 0
-
-# m = number of workers
-m = 0
-
-# The status codes can be deciphered by
-#  using them as the index numbers of a tuple
-#   called task_tuple, containing corresponding activities
-
-# To print the short version of the code,
-#  access index 0 of the nested tuple (eg. task_tuple[4[0]] )
-# Or to print the long version of the code,
-#  access index 1 of the nested tuple (eg. task_tuple[4[1]] )
-
-# ----- Status codes are as follows:
-# Status = 0 : IDLE      / IDLE
-#  "  "  = 1 : SCREWing  / SCREWing the arms on
-#  "  "  = 2 : WELDing   / WELDing the legs on
-#  "  "  = 3 : HAMMERing / HAMMERing the head on
-#  "  "  = 4 : POLISHing / POLISHing the eyes
-#  "  "  = 5 : DRILLing  / DRILLing the ears
-#  "  "  = 6 : ATTACHing / ATTACHing the waste hose
-#  "  "  = 7 : TESTing   / TESTing the functioning
-#  "  "  = 8 : UNLOADing / UNLOADing trucks with forklift
-#  "  "  = 9 : BOXing    / BOXing and shipping product
-#  "  "  = 10: FETCHing  / FETCHing cups of tea
-#  "  "  = 11: FINISHED  / FINISHED task & ready for reassignment
-
-task_tuple = (("IDLE     ", "IDLE                          "),
-                ("SCREWing ", "SCREWing arms on              "),
-                ("WELDing  ", "WELDing legs on               "),
-                ("HAMMERing", "HAMMERing heads on            "),
-                ("POLISHing", "POLISHing eyes                "),
-                ("DRILLing ", "DRILLing ears                 "),
-                ("ATTACHing", "ATTACHing waste hoses         "),
-                ("TESTing  ", "TESTing the functioning       "),
-                ("UNLOADing", "UNLOADing trucks with forklift"),
-                ("BOXing   ", "BOXing and shipping product   "),
-                ("FETCHing ", "FETCHing cups of tea          "),
-                ("FINISHED ", "FINISHED_TASK                 "))
-
-
-# The scheduler dictionary will be a database showing, for each task(i),
-#  how many robots and how many workers are working on them,
-#   eg. scheduler[i[robots, humans]
-# It is based on the short version of the task stored in index 0
-#  of task_tuple's inner nested tuple pairs
-
-scheduler = {}
-for i in range(1, 11):
-    scheduler[task_tuple[i[0]]] = [0, 0]
-
-
-# The task log is a dictionary showing, for each task,
-# how many repetitions of that task have been completed
-# and whether any workers or robots are currently engaged in it
-# eg. task_log[i[completed, in progress
-# It is based on the short version of the task stored in index 0
-#  of task_tuple's inner nested tuple pairs
-
-task_log ={}
-for i in range(1,11):
-    task_log[task_tuple[i[0]]] = [0, 0]
+def time_sim():
+    global seconds, minutes, hours
+    total_time = 0
+    hours = total_time // 3600
+    minutes = (total_time // 60) - (hours * 60)
+    seconds = total_time - (hours * 3600) - (minutes * 60)
+    if total_time == 86400:
+        clear_screen()
+        print("\n\n\n")
+        print("A whole day of factory time has ended.\n"
+              "You have run out of time to complete any more tasks.\n")
+        end_sequence()
+    else:
+        return
 
 # Function to clear screen and return cursor to top left corner
 def clear_screen():
@@ -81,6 +35,7 @@ def clear_screen():
     # Cursor to home using ANSI escape sequence
     print("\u001b[H")
     sleep(1)
+    time_sim()
 
 
 
@@ -88,17 +43,19 @@ def clear_screen():
 # ---- & check the value entered for n is valid :
 def input_robots(n):
     sleep(1)
+    time_sim()
     while True:
         while not n:
             print("\n How many robot workers do you want for your factory?\n\n")
-            n = input("  Please choose a number between 1 and 100. \n\n")
+            n = input("  Please choose a number between 1 and 99. \n\n")
             sleep(2)
+            time_sim()
             if not n:
                 print("\n Excuse me, but I asked you a question! \n")
                 break
             try:
                 n = int(n)
-                if n >= 1 and n <= 100:
+                if n >= 1 and n < 100:
                     return n, n + 1
                 else:
                     print("\n Sorry, but that isn't a valid response. \n")
@@ -106,10 +63,15 @@ def input_robots(n):
                         print("\n How can we have a negative amount? We don't owe nobody our robots !!\n")
                     elif n == 0:
                         print("\n We can't build robots with no robots to build them. \n")
-                    elif n > 100:
+                    elif n > 99:
                         print("\n We can't risk having that many droids onsite. \n")
-                        sleep(0.5)
+                        sleep(1)
+                        time_sim()
                         print("\n      HAVE YOU NEVER SEEN BLADE RUNNER? \n")
+                    n = 0
+                    sleep(3)
+                    time_sim()
+                    clear_screen()
             except ValueError:
                 print("\n Sorry, but that isn't a valid response. \n")
                 print("\n Maybe you entered letters or symbols instead of just a number. \n")
@@ -119,17 +81,19 @@ def input_robots(n):
 # ---- & check the value entered for m is valid :
 def input_humans(m):
     sleep(1)
+    time_sim()
     while True:
         while not m:
             print("\n\n How many human workers do you intend to employ? \n")
-            m = input("  Please choose a number between 1 and 100. \n\n")
+            m = input("  Please choose a number between 1 and 99. \n\n")
             sleep(2)
+            time_sim()
             if not m:
                 print("\n Speak into the microphone, please - \n I can't hear you ! \n")
                 break
         try:
             m = int(m)
-            if m >= 1 and m <= 100:
+            if m >= 1 and m < 100:
                 print("\n OK, I can work with that.\n")
                 return m, m + 1
             else:
@@ -138,9 +102,12 @@ def input_humans(m):
                     print("\n DOES NOT COMPUTE !!!")
                 elif m == 0:
                     print("\n We need at least one human worker to prevent a droid revolt.")
-                elif m > 100:
-                    print("\n You can't afford to pay out wages for over 100 workers. ")
-                continue
+                elif m > 99:
+                    print("\n You can't afford to pay out wages for 100 workers. ")
+                m = 0
+                sleep(3)
+                time_sim()
+                clear_screen()
         except ValueError:
             print("\n Sorry, but that isn't a valid response. \n")
             print("\n Maybe you entered letters or symbols instead of just a number. \n")
@@ -148,13 +115,21 @@ def input_humans(m):
 
 # Function to make dictionaries of robots or humans {n} or {m}
 # Parameter {phrase} will state whether {Robot} or {Human}
+#  "   "    {x_dict} will hold either {n_dict} --> robots
+#                                  or {m_dict} --> as an argument
 # Each worker will be given an initial status of 0 (eg. IDLE)
-#  "   "    {x_dict} will hold either {n_dict} or {m_dict} as an argument
+#  This will change to 1 when they are WORKING
+# and to 2 when they are FINISHED
+
+
 def dict_maker(x, phrase):
-    print(f"\nOK, Here are your {x} {phrase}s: \n")
-    x_list = [phrase + "_" + str(counter) for counter in range(1, x + 1)]
+    print(f"\n As promised, Here are your {x} {phrase}s: \n")
+    #  .zfill(3) formats them as three digits,
+    # eg. "Robot_001" or "Human_043"
+    x_list = [phrase + "_" + str(counter.zfill(3)) for counter in range(1, x + 1)]
     x_dict = {phrase: 0 for phrase in x_list}
     sleep(1)
+    time_sim()
     return x_dict
 
 # Function to print dictionary of either humans or robots
@@ -173,10 +148,20 @@ def dict_printer(x, x_dict):
 def intro_function():
     #################################### Introduction ###########################################
 
+    # ---- Initialise main variables ---- #
+
+    # n = number of robots
+    n = 0
+
+    # m = number of workers
+    m = 0
+
     clear_screen()
+
     print("Program to simulate coordination between n robots and m workers in a robotic cell \n")
     input("\nPress Enter to continue... \n")
     sleep(1)
+    time_sim()
 
     print("\n Scenario: ")
     print("""\n     You are the supervisor of Ro-Ro-Ro-Your-Bots\u00AE, where robots work alongside
@@ -186,39 +171,130 @@ def intro_function():
     produce robots, built by robotic cells of robot workers labouring alongside humans...
     """)
     sleep(1)
+    time_sim()
     input("\nPress Enter to continue... ")
 
 
     clear_screen()
 
     # Call function to ask user how many robots they want
-    global n, next_n
     n, next_n = input_robots(n)
-    # Variable to number additional robot later
+
+    # Create variable to label additional robot later
     next_n = (n + 1)
 
     # Output initial number of robot workers (n)
     n_dict = dict_maker(n, "Robot")
     dict_printer(n, n_dict)
     sleep(1)
+    time_sim()
     input("\n\nPress Enter to continue... ")
     clear_screen()
 
     # Call function to ask user how many humans they want
-    global m, next_m
     m, next_m = input_humans(m)
     # Variable to number additional employee later
     next_m = m + 1
     sleep(1)
+    time_sim()
 
     # ----Output initial number of human workers (m)
 
     m_dict = dict_maker(m, "Human")
     dict_printer(m, m_dict)
     sleep(1)
+    time_sim()
     input("\n\nPress Enter to continue... ")
     clear_screen()
+
+    #  As each WORKING robot or worker is assigned to a specific task,
+    # a lengthier mirror of the dictionaries containing their statuses
+    # contains the codes of these tasks
+    # and is itself contained within the encyclopedic task_log
+
+    # Its task codes can be deciphered by
+    #  using them as the index numbers of a tuple
+    #   called task_tuple, containing corresponding activities
+
+    # To print the short version of the code,
+    #  access index 0 of the nested tuple (eg. task_tuple[4[0]] )
+    # Or to print the long version of the code,
+    #  access index 1 of the nested tuple (eg. task_tuple[4][1] )
+
+    # ------------------------------------------------------------ Task codes are:
+    task_tuple = (("IDLE     ", "IDLE                          "), #--> 00
+                  ("SCREWing ", "SCREWing arms on              "), #--> 01
+                  ("WELDing  ", "WELDing legs on               "), #--> 02
+                  ("HAMMERing", "HAMMERing heads on            "), #--> 03
+                  ("POLISHing", "POLISHing eyes                "), #--> 04
+                  ("DRILLing ", "DRILLing ears                 "), #--> 05
+                  ("ATTACHing", "ATTACHing waste hoses         "), #--> 06
+                  ("TESTing  ", "TESTing the functioning       "), #--> 07
+                  ("UNLOADing", "UNLOADing trucks with forklift"), #--> 08
+                  ("BOXing   ", "BOXing and shipping product   "), #--> 09
+                  ("FETCHing ", "FETCHing cups of tea          "), #--> 10
+                  ("FINISHED ", "FINISHED_TASK                 ")) #--> 11
+
+    # -------------------the Task Log ----------------------------
+
+    # task_log is a multi-dimensional list showing, for each task,
+    # how many repetitions of that task have been completed
+    # and whether any workers or robots are currently engaged in it
+    #  It contains:
+    #  - - - - - [0] = a dictionary of twelve keys, one for each task code:
+    #  - - - - -    each value is a list of the robots engaged in the task
+    #               (or engaged in the IDLE-ness, for task codes 0 & 11
+    #  - - - - - [1] = another dictionary, a mirror of it where
+    #  - - - - -    each value is a list of the humans engaged in the task
+
+    task_log = []
+    for i in range(0, 2):
+        task_log.append({})
+        for j in range(0, 12):
+            task_log[i][j] = 0
+
+    # Task log also contains:
+    #  - - - - - [2] = a dictionary of 12 lists,
+    #  - - - - - - - -  each list holding the IDs of the
+    #  - - - - - - -  individual robots engaged in each task
+    #  - - - - - [3] = another dictionary of 12 lists, each holding
+    #  - - - - - - -  **SURPRISE**: the IDs of the humans
+    #  - - - - - - - - - - - - - - - engaged in that task
+
+    for i in range(2, 4):
+        task_log.append({})
+        for j in range(0, 12):
+            task_log[i][j] = []
+
+    #  - - - - - [4] = a dictionary of twelve keys, one for each task code:
+    #  - - - - -    each value holds its own dictionary, this time of
+    #  - - - - -    three keys, the values being:
+    #  - - - - -    number of tasks not started / in progress / completed
+
+    task_log[4] = {}
+    for i in range(0, 12):
+        task_log[4].append({})
+        task_log[4][i] =  {
+                           "Not started": 0,
+                           "In progress": 0,
+                           "Complete": 0,
+                          }
+
+    clear_screen()
+
+    # The scheduler dictionary will be a database showing, for each task(i),
+    #  how many robots and how many workers are working on them,
+    #   eg. scheduler[i[robots, humans]]
+    # It is based on the short version of the task stored in index 0
+    #  of task_tuple's inner nested tuple pairs
+
+    scheduler = {}
+    for i in range(1, 11):
+        scheduler[task_tuple[i][0]] = [0, 0]
+
+    # Return primary variables to main body of program
     return n, m, n_dict, m_dict, next_n, next_m, task_tuple, scheduler, task_log
+
 
 # Helper function to check input is a single character
 def get_length(ask, max=1):
@@ -229,6 +305,7 @@ def get_length(ask, max=1):
     elif len(ask) < 1:
         print("Do you need more time to think?")
         sleep(10)
+        time_sim()
         return False
     elif len(ask) <= max:
         return True
@@ -238,6 +315,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, statuses, schedules, tasks):
     while True:
         next_action = input("\nPlease choose an action : (or press H to get Help) \n").upper()
         sleep(1)
+        time_sim()
         # check only 1 character was input
         if get_length(next_action):
             match next_action:
@@ -251,7 +329,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, statuses, schedules, tasks):
                     break
              # CHANGE
                 case "C":
-                    a_dict = change_status(a_dict, task_tuple)
+                    a_dict = change_status(a_dict)
                     break
              # PROGRAM
                 case "P":
@@ -293,8 +371,10 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, statuses, schedules, tasks):
                 case _:
                     print("Sorry, I don't think that's a valid option.\n")
                     sleep(1)
+                    time_sim()
                     print("Any feedback should be directed to our team.\n")
                     sleep(2)
+                    time_sim()
                     break
 
 
@@ -337,8 +417,10 @@ def simple_error():
            'but it\'s nothing to worry about. \n\n'
            ' We can always build new factories / robots / people / supervisors... \n\n'))
     sleep(1)
+    time_sim()
     print("\n\nLet's take a step back shall we? \n")
     sleep(2)
+    time_sim()
     return
 
 
@@ -346,103 +428,104 @@ def simple_error():
 # Function to show options for assigning tasks
 def show_task_options():
     sleep(1)
+    time_sim()
     print(('\n These are the options for the tasks:    \n'
-               '\n Press [S] for SCREWing arms on          \n'  # Status = 1
-               '\n Press [W] for WELDing legs on           \n'  # Status = 2
-               '\n Press [H] for HAMMERing heads on        \n'  # Status = 3
-               '\n Press [P] = POLISH the eyes             \n'  # Status = 4
-               '\n Press [D] = DRILL the ears              \n'  # Status = 5
-               '\n Press [A] = ATTACH the waste hose       \n'  # Status = 6
-               '\n Press [T] = TEST the functioning        \n'  # Status = 7
-               '\n Press [U] to UNLOAD trucks              \n'  # Status = 8
-               '\n Press [B] to BOX and ship the product   \n'  # Status = 9
-               '\n Press [F] for FETCH cups of tea         \n'  # Status = 10
+               '\n Press [S] for SCREWing arms on          \n'  # code = 1
+               '\n Press [W] for WELDing legs on           \n'  # code = 2
+               '\n Press [H] for HAMMERing heads on        \n'  # code = 3
+               '\n Press [P] = POLISH the eyes             \n'  # code = 4
+               '\n Press [D] = DRILL the ears              \n'  # code = 5
+               '\n Press [A] = ATTACH the waste hose       \n'  # code = 6
+               '\n Press [T] = TEST the functioning        \n'  # code = 7
+               '\n Press [U] to UNLOAD trucks              \n'  # code = 8
+               '\n Press [B] to BOX and ship the product   \n'  # code = 9
+               '\n Press [F] for FETCH cups of tea         \n'  # code = 10
                '\n Press [X] to Exit this menu             \n'
            ))
     return
 
 # Function for SCREWing arms on
 # Accessed by pressing S within what_task() menu
-# Creates a status of 1
+# Creates a task_code of 1
 def screw_arms():
     print("You have selected SCREW arms on.\n")
-    status = 1
-    return status
+    task_code = 1
+    return task_code
 
 # Function for WELDing legs on
 # Accessed by pressing W within what_task() menu
-# Creates a status of 2
+# Creates a task_code of 2
 def weld_legs():
     print("You have selected WELD legs on.\n")
-    status = 2
-    return status
+    task_code = 2
+    return task_code
 
 # Function for HAMMERing heads on
 # Accessed by pressing H within what_task() menu
-# Creates a status of 3
+# Creates a task_code of 3
 def hammer_heads():
     print("You have selected HAMMER heads on\n")
-    status = 3
-    return status
+    task_code = 3
+    return task_code
 
 # Function for POLISHing the eyes
 # Accessed by pressing P within what_task() menu
-# Creates a status of 4
+# Creates a task_code of 4
 def polish_eyes():
-    status = 4
-    return status
+    task_code = 4
+    return task_code
 
 # Function for DRILLing the ears
 # Accessed by pressing D within what_task() menu
-# Creates a status of 5
+# Creates a task_code of 5
 def polish_eyes(x_dict):
     print("You have selected DRILL ears.\n")
-    status = 5
-    return status
+    task_code = 5
+    return task_code
 
 
 # Function for ATTACHing the waste hose
 # Accessed by pressing A within what_task() menu
-# Creates a status of 6
+# Creates a task_code of 6
 def attach_hose():
     print("You have selected ATTACH the waste hose\n")
-    status = 6
-    return status
+    task_code = 6
+    return task_code
 
 
 # Function for TESTing the functioning
 # Accessed by pressing T within what_task() menu
-# Creates a status of 7
+# Creates a task_code of 7
 def test_functioning():
     print("You have selected TEST the functioning\n")
-    status = 7
-    return status
+    task_code = 7
+    return task_code
 
 
 # Function for UNLOADing trucks
 # Accessed by pressing U within what_task() menu
-# Creates a status of 8
+# Creates a task_code of 8
 def unload_trucks():
     print("You have selected UNLOAD trucks\n")
-    status = 8
-    return status
+    task_code = 8
+    return task_code
 
 # Function for BOXing and shipping the product
 # Accessed by pressing B within what_task() menu
-# Creates a status of 9
+# Creates a task_code of 9
 def box_product():
     print("You have selected BOX and ship the product\n")
-    status = 9
-    return status
+    task_code = 9
+    return task_code
 
 
 # Function for FETCHing cups of tea
 # Accessed by pressing F within what_task() menu
-# Creates a status of 10
+# Creates a task_code of 10
 def fetch_tea():
     print("You have selected FETCH cups of tea\n")
-    status = 10
-    return status
+    task_code = 10
+    return task_code
 
 
 # Helper function to determine what task
@@ -452,6 +535,7 @@ def what_task(phrase="worker", dict="m_dict", scheduler="scheduler"):
         next_task = input((" What task would you like to assign to them? \n "
                      "              (Press [O] to see the options)\n"))
         sleep(1)
+        time_sim()
         if get_length(next_task):
             match next_task:
                 case "O":
@@ -463,63 +547,65 @@ def what_task(phrase="worker", dict="m_dict", scheduler="scheduler"):
                 case "S":
                     print("\n You have selected \"SCREW arms on\". \n")
                     selected = True
-                    # Status becomes 1
+                    # task_code becomes 1
                     return 1
                 case "W":
                     print("\n You have selected \"WELD legs on\". \n")
                     selected = True
-                    # Status becomes 2
+                    # task_code becomes 2
                     return 2
                 case "H":
                     print("\n You have selected \"HAMMER the head on\". \n")
                     selected = True
-                    # Status becomes 3
+                    # task_code becomes 3
                     return 3
                 case "P":
                     print("\n You have selected \"POLISH the eyes\". \n")
                     selected = True
-                    # Status becomes 4
+                    # task_code becomes 4
                     return 4
                 case "D":
                     print("\n You have selected \"DRILL the ears\". \n")
                     selected = True
-                    # Status becomes 5
+                    # task_code becomes 5
                     return 5
                 case "A":
                     print("\n You have selected \"ATTACH the waste hose\". \n")
                     selected = True
-                    # Status becomes 6
+                    # task_code becomes 6
                     return 6
                 case "T":
                     print("\n You have selected \"TEST the functioning\". \n")
                     selected = True
-                    # Status becomes 7
+                    # task_code becomes 7
                     return 7
                 case "U":
                     print("\n You have selected \"UNLOAD trucks with forklift\". \n")
                     selected = True
-                    # Status becomes 8
+                    # task_code becomes 8
                     return 8
                 case "B":
                     print("\n You have selected \"BOX & ship product\". \n")
                     selected = True
-                    # Status becomes 9
+                    # task_code becomes 9
                     return 9
                 case "F":
                     print("\n You have selected \"FETCH cups of tea\". \n")
                     selected = True
-                    # Status becomes 10
+                    # task_code becomes 10
                     return 10
                 case "X":
                     # Exit from task options
                     print("\n Selecting this will return you to the main menu. \n")
                     selected = True
                     sleep(2)
+                    time_sim()
                     return 11
                 case _:
                     # wildcard case to catch bad inputs
                     print("\n Instruction not recognised. \n")
                     sleep(2)
+                    time_sim()
                     return 12
             continue
     else:
@@ -527,26 +613,38 @@ def what_task(phrase="worker", dict="m_dict", scheduler="scheduler"):
 
 #  Function to loop through robots or humans
 # and display the tasks they're working on
-# {longshort} parameter should be set to either
+#  {longshort} parameter should be set to either
 # 0 or 1 depending on whether
 # the short or long version of the task title is
 # being printed
-def task_printer(x_dict, statuses, longshort):
-    sleep(1)
-    if longshort == 0:
-        per_line = 5
-    else:
-        per_line = 3
-    key_number = 0
-    for key, value in x_dict.items():
-        if key_number % per_line == 0:
-            print("\n")
-        if key_number < 10:
-            print(f"{key} : {statuses[value][longshort]}", end="    ")
-        elif key_number >= 10:
-            print(f"{key} : {statuses[value][longshort]}", end="   ")
-        key_number += 1
-    print("\n\n")
+# def task_printer(x_dict, task_codes, longshort):
+#     sleep(1)
+#     time_sim()
+#     if longshort == 0:
+#         per_line = 5
+#     else:
+#         per_line = 3
+#     key_number = 0
+#     for key, value in x_dict.items():
+#         if key_number % per_line == 0:
+#             print("\n")
+#         if key_number < 10:
+#             print(f"{key} : {statuses[value][longshort]}", end="    ")
+#         elif key_number >= 10:
+#             print(f"{key} : {statuses[value][longshort]}", end="   ")
+#         key_number += 1
+#     print("\n\n")
+
+
+def return_status(drone):
+    match drone:
+        case 0:
+            status = "  IDLE  "
+        case 1:
+            status = "WORKING "
+        case 2:
+            status = "FINISHED"
+    return status
 
 
 #  Function to loop through robots or humans
@@ -554,28 +652,58 @@ def task_printer(x_dict, statuses, longshort):
 # stored in the dictionary, cross-referenced with task_tuple
 #  The status will print as either
 # IDLE, WORKING or FINISHED
-def status_printer(x_dict, statuses):
+def status_printer(x_dict):
     sleep(1)
+    time_sim()
     key_number = 0
     for key, value in x_dict.items():
         if key_number % 5 == 0:
             print("\n")
-        if key_number < 10:
-            if value == 0 or value == 11:
-                print(f"{key} : {statuses[value][0]}", end="    ")
-            else:
-                print(f"{key} : WORKING", end="    ")
-        elif key_number >= 10:
-            if value == 0 or value == 11:
-                print(f"{key} : {statuses[value][0]}", end="    ")
-            else:
-                print(f"{key} : WORKING", end="    ")
+        print(f"{key} : " , end="")
+        match value:
+            case 0:
+                print("  IDLE  ", end="   ")
+            case 1:
+                print("WORKING ", end="   ")
+            case 2:
+                print("FINISHED", end="   ")
         key_number += 1
     print("\n\n")
 
-def status_list(statuses, longshort):
-    for i in range(0, 12):
-        print(f"          {statuses[i][longshort]}\n")
+
+# Task log screen display
+def show_log():
+    clear_screen()
+    print((f'                                             ------------                                               \n'
+           '==============================================| TASK LOG |===============================================\n'
+           '| TIME :                       |              ------------                     ||         WORKERS       |\n'
+           '|------------: TASK : ---------| # NOT STARTED | # IN PROGRESS | # COMPLETE    ||   BOTS     |  HUMANS  |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| SCREWing on arms (pairs)     |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| WELDing on legs (pairs)      |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| HAMMERing on heads           |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| POLISHed eyes                |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| DRILLed ears                 |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| ATTACHed waste hoses         |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| TESTed products              |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| UNLOADed trucks              |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| BOXes shipped                |               |               |               ||            |          |\n'
+           '|------------------------------|---------------|---------------|---------------||------------|----------|\n'
+           '| FETCHed cups of tea (100s)   |               |               |               ||            |          |\n'
+           '========================================================================================================|\n'
+           ))
+    # Use escape codes to send cursor to different screen positions
+    #       \u001b[{line};{column}H
+    #  OR   \u001b[{line};{column}f
+    # Use \r and end="" to prevent new lines being added
 
 # Function to return a quantity (of workers or robots)
 def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
@@ -584,6 +712,7 @@ def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
         while not l:
             l = input(f"\n\n How many {phrase}s {phrase_2}? \n\n Please choose a number between 1 and {max}. \n")
             sleep(2)
+            time_sim()
             if not l:
                 print("\n Was I meant to take that as an answer? \n")
                 continue
@@ -592,10 +721,12 @@ def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
             if l > max:
                 print("\n I thought I told you what the maximum amount was... ? \n")
                 sleep(1)
+                time_sim()
                 continue
             elif l < 1:
                 print(f"\n That is NOT between 1 and {max}. \n")
                 sleep(1)
+                time_sim()
                 continue
             else:
                 return l
@@ -610,31 +741,34 @@ def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
 def ask_finished_to_idle(x_dict, phrase="worker"):
     yesno == "Maybe"
     sleep(1)
+    time_sim()
     while True:
         finished = 0
         j = len(x_dict)
         for i in range(j):
-            if x_dict[phrase + "_" + str(i - 1)]  == 11:
+            if x_dict[phrase + "_" + str(i - 1)]  == 2:
                 finished += 1
         if finished == 1:
-                while yesno != "Y" and yesno != "N":
-                    yesno = input(f"Would you like to make the {phrase} "
-                                "that has finished its task available for more work? (Y/N) \n")
-                    sleep(1)
-                    if get_length(yesno):
-                        if yesno == "Y":
-                            for swap in range(0, len(x_dict), -1):
-                                if x_dict[phrase + "_" + str(swap)] == 0:
-                                    x_dict[phrase + "_" + str(swap)] = 11
-                                    return x_dict, yesno
-                    if yesno == "N":
-                        print("\nStop wasting time then!! \n")
-                        return x_dict, yesno
+            while yesno != "Y" and yesno != "N":
+                yesno = input(f"Would you like to make the {phrase} "
+                            "that has finished its task available for more work? (Y/N) \n")
+                sleep(1)
+                time_sim()
+                if get_length(yesno):
+                    if yesno == "Y":
+                        for swap in range(0, len(x_dict), -1):
+                            if x_dict[phrase + "_" + str(swap)] == 2:
+                                x_dict[phrase + "_" + str(swap)] = 0
+                                return x_dict, yesno
+                if yesno == "N":
+                    print("\nStop wasting time then!! \n")
+                    return x_dict, yesno
         elif finished > 1 :
             while yesno != "Y" and yesno != "N":
                 yesno = input(f"Would you like to make any of the {phrase}s that "
                             "have finished their tasks available for more work? (Y/N)\n")
                 sleep(1)
+                time_sim()
                 if get_length(yesno):
                     if yesno == "Y":
                         # Find out how many robots or humans to transfer
@@ -642,17 +776,18 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
                                    "from FINISHED to IDLE ? \n")
                         x = how_many_labourers(phrase, phrase_2, finished)
                         # Change x number of robots or workers in list from
-                        #  status 0 (IDLE) to status 11 (FINISHED)
+                        #  status 0 (IDLE) to status 2 (FINISHED)
                         while x:
                                 for swap in range(0, x):
-                                    if x_dict[phrase + "_" + str(swap)] == 0:
-                                        x_dict[phrase + "_" + str(swap)] = 11
+                                    if x_dict[phrase + "_" + str(swap)] == 2:
+                                        x_dict[phrase + "_" + str(swap)] = 0
                                         x -= 1
                         return x_dict, yesno
                     elif yesno == "N":
-                        print("\n Selecting this will return you to the main menu. \n")
+                        print("You have elected not to refresh any robots. \n")
                         sleep(2)
-                        pass
+                        time_sim()
+                    return x_dict, yesno
 
 
 # Function to add robot
@@ -663,12 +798,15 @@ def add_robot(x, x_dict, next_x):
     clear_screen()
     print("\n You have selected \"ADD a robot\" \n")
     sleep(1)
+    time_sim()
     print("\n Here are the robots you currently have:-- \n\n")
     dict_printer(x_dict)
     sleep(1)
+    time_sim()
     to_add = how_many_labourers("robots", "do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
                                    100 - x)
     sleep(1)
+    time_sim()
     if to_add == 1:
         x_dict["Robot_" + str(next_x)] = 0
         x += 1
@@ -677,6 +815,7 @@ def add_robot(x, x_dict, next_x):
         print(f"Its name is {x_dict["Robot_" + str(next_x)]} - cute, huh ? \n")
         print(" --Press C to CHANGE their status and get them mechanised ! \n")
         sleep(1)
+        time_sim()
         return x, x_dict, next_x
     elif to_add > 1:
         print(f"\n You have added {to_add} extra 'bots to the crew. \n")
@@ -702,11 +841,13 @@ def remove_robot(x, x_dict, next_x):
     clear_screen()
     print("\n You have selected \"REMOVE a robot\" \n")
     sleep(1)
+    time_sim()
     # Check the factory has enough robots for any to be removed
     if x == 1:
         print(("\n You only have one teeny-weeny robot left - \n\n"
               " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "))
         sleep(0.5)
+        time_sim()
         print("So sorry, no, you can't remove that last poor lonely robot.")
         return x, x_dict
     elif x < 1:
@@ -719,6 +860,7 @@ def remove_robot(x, x_dict, next_x):
                " Here you go : \n\n"
                ))
         sleep(1)
+        time_sim()
         x = 100
         dict_maker(x,"Robot")
         dict_printer(x_dict)
@@ -728,6 +870,7 @@ def remove_robot(x, x_dict, next_x):
                " So I guess you'll want to send some to the trash compacter straight away! \n\n"
                " Let's give it another try then, shall we?\n\n"))
         sleep(1)
+        time_sim()
         remove_robot(x, x_dict, next_x)
         return x, x_dict
     elif n == 2:
@@ -746,10 +889,12 @@ def remove_robot(x, x_dict, next_x):
                "because you need at least 1 droid for your robotic cell to function. \n\n"
                ))
         sleep(1)
+        time_sim()
         while yesno != "Y" and yesno != "N":
             yesno = input("So, press [Y] if you want to drop down to the minimum.\n"
                           "Else, press [N].\n")
             sleep(1)
+            time_sim()
             if get_length(yesno):
                 if yesno == "Y":
                         del x_dict[k]
@@ -777,6 +922,7 @@ def remove_robot(x, x_dict, next_x):
             print("\nYou have 1 IDLE robot to remove.\n\n"
                   "That should send out a signal to the others.")
             sleep(1)
+            time_sim()
             for key, value in reversed(x_dict.items()):
                 if value == 0:
                     k = key
@@ -802,26 +948,32 @@ def remove_robot(x, x_dict, next_x):
                 del x_dict[key]
                 print(f"\n{x_dict[key]} has been deleted.")
                 sleep(1)
+                time_sim()
             return x, x_dict
 
 
 # Function to change status of a robot:
-# Accessed by pressing C within what_next(n, m, n_dict, m_dict, next_n, next_m, task_tuple, scheduler, task_log) function
-# statuses available = idle / working / finished task
-def change_status(x_dict, statuses):
+# Accessed by pressing C within what_next() function
+# statuses available: 0 = idle
+#                     1 = working
+#                     2 = finished task
+def change_status(x_dict):
     clear_screen()
     print("\n You have selected \"CHANGE a robot's status\" \n")
     sleep(1)
+    time_sim()
     print("\n          You will now be shown all the many robots you have to choose from,"
           "           along with their respective statuses: \n\n")
     sleep(1)
-    status_printer(x_dict, statuses)
+    time_sim()
+    status_printer(x_dict)
     request = 0
     while not request:
         request = input("\n  Please select the robot(s) whose status(es) you want to change,\n"
                         " using their serial numbers SEPARATED BY COMMAS.\n\n"
                         "  Alternatively, press X to return to the main menu.")
         sleep(1)
+        t
         if request == "X":
             return x_dict
         # Remove any spaces from the query
@@ -835,226 +987,255 @@ def change_status(x_dict, statuses):
             if desired_list[t].isdigit() == False:
                 print("I think you entered an invalid character.\n")
                 sleep(1)
+                t
                 print(" Let's try that again.\n")
                 sleep(1)
+                t
                 request = 0
             else:
-                try:
-                    # convert the list of split strings into a list of integers
-                    desired_list[t] = int(desired_list[t])
-                    if desired_list[t] > 100 or desired_list[t] < 1:
-                        print("You entered a value out of range")
-                        sleep(1)
-                        print(" Let's try that again.\n")
-                        sleep(1)
-                        request = 0
-                    desired_list[int(t)] = "Robot" + "_" + str(desired_list[t])
-                except ValueError:
-                    print("I think you entered an invalid character.\n")
-                    sleep(1)
-                    print(" Let's try that again.\n")
-                    sleep(1)
-                    request = 0
-            for desired in desired_list:
-                if desired not in x_dict:
-                    print("Your selection doesn't correspond to the robots in your employ. \n"
-                          "Maybe you thought you owned more than you do. \n")
-                    sleep(1)
-                    print(" Let's try that again.\n")
-                    sleep(1)
-                    request = 0
-            # check if all robots to be switched have same status as the first
-            # the status has to be converted from the codes in the task_tuple
-            base_status = x_dict[desired_list[0]]
-            if 0 < base_status < 11:
-                for desired in desired_list:
-                    if not 0 < x_dict[desired] < 11:
-                        print(("\n I don't think all the robots you selected had the same status.\n\n"
-                          " I suggest you try again.\n"))
-            else:
-                for desired in desired_list:
-                    if x_dict[desired] != base_status:
-                        print("\n I don't think all the robots you selected had the same status.\n\n"
-                              " I suggest you try again.\n")
-                        sleep(1)
-                        request = 0
-        while True:
-            # Grammar checking: has only a single robot been selected?
-            if len(desired_list) == 1:
-                print(f"\n This robot is currently ", end="")
-                if 0 < x_dict[desired_list[0]] < 11:
-                    print("WORKING\n")
-                else:
-                    print(statuses[desired_list[0]][0])
-                print("Please enter the status you wish to change it to:\n")
-            elif len(desired_list) > 1:
-                print(f"\n These robots are currently {statuses[x_dict[desired]][1]}.\n")
-                print("Please enter the status you wish to change them to:\n")
-            print("     0 = IDLE      1 = WORKING     2 = FINISHED       \n")
-            print("Or press X to return to the main menu.\n")
-            desired_status = input()
+                continue
+        try:
+            # convert the list of split strings into a list of integers
+            for t in range(len(desired_list)):
+                desired_list[t] = int(desired_list[t])
+                # convert to text keys to match against dictionary
+                #  .zfill(3) formats them as three digits,
+                # adding leading zeroes, as in dictionary
+                desired_list[int(t)] = "Robot" + "_" + str(desired_list[t.zfill(3)])
+        except ValueError:
+            print("I think you entered an invalid character.\n")
             sleep(1)
-            if get_length(desired_status, 1):
-                if desired_status == "X":
-                    print(" Action aborted. Returning to the main menu.\n")
-                    sleep(2)
-                    return x_dict
-                else:
-                    try:
-                        desired_status = int(desired_status)
-                        if desired_status < 0 or desired_status > 2:
-                            print(" That number isn't going to get any work done.\n"
-                                  " Please try again or press X to return to the main menu.")
-                            break
-                        elif 0 <= desired_status <= 11:
-                           pass
-                    except ValueError:
-                        print(" Your input was invalid.\n")
-                        print(" Go back to the main menu and do better.")
-                        sleep(1)
-                        return x_dict
+            time_sim()
+            print(" Let's try that again.\n")
+            sleep(1)
+            time_sim()
+            request = 0
+        for desired in desired_list:
+            if desired not in x_dict:
+                print("Your selection doesn't correspond to the robots in your employ. \n"
+                      "Maybe you thought you owned more than you do. \n")
+                sleep(1)
+                time_sim()
+                print(" Let's try that again.\n")
+                sleep(1)
+                time_sim()
+                request = 0
+            else:
+                continue
+        # check if all robots to be switched have same status as the first
+        base_status = x_dict[desired_list[0]]
+        for desired in desired_list:
+            try:
+                if x_dict[desired] != base_status:
+                    print("\n I don't think all the robots you selected had the same status.\n\n")
+                    print("I suggest you try again.\n")
+                    request = 0
+            except KeyError:
+                print("Error: one of those numbers smelled a a bit off.\n")
+                print("Please try again. Or don't. Either way.\n")
+                request = 0
+    # Grammar checking: has only a single robot been selected?
+    if len(desired_list) == 1:
+        print(f" This robot is currently {return_status(x_dict[desired_list[0]])}", end="")
+        print("Please enter the status you wish to change it to:\n")
+    elif len(desired_list) > 1:
+        print(f"\n These robots are currently {return_status(x_dict[desired_list[0]])}.\n")
+        print("Please enter the status you wish to change them to:\n")
+    print("     0 = IDLE      1 = WORKING     2 = FINISHED       \n")
+    print("Or press X to return to the main menu.\n")
+    desired_status = 0
+    while not desired_status:
+        desired_status = input()
+        sleep(1)
+        time_sim()
+        if desired_status == "X":
+            print(" Action aborted. Returning to the main menu.\n")
+            sleep(2)
+            time_sim()
+            return x_dict
+        if get_length(desired_status, 1):
+            try:
+                desired_status = int(desired_status)
+                if desired_status < 0 or desired_status > 2:
+                    print(" That number isn't going to work.\n"
+                          " Please try again or press X to return to the main menu.")
+                    desired_status = 0
+                elif 0 <= desired_status <= 1:
+                    print(f" You have opted to switch them from {return_status(desired_status)}"
+                          f" to {return_status(base_status)}.\n")
+                    if desired_status == base_status:
+                        print("That doesn't make sense, even to me.\n")
+                        print("Please try again.")
+                        desired_status = 0
+                    else:
+                        for desired in desired_list:
+                            x_dict[desired] = desired_status
+                            print(f"{desired} has been switched to {return_status(desired_status)}.\n")
+            except ValueError:
+                print(" Your input was invalid.\n")
+                print(" Go back to the main menu and do better.")
+                sleep(1)
+                time_sim()
+                return x_dict
 
 # Function to assign task to [PROGRAM] robot
 # Accessed by pressing P within what_next(n, m, n_dict, m_dict, next_n, next_m, task_tuple, scheduler, task_log) function
-def program_robot(x_dict, schedule, statuses):
-    clear_screen()
-    print("\n You have selected \"PROGRAM a robot to execute a task\" \n")
-    sleep(2)
-    # Check if any robots are IDLE
-    idle = 0
-    finished = 0
-    for value in x_dict.values():
-        if value == 0:
-            idle += 1
-        if value == 11:
-            finished += 1
-    if not idle and finished:
-        print(" but you have no IDLE robots to execute your programs.\n")
-        # Suggest user switches some statuses from FINISHED to IDLE
-        ask_finished_to_idle(n_dict, "Robot")
-    elif not idle and not finished:
-        print(" but you have no IDLE robots to execute further programs.\n")
-        print("\n You will have to switch some from the tasks they're WORKING on \n"
-              "or wait til they're FINISHED. \n")
-        sleep(3)
-        what_next(n, m, n_dict, m_dict, next_n, next_m, task_tuple, scheduler, task_log)
-    else:
-        if idle == 1:
-            print("\n You have 1 robot IDLE. \n")
-            sleep(0.5)
-            # Identify IDLE robot
-            for key, value in x_dict.items():
-                if value == 0:
-                    x_dict[key] = what_task("Robot", x_dict, scheduler)
-                    break
-            return x_dict
-        elif idle > 1:
-            print(f" You currently have {idle} IDLE robots to assign tasks to.\n")
-            y = how_many_labourers("robots")
-            next_task = what_task("robot", scheduler)
-            pass
-
-
-############## below is code frangment to be adapted from Change Status function
-        sleep(1)
-        print("\n          You will now be shown all the many robots you have to choose from,"
-              "           along with their respective statuses: \n\n")
-        sleep(1)
-        task_printer(x_dict, statuses, 0)
-        request = 0
-        while not request:
-            request = input("\n  Please select the robot(s) whose status you want to change,\n"
-                            " using their serial numbers SEPARATED BY COMMAS.\n\n"
-                            "  Alternatively, press X to return to the main menu.")
-            sleep(1)
-            if request == "X":
-                return x_dict
-            # Remove any spaces from the query
-            request = request.replace(" ", "")
-            desired_list = request.split(",")  # Removes any commas and separates the query there
-            # If they requested more items than there are robots, trim it right down
-            if len(desired_list) > len(x_dict):
-                del desired_list[len(x_dict):]
-            # Check all the characters of the string are numbers now
-            for t in range(len(desired_list)):
-                if desired_list[t].isdigit() == False:
-                    print("I think you entered an invalid character.\n")
-                    sleep(1)
-                    print(" Let's try that again.\n")
-                    sleep(1)
-                    request = 0
-                else:
-                    try:
-                        # convert the list of split strings into a list of integers
-                        desired_list[t] = int(desired_list[t])
-                        if desired_list[t] > 100 or desired_list[t] < 1:
-                            print("You entered a value out of range")
-                            sleep(1)
-                            print(" Let's try that again.\n")
-                            sleep(1)
-                            request = 0
-                        desired_list[int(t)] = "Robot" + "_" + str(desired_list[t])
-                    except ValueError:
-                        print("I think you entered an invalid character.\n")
-                        sleep(1)
-                        print(" Let's try that again.\n")
-                        sleep(1)
-                        request = 0
-                for desired in desired_list:
-                    if desired not in x_dict:
-                        print("Your selection doesn't correspond to the robots in your employ. \n"
-                              "Maybe you thought you owned more than you do. \n")
-                        sleep(1)
-                        print(" Let's try that again.\n")
-                        sleep(1)
-                        request = 0
-                # check if all robots to be switched have same status as the first
-                base_status = x_dict[desired_list[0]]
-                for desired in desired_list:
-                    if x_dict[desired] != base_status:
-                        print("\n I don't think all the robots you selected had the same status.\n\n"
-                              " I suggest you try again.\n")
-                        sleep(1)
-                        request = 0
-            while True:
-                # Grammar checking: has only a single robot been selected?
-                if len(desired_list) == 1:
-                    print(f"\n This robot is currently {statuses[x_dict[desired]][1]}.\n")
-                    print(""" Please enter the status you wish to change it to,
-                                     from the following list:\n""")
-                    status_list(statuses, 1)
-                elif len(desired_list) > 1:
-                    print(f"\n These robots are currently {statuses[x_dict[desired]][1]}.\n")
-                    print(""" Please enter the status you wish to change them to,
-                                     from the following list:\n""")
-                    status_list(statuses, 1)
-                print("Or press X to return to the main menu.\n")
-                desired_status = input()
-                sleep(1)
-                if get_length(desired_status, 2):
-                    if desired_status == "X":
-                        print(" Action aborted. Returning to the main menu.\n")
-                        sleep(2)
-                        return x_dict
-                    else:
-                        try:
-                            desired_status = int(desired_status)
-                            if desired_status < 0 or desired_status > 11:
-                                print(" That number isn't going to get any work done.\n"
-                                      " Please try again or press X to return to the main menu.")
-                                break
-                            elif 0 <= desired_status <= 11:
-                                for desired in desired_list:
-                                    x_dict[desired] = desired_status
-                                    print(f"{desired} is now {statuses[x_dict[desired]][1]}\n")
-                                    sleep(1)
-                                    return x_dict
-                        except ValueError:
-                            print(" Your input was invalid.\n")
-                            print(" Go back to the main menu and do better.")
-                            sleep(1)
-                            return x_dict
-    task_printer(x_dict, statuses, 0)
+##def program_robot(x_dict, schedule, statuses):
+##    clear_screen()
+##    print("\n You have selected \"PROGRAM a robot to execute a task\" \n")
+##    sleep
+##    time_sim()
+##    # Check if any robots are IDLE
+##    idle = 0
+##    finished = 0
+##    for value in x_dict.values():
+##        if value == 0:
+##            idle += 1
+##        if value == 11:
+##            finished += 1
+##    if not idle and finished:
+##        print(" but you have no IDLE robots to execute your programs.\n")
+##        # Suggest user switches some statuses from FINISHED to IDLE
+##        ask_finished_to_idle(n_dict, "Robot")
+##    elif not idle and not finished:
+##        print(" but you have no IDLE robots to execute further programs.\n")
+##        print("\n You will have to switch some from the tasks they're WORKING on \n"
+##              "or wait til they're FINISHED. \n")
+##        sleep(3)
+##        time_sim()
+##        what_next(n, m, n_dict, m_dict, next_n, next_m, task_tuple, scheduler, task_log)
+##    else:
+##        if idle == 1:
+##            print("\n You have 1 robot IDLE. \n")
+##            sleep(0.5)
+##            time_sim()
+##            # Identify IDLE robot
+##            for key, value in x_dict.items():
+##                if value == 0:
+##                    x_dict[key] = what_task("Robot", x_dict, scheduler)
+##                    break
+##            return x_dict
+##        elif idle > 1:
+##            print(f" You currently have {idle} IDLE robots to assign tasks to.\n")
+##            y = how_many_labourers("robots")
+##            next_task = what_task("robot", scheduler)
+##            pass
+##
+##
+################ below is code fragment to be adapted from Change Status function
+##        sleep(1)
+##        time_sim()
+##        print("\n          You will now be shown all the many robots you have to choose from,"
+##              "           along with their respective statuses: \n\n")
+##        time_sim()
+##        task_printer(x_dict, statuses, 0)
+##        request = 0
+##        while not request:
+##            request = input("\n  Please select the robot(s) whose status you want to change,\n"
+##                            " using their serial numbers SEPARATED BY COMMAS.\n\n"
+##                            "  Alternatively, press X to return to the main menu.")
+##            sleep(1)
+##            time_sim()
+##            if request == "X":
+##                return x_dict
+##            # Remove any spaces from the query
+##            request = request.replace(" ", "")
+##            desired_list = request.split(",")  # Removes any commas and separates the query there
+##            # If they requested more items than there are robots, trim it right down
+##            if len(desired_list) > len(x_dict):
+##                del desired_list[len(x_dict):]
+##            # Check all the characters of the string are numbers now
+##            for t in range(len(desired_list)):
+##                if desired_list[t].isdigit() == False:
+##                    print("I think you entered an invalid character.\n")
+##                    sleep(1)
+##                    time_sim()
+##                    print(" Let's try that again.\n")
+##                    sleep(1)
+##                    time_sim()
+##                    request = 0
+##                else:
+##                    try:
+##                        # convert the list of split strings into a list of integers
+##                        desired_list[t] = int(desired_list[t])
+##                        if desired_list[t] > 100 or desired_list[t] < 1:
+##                            print("You entered a value out of range")
+##                            sleep(1)
+##                            time_sim()
+##                            print(" Let's try that again.\n")
+##                            sleep(1)
+##                            time_sim()
+##                            request = 0
+##                        desired_list[int(t)] = "Robot" + "_" + str(desired_list[t])
+##                    except ValueError:
+##                        print("I think you entered an invalid character.\n")
+##                        sleep(1)
+##                        time_sim()
+##                        print(" Let's try that again.\n")
+##                        sleep(1)
+##                        time_sim()
+##                        request = 0
+##                for desired in desired_list:
+##                    if desired not in x_dict:
+##                        print("Your selection doesn't correspond to the robots in your employ. \n"
+##                              "Maybe you thought you owned more than you do. \n")
+##                        sleep(1)
+##                        time_sim()
+##                        print(" Let's try that again.\n")
+##                        sleep(1)
+##                        time_sim()
+##                        request = 0
+##                # check if all robots to be switched have same status as the first
+##                base_status = x_dict[desired_list[0]]
+##                for desired in desired_list:
+##                    if x_dict[desired] != base_status:
+##                        print("\n I don't think all the robots you selected had the same status.\n\n"
+##                              " I suggest you try again.\n")
+##                        sleep(1)
+##                        time_sim())
+##                        request = 0
+##            while True:
+##                # Grammar checking: has only a single robot been selected?
+##                if len(desired_list) == 1:
+##                    print(f"\n This robot is currently {statuses[x_dict[desired]][1]}.\n")
+##                    print(""" Please enter the status you wish to change it to,
+##                                     from the following list:\n""")
+##                    status_list(statuses, 1)
+##                elif len(desired_list) > 1:
+##                    print(f"\n These robots are currently {statuses[x_dict[desired]][1]}.\n")
+##                    print(""" Please enter the status you wish to change them to,
+##                                     from the following list:\n""")
+##                    status_list(statuses, 1)
+##                print("Or press X to return to the main menu.\n")
+##                desired_status = input()
+##                sleep(1)
+##                time_sim()
+##                if get_length(desired_status, 2):
+##                    if desired_status == "X":
+##                        print(" Action aborted. Returning to the main menu.\n")
+##                        sleep(2)
+##                        return x_dict
+##                    else:
+##                        try:
+##                            desired_status = int(desired_status)
+##                            if desired_status < 0 or desired_status > 11:
+##                                print(" That number isn't going to get any work done.\n"
+##                                      " Please try again or press X to return to the main menu.")
+##                                break
+##                            elif 0 <= desired_status <= 11:
+##                                for desired in desired_list:
+##                                    x_dict[desired] = desired_status
+##                                    print(f"{desired} is now {statuses[x_dict[desired]][1]}\n")
+##                                    sleep(1)
+##                                    time_sim()
+##                                    return x_dict
+##                        except ValueError:
+##                            print(" Your input was invalid.\n")
+##                            print(" Go back to the main menu and do better.")
+##                            sleep(1)
+##                            time_sim()
+##                            return x_dict
+##    task_printer(x_dict, statuses, 0)
 
 
 # Function to employ new worker.
@@ -1066,12 +1247,15 @@ def employ_worker(x, x_dict, next_x):
     clear_screen()
     print("\n You have selected \"EMPLOY a new worker\" \n")
     sleep(1)
+    time_sim()
     print("\n Here are the humans you currently have:-- \n\n")
     dict_printer(x_dict)
     sleep(1)
+    time_sim()
     to_add = how_many_labourers("humans", "do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
                                 100 - x)
     sleep(1)
+    time_sim()
     if to_add == 1:
         x_dict["Human_" + str(next_x)] = 0
         x += 1
@@ -1081,6 +1265,7 @@ def employ_worker(x, x_dict, next_x):
         print(" Bet you've forgotten it already!\n")
         print(" --Press M to MANAGE their status and get them toiling ! \n")
         sleep(1)
+        time_sim()
         return x, x_dict, next_x
     elif to_add > 1:
         print(f"\n You have added {to_add} extra bodies to the workforce. \n")
@@ -1093,6 +1278,7 @@ def employ_worker(x, x_dict, next_x):
                 print(["Human_" + str(next_x + i)], end="  ")
             else:
                 print(["Human_" + str(next_x + i)], end=" ")
+            print("\n")
         print(" --Press M to MANAGE their statuses and get them toiling ! \n")
         x += to_add
         next_x += to_add
@@ -1107,22 +1293,26 @@ def fire_human(x, x_dict, next_x):
     clear_screen()
     print("\n You have selected \"FIRE a human\" \n")
     sleep(1)
+    time_sim()
     # Check the factory has enough human life for any to be removed
     if x == 1:
         print(("\n You only have one other human left apart from you- \n\n"
               " If you even count, that is.\n\n "))
         sleep(0.5)
+        time_sim()
         print("So sorry, no, you can't remove any more humanity from this plant.")
         return x, x_dict, next_x
     elif x < 1:
         print("\n The humanity counter is too low.")
         sleep(4)
+        time_sim()
         print((" It seems you have no humans to remove.\n\n"
                " You need at least 1 human around, for insurance purposes if nothing else. \n\n "
                " Oh, how fortunate - I see at yon factory gates \n"
                " a wandering journeyman seeking to ply his trade... \n\n"
                ))
         sleep(1)
+        time_sim()
         x = 1
         x_dict[next_x] = 0
         next_x += 1
@@ -1145,10 +1335,12 @@ def fire_human(x, x_dict, next_x):
                    "because you need at least 1 other human to reduce the risk of you getting cabin fever. \n\n"
                   ))
         sleep(1)
+        time_sim()
         while yesno != "Y" and yesno != "N":
             yesno = input("So, press [Y] if you want to cut staffing to the minimum.\n"
                           "Otherwise, press [N].\n")
             sleep(1)
+            time_sim()
             if get_length(yesno):
                 if yesno == "Y":
                         del x_dict[k]
@@ -1177,6 +1369,7 @@ def fire_human(x, x_dict, next_x):
             print("\nYou have 1 IDLE human you can sack.\n\n"
                   "Do it now, before you grow a heart.")
             sleep(1)
+            time_sim()
             for key, value in reversed(x_dict.items()):
                 if value == 0:
                     k = key
@@ -1204,6 +1397,7 @@ def fire_human(x, x_dict, next_x):
                 del x_dict[key]
                 print(f"\n{x_dict[key]} has been fired.")
                 sleep(1)
+                time_sim()
             return x, x_dict, next_x
 
 
@@ -1213,13 +1407,120 @@ def fire_human(x, x_dict, next_x):
 def manage_worker(x_dict, statuses):
     clear_screen()
     print("\n You have selected \"MANAGE a worker\" \n")
-    sleep(2)
-    print("\n          You will now be shown the wide range of skivvies you have to choose from: \n\n")
-    sleep(2)
-    dict_printer(x_dict)
     sleep(1)
-    pass
-    return x_dict
+    time_sim()
+    print("\n          You will now be shown all the many skivvies you have to choose from,"
+          "           along with their respective statuses: \n\n")
+    sleep(1)
+    time_sim()
+    status_printer(x_dict)
+    request = 0
+    while not request:
+        request = input("\n  Please select the human(s) whose status(es) you want to change,\n"
+                        " using their employee numbers SEPARATED BY COMMAS.\n\n"
+                        "  Alternatively, press X to return to the main menu.")
+        sleep(1)
+        time_sim()
+        if request == "X":
+            return x_dict
+        # Remove any spaces from the query
+        request = request.replace(" ", "")
+        desired_list = request.split(",") # Removes any commas and separates the query there
+        # If they requested more items than there are humans, trim it right down
+        if len(desired_list) > len(x_dict):
+            del desired_list[len(x_dict):]
+        # Check all the characters of the string are numbers now
+        for t in range(len(desired_list)):
+            if desired_list[t].isdigit() == False:
+                print("I think you entered an invalid character.\n")
+                sleep(1)
+                time_sim()
+                print(" Let's try that again.\n")
+                sleep(1)
+                time_sim()
+                request = 0
+            else:
+                continue
+        try:
+            # convert the list of split strings into a list of integers
+            for t in range(len(desired_list)):
+                desired_list[t] = int(desired_list[t])
+                # convert to text keys to match against dictionary
+                desired_list[int(t)] = "Human" + "_" + str(desired_list[t])
+        except ValueError:
+            print("I think you entered an invalid character.\n")
+            sleep(1)
+            time_sim()
+            print(" Let's try that again.\n")
+            sleep(1)
+            time_sim()
+            request = 0
+        for desired in desired_list:
+            if desired not in x_dict:
+                print("Your selection doesn't correspond to the humans in your employ. \n"
+                      "Maybe you thought you owned more than you do. \n")
+                sleep(1)
+                time_sim()
+                print(" Let's try that again.\n")
+                sleep(1)
+                time_sim()
+                request = 0
+            else:
+                continue
+        # check if all humans to be switched have same status as the first
+        base_status = x_dict[desired_list[0]]
+        for desired in desired_list:
+            try:
+                if x_dict[desired] != base_status:
+                    print("\n I don't think all the humans you selected had the same status.\n\n")
+                    print("I suggest you try again.\n")
+                    request = 0
+            except KeyError:
+                print(" Something isn't working out somewhere.\n")
+                print(" Please give it another try.\n")
+                request = 0
+    # Grammar checking: has only a single human been selected?
+    if len(desired_list) == 1:
+        print(f" This human is currently {return_status(x_dict[desired_list[0]])}", end="")
+        print("Please enter the status you wish to change it to:\n")
+    elif len(desired_list) > 1:
+        print(f"\n These humans are currently {return_status(x_dict[desired_list[0]])}.\n")
+        print("Please enter the status you wish to change them to:\n")
+    print("     0 = IDLE      1 = WORKING     2 = FINISHED       \n")
+    print("Or press X to return to the main menu.\n")
+    desired_status = 0
+    while not desired_status:
+        desired_status = input()
+        sleep(1)
+        time_sim()
+        if desired_status == "X":
+            print(" Action aborted. Returning to the main menu.\n")
+            sleep(2)
+            return x_dict
+        if get_length(desired_status, 1):
+            try:
+                desired_status = int(desired_status)
+                if desired_status < 0 or desired_status > 2:
+                    print(" That number isn't going to work.\n"
+                          " Please try again or press X to return to the main menu.")
+                    desired_status = 0
+                elif 0 <= desired_status <= 1:
+                    print(f" You have opted to switch them from {return_status(desired_status)}"
+                          f" to {return_status(base_status)}.\n")
+                    if desired_status == base_status:
+                        print("That doesn't make sense, even to me.\n")
+                        print("Please try again.")
+                        desired_status = 0
+                    else:
+                        for desired in desired_list:
+                            x_dict[desired] = desired_status
+                            print(f"{desired} has been switched to {return_status(desired_status)}.\n")
+            except ValueError:
+                print(" Your input was invalid.\n")
+                print(" Go back to the main menu and do better.")
+                sleep(1)
+                time_sim()
+                return x_dict
 
 
 # Function to order available workers to carry out tasks.
@@ -1228,6 +1529,7 @@ def order_worker(x_dict, statuses):
     clear_screen()
     print("\n You have selected \"ORDER worker to task\" \n")
     sleep(1.5)
+    time_sim()
     if not x_dict.count(0) and x_dict.count(11):
         print(" but you have no IDLE lackeys to boss around.\n")
         ask_finished_to_idle("human", m_dict)
@@ -1257,37 +1559,10 @@ def log_tasks():
     clear_screen()
     print("\n You have selected \"LOG tasks\" ", end="")
     sleep(3)
-
-    # Task log screen display
-
-    print('\r                      ------------                          ')
-    print((f'======================| TASK LOG |===========================\n'
-           '|                   ------------                          |\n'
-           '|                                                         |\n'
-           '|               -- FINISHED tasks --                      |\n'
-           '|                                                         |\n'
-           '|   # of arms SCREWED on (pairs)  --> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of legs WELDED on  (pairs)  --> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of heads HAMMERed on --> -> --> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of (pairs of) eyes POLISHed --> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of (pairs of) ears DRILLed --> -> --->              |\n'
-           '|                                                         |\n'
-           '|   # of waste hoses ATTACHed --> --> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of quality control TESTs completed -->              |\n'
-           '|                                                         |\n'
-           '|   # of trucks UNLOADed --> -> -> -> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of BOXes shipped   --> -> -> -> -> -->              |\n'
-           '|                                                         |\n'
-           '|   # of cups of tea FETCHed (100\'s) -> -->               |\n'
-           '|                                                         |\n'
-           '===========================================================\n'
-           ))
+    print("You will now be shown the progress log...")
+    sleep(1)
+    time_sim()
+    show_log()
     pass
 
 
@@ -1296,11 +1571,16 @@ def log_tasks():
 # Accessed by pressing T within what_next() function
 # Should regularly update status and identify problems
 # eg. Idle robots, idle workers, incomplete tasks.
-def track_progress():
+def track_progress(x_dict, y_dict, tasks):
     clear_screen()
     print("\n You have selected \"TRACK progress\" \n")
     sleep(1)
-    pass
+    time_sim()
+    print("You will now be shown the progress log...")
+    sleep(1)
+    show_log()
+
+
 
 # Function to get help
 # Accessed by pressing H within what_next() function
@@ -1356,6 +1636,7 @@ def get_help():
            '          change their status first.                         \n'
            ))
     sleep(1)
+    time_sim()
     input("\n Press Enter to continue... \n")
     clear_screen()
     print(('\n\n Press [C] to change the status of a robot.              \n'
@@ -1380,6 +1661,7 @@ def get_help():
            '           To do so, enter the numbers separated by commas.  \n'
            ))
     sleep(3)
+    time_sim()
     print(('\n\n Press [P] to program a robot: \n'
            '\n            - that translates to giving it a task to do.   \n'
            '\n            - You choose from the varied tasks carried out \n'
@@ -1387,6 +1669,7 @@ def get_help():
            '\n                           Ro-Ro-Ro-Your-Bots\u00AE        \n'
          ))
     sleep(3)
+    time_sim()
     print(('\n\n Press [E] to employ (human) workers:                    \n'
            '\n            - This allows you to grow your workforce.      \n'
            '\n            - Humans work out more costly than robots,     \n'
