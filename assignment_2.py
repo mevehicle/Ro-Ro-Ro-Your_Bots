@@ -262,8 +262,8 @@ def intro_function():
 
     # Task log also contains:
     #  - - - - - [3] = a dictionary of 12 lists,
-    #  - - - - - - - -  each list holding the IDs of the
-    #  - - - - - - -  individual robots engaged in each task
+    #  - - - - - - - -  each list holding the IDs of the robots
+    #  - - - - - - - -  engaged in that task, eg. Robot_088
     #  - - - - - [4] = another dictionary of 12 lists, each holding
     #  - - - - - - -  **SURPRISE**: the IDs of the humans
     #  - - - - - - - - - - - - - - - engaged in that task
@@ -363,7 +363,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks, log):
                     break
              # PROGRAM
                 case "P":
-                    a_dict, tasks, log = program_robot(a_dict, tasks, log)
+                    a_dict, tasks, log = program_robot(a_dict, tasks)
                     break
              # EMPLOY
                 case "E":
@@ -379,7 +379,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks, log):
                     break
              # ORDER
                 case "O":
-                    b_dict, tasks = order_worker(b_dict, tasks, log)
+                    b_dict, tasks = order_worker(b_dict, tasks)
                     break
              # LOG
                 case "L":
@@ -664,7 +664,7 @@ def show_log():
            '| BOXes shipped                |               |               |               ||           ||          |\n'
            '|------------------------------|---------------|---------------|---------------||-----------||----------|\n'
            '| FETCHed cups of tea (100s)   |               |               |               ||           ||          |\n'
-           '========================================================================================================|\n'
+           '=========================================================================================================\n'
            ))
     # Use escape codes to send cursor to different screen positions
     #       \u001b[{line};{column}H
@@ -1069,73 +1069,70 @@ def change_status(x_dict):
 
 # Function to assign task to [PROGRAM] robot
 # Accessed by pressing P within what_next() function
-def program_robot(a_dict, tasks, log):
+def program_robot(a_dict, tasks):
     clear_screen()
     print("\n You have selected \"PROGRAM a robot to execute a task\" \n")
     time_sim(secs=1)
+
     # Check if any robots are IDLE
     # IDLE robots are numbered at task_log[1][0]
-    idle = sum(1 for value in a_dict.values() if value == 0)
-    finished = sum(1 for value in a_dict.values() if value == 2)
-    if not idle and finished:
+    idle = tasks[1][0]
+    while not idle:
         print(" but you have no IDLE robots to execute your programs.\n")
+        #  Check if any robots have FINISHED their tasks
+        # and could be re-labelled as IDLE
+        # FINISHED robots are numbered at tasks[1][11]
+        finished = tasks[1][11]
+        if not finished:
+            print("\n You will have to switch some from the tasks they're WORKING on \n"
+                  "or wait til they're FINISHED. \n")
+            time_sim(secs=3)
+            return a_dict, tasks
         # Suggest user switches some statuses from FINISHED to IDLE
         ask_finished_to_idle(a_dict, "Robot")
-    elif not idle and not finished:
-        print(" but you have no IDLE robots to execute further programs.\n")
-        print("\n You will have to switch some from the tasks they're WORKING on \n"
-              "or wait til they're FINISHED. \n")
-        time_sim(secs=3)
-        return a_dict, tasks, log
-    else:
-        if idle == 1:
-            print("\n You have 1 robot IDLE. \n")
-            idle_list = []
-            time_sim(secs=1)
-            # Identify IDLE robot
-            print("Here's the IDLE robot -->", end="")
-            for key, value in a_dict.items():
+
+    if idle == 1:
+        print("\n You have 1 robot IDLE. \n")
+        idle_list = []
+        time_sim(secs=1)
+        # Identify IDLE robot
+        print("Here's the IDLE robot -->", end="")
+        for key, value in a_dict.items():
+            if value == 0:
                 if value == 0:
-                    robot_name = key.split("_", 2)
-                    robot_ID = key[1]
-                    idle_list.append(robot_ID)
-                    print("\r", robot_name, "\n")
+                    print("\r", key, "\n")
                     print(" Shame on it !! \n")
-        elif idle > 1:
-            print(f" You currently have {idle} IDLE robots to assign tasks to.\n")
-            idle_list = []
-            time_sim(secs=1)
-            # Identify IDLE robots
-            print(f" These are the {idle} IDLE robots :\n")
-            a = 1  # Create a counter to print the robots' names
-                   # in lines of 5
-            for key, value in a_dict.items():
-                while a <= 5:
-                    if value == 0:
-                        robot_name = key.split("_", 2)
-                        robot_ID = key[1]
-                        idle_list.append(robot_ID)
-                        print(f" {robot_name}  ", end="")
-                a = 1
-                print("\n")
-            print("  If you ask me, they should be lined up against the wall"
-                  " and shut down.")
+    elif idle > 1:
+        print(f" You currently have {idle} IDLE robots to assign tasks to.\n")
+        time_sim(secs=1)
+        # Identify IDLE robots
+        print(f" These are the {idle} IDLE robots :\n")
+        a = 1  # Create a counter to print the robots' names
+               # in lines of 5
+        for key, value in a_dict.items():
+            while a <= 5:
+                if value == 0:
+                    print(f" {key}  ", end="")
+            a = 1
+            print("\n")
+        print("  If you ask me, they should be lined up against the wall"
+              " and shut down.")
         time_sim(secs=1)
         request = 0
         while not request:
-            request = input("\n  Please select the robot(s) whose status you want to change,\n"
+            request = input("\n  Please select the robot(s) who you wish to re-program,\n"
                             " using their serial numbers SEPARATED BY COMMAS.\n\n"
                             "  Alternatively, press X to return to the main menu.")
 
             time_sim(secs=1)
             if request == "X":
-                return x_dict
+                return a_dict, tasks
             # Remove any spaces from the query
             request = request.replace(" ", "")
             chosen_list = request.split(",")  # Removes any commas and separates the query there
             # If they requested more items than there are robots, trim it right down
-            if len(chosen_list) > len(x_dict):
-                del chosen_list[len(x_dict):]
+            if len(chosen_list) > len(a_dict):
+                del chosen_list[len(a_dict):]
             # Check all the characters of the string are numbers now
             for t in range(len(chosen_list)):
                 if chosen_list[t].isdigit() == False:
@@ -1158,89 +1155,109 @@ def program_robot(a_dict, tasks, log):
 
                             time_sim(secs=1)
                             request = 0
+                        # Build the robot's ID
                         chosen_list[int(t)] = "Robot" + "_" + str(chosen_list[t])
                     except ValueError:
                         print("I think you entered an invalid character.\n")
-
                         time_sim(secs=1)
                         print(" Let's try that again.\n")
-
                         time_sim(secs=1)
                         request = 0
-                for chosen in chosen_list:
-                    if chosen not in x_dict:
-                        print("Your selection doesn't correspond to the robots in your employ. \n"
-                              "Maybe you thought you owned more than you do. \n")
 
-                        time_sim(secs=1)
-                        print(" Let's try that again.\n")
+            # Check that each robot selected is actually working in the robotic cell
+            for chosen in chosen_list:
+                if chosen not in a_dict:
+                    print("Your selection doesn't correspond to the robots in your employ. \n"
+                          "Maybe you thought you owned more than you do. \n")
 
-                        time_sim(secs=1)
-                        request = 0
-                # check if all robots to be switched have same status as the first
-                base_status = x_dict[chosen_list[0]]
-                for chosen in chosen_list:
-                    if x_dict[chosen] != base_status:
-                        print("\n I don't think all the robots you selected had the same status.\n\n"
-                              " I suggest you try again.\n")
+                    time_sim(secs=1)
+                    print(" Let's try that again.\n")
 
-                        time_sim(secs=1)
-                        request = 0
-            while True:
-                # Grammar checking: has only a single robot been selected?
-                if len(chosen_list) == 1:
-                    print(""" Please enter the task you wish to condemn it to,
-                                     from the following list:\n""")
-                    print(f"          {tasks.index(task):task in tasks if task != 0 and task != 11}", end="")
-                    print(f" -- --> {task:task in tasks if task != 0 and task != 11} \n")
-                elif len(chosen_list) > 1:
-                    print(""" Please enter the task you wish to consign them to,
-                                                         from the following list:\n""")
-                print(f"          {tasks.index(task):task in tasks if task != 0 and task != 11}", end="")
+                    time_sim(secs=1)
+                    request = 0
+            # check if all robots to be switched have same status as the first
+            base_status = a_dict[chosen_list[0]]
+            for chosen in chosen_list:
+                if a_dict[chosen] != base_status:
+                    print("\n I don't think all the robots you selected had the same status.\n\n"
+                          " I suggest you try again.\n")
+                    time_sim(secs=1)
+                    request = 0
+            # Grammar checking: has only a single robot been selected?
+            if len(chosen_list) == 1:
+                print(""" Please enter the task you wish to condemn it to,
+                                 from the following list:\n""")
+                print(f"    {tasks[0][task][1]:task in tasks if task != 0 and task != 11}", end="")
                 print(f" -- --> {task:task in tasks if task != 0 and task != 11} \n")
-                print("Or press X to return to the main menu.\n")
-                chosen_task = 0
-                while not chosen_task:
-                    chosen_task = input()
-                time_sim(secs=1)
-                if chosen_task == "X":
-                    print(" Action aborted. Returning to the main menu.\n")
-                    time_sim(secs=2)
-                    return x_dict
-                if get_length(chosen_task, 1):
-                    try:
-                        chosen_task = int(chosen_task)
-                        if chosen_task < 0 or chosen_task > 2:
-                            print(" That number isn't going to work.\n"
-                                  " Please try again or press X to return to the main menu.")
-                            chosen_task = 0
-                        elif 0 <= chosen_task <= 1:
-                            print(f" You have opted to switch them from {return_task(chosen_task)}"
-                                  f" to {return_task(base_task)}.\n")
-                            if chosen_task == base_task:
-                                print("That doesn't make sense, even to me.\n")
-                                print("Please try again.")
-                                chosen_task = 0
-                            else:
-                                for chosen in chosen_list:
-                                    x_dict[chosen] = chosen_task
-                                    print(f"{chosen} has been switched to {return_task(chosen_task)}.\n")
-                    except ValueError:
-                        print(" Your input was invalid.\n")
-                        print(" Go back to the main menu and do better.")
+            elif len(chosen_list) > 1:
+                print(""" Please enter the task you wish to consign them to,
+                                                     from the following list:\n""")
+            print(f"          {tasks[0][task][1]:task in tasks if task != 0 and task != 11}", end="")
+            print(f" -- --> {task:task in tasks if task != 0 and task != 11} \n")
+            print("Or press X to return to the main menu.\n")
+            chosen_task = 0
+            while not chosen_task:
+                chosen_task = input()
+            time_sim(secs=1)
+            if chosen_task == "X":
+                print(" Action aborted. Returning to the main menu.\n")
+                time_sim(secs=2)
+                return a_dict, tasks
+
+            # Check whether input was one character long
+            if get_length(chosen_task, 1):
+                try:
+                    # Check whether input was an integer
+                    chosen_task = int(chosen_task)
+                    if chosen_task < 1 or chosen_task > 10:
+                        print(" That number isn't going to work.\n"
+                              " Please try again or press X to return to the main menu.")
                         time_sim(secs=2)
-                        return a_dict, tasks, log
-                #######################################################
-                #  Need to remove {robot_ID} from list at task_log[3] #
-                # and also to decrement task_log[1][0], the list
-                # of IDLE robots #
-                # while incrementing task_log[1][next_task]
-                # to add it onto the list working on the new task
-                #    y = how_many_labourers(phrase="robots", phrase_2="would you like to re-program?")
-                #    next_task = what_task(tasks)
-                #
-                #    # Need to create a temp_list of robot IDs chosen#
-                #######################################################
+                        request = 0
+                    elif 1 <= chosen_task <= 10:
+                        print(f" You have opted to switch them from IDLE"
+                              f" to {tasks[0][chosen_task][1]}.\n")
+                        for chosen in chosen_list:
+                            x_dict[chosen] = chosen_task
+                            print(f"{chosen} has been switched to {tasks[0][chosen_task][1]}.\n")
+                            break
+
+                except ValueError:
+                    print(" Your input was invalid.\n")
+                    print(" Go back to the main menu and do better.")
+                    time_sim(secs=2)
+                    return a_dict, tasks, log
+
+        # while not loop has been ended by break statement
+        #  Update tasks:
+        for chosen in chosen_list:
+            # Increment list of robots working on this task
+            tasks[1][chosen_task] += 1
+            # Decrement list of IDLE robots
+            tasks[1][0] -= 1
+            # Remove robot's ID from IDLE list kept at tasks[3][0]
+            try:
+                tasks[3][0].pop(chosen)
+            except:
+                print(" Your Robot Resources manager just noticed a discrepancy "
+                  "in your RR inventory.\n"
+                  " You might want to check the LOG next (L from main menu)\n"
+                  "           or TRACK progress of tasks (T from main menu)\n")
+                input("Press ENTER to continue.\n")
+                time_sim(secs=2)
+                # Find robot's ID in Task Log
+                pass
+            # Add robot's ID to list for that task at tasks[3][_]
+            # But check first it isn't already there
+            for i in range(12):
+                search_list = len(tasks[3][i])
+                for robot in search_list:
+                    if robot == chosen:
+                        tasks[3][task].remove(robot)
+            tasks[3][chosen_task].append(chosen)
+            return a_dict, tasks
+
+
 
 
 # Function to employ new worker.
@@ -1522,30 +1539,192 @@ def manage_worker(x_dict):
 
 # Function to order available workers to carry out tasks.
 # Accessed by pressing O within what_next() function
-def order_worker(x_dict, tasks):
+def order_worker(b_dict, tasks):
     clear_screen()
-    print("\n You have selected \"ORDER worker to task\" \n")
+    print("\n You have selected \"ORDER\" a human to perform a task. \n")
     time_sim(secs=1)
-    if not x_dict.count(0) and x_dict.count(11):
+
+    # Check if any humans are IDLE
+    # IDLE humans are numbered at task_log[2][0]
+    idle = tasks[2][0]
+    while not idle:
         print(" but you have no IDLE lackeys to boss around.\n")
-        ask_finished_to_idle("human", m_dict)
-        return
-    elif not m_dict.count(0) and not m_dict.count(11):
-        print(" but you have no IDLE lackeys to boss around.\n")
-        print("\n You will have to switch some from the tasks they're WORKING on, \n"
-              "pressing M for MANAGE from the main menu \n"
-              "or wait til they've FINISHED what they're doing. \n")
-        return
-    elif m_dict.count(0) == 1:
-        print(f" You only have 1 IDLE human to assign a task to.\n")
-        time_sim(secs=0.5)
-        m_dict.insert(what_task(tasks))
-        m_dict.remove(0)
-        return
-    elif m_dict.count(0) > 1:
-        print(f" You currently have {m_dict.count(0)} IDLE humans to assign tasks to.\n")
-        z = how_many_labourers(phrase="humans", phrase_2="would you like to order to do something?", max=idle)
-        next_task = what_task(tasks)
+        #  Check if any humans have FINISHED their tasks
+        # and could be re-labelled as IDLE
+        # FINISHED humans are numbered at tasks[2][11]
+        finished = tasks[2][11]
+        if not finished:
+            print("\n You will have to switch some from the tasks they're WORKING on, \n"
+                  "or wait til they've FINISHED what they're doing. \n")
+            time_sim(secs=3)
+            return b_dict, tasks, log
+        # Suggest user switches some statuses from FINISHED to IDLE
+        ask_finished_to_idle(b_dict, "Human")
+
+    if idle == 1:
+        print("\n You have 1 human IDLE. \n")
+        idle_list = []
+        time_sim(secs=1)
+        # Identify IDLE human
+        print("Here's the IDLE human -->", end="")
+        for key, value in b_dict.items():
+            if value == 0:
+                print("\r", key, "\n")
+                print(" Shame on them !! \n")
+    elif idle > 1:
+        print(f" You currently have {idle} IDLE humans to order to do tasks.\n")
+        time_sim(secs=1)
+        # Identify IDLE humans
+        print(f" These are the {idle} IDLE humans :\n")
+        a = 1  # Create a counter to print the humans' names
+        # in lines of 5
+        for key, value in b_dict.items():
+            while a <= 5:
+                if value == 0:
+                    print(f" {key}  ", end="")
+            a = 1
+            print("\n")
+        print("  If you ask me, they should be lined up against the wall"
+              " and shut down.")
+        time_sim(secs=1)
+        request = 0
+        while not request:
+            request = input("\n  Please select the human(s) who you wish to boss around,\n"
+                            " using their employee numbers SEPARATED BY COMMAS.\n\n"
+                            "  Alternatively, press X to return to the main menu.")
+
+            time_sim(secs=1)
+            if request == "X":
+                return b_dict, tasks, log
+            # Remove any spaces from the query
+            request = request.replace(" ", "")
+            chosen_list = request.split(",")  # Removes any commas and separates the query there
+            # If they requested more items than there are humans, trim it right down
+            if len(chosen_list) > len(b_dict):
+                del chosen_list[len(b_dict):]
+            # Check all the characters of the string are numbers now
+            for t in range(len(chosen_list)):
+                if chosen_list[t].isdigit() == False:
+                    print("I think you entered a dodgy character.\n")
+
+                    time_sim(secs=1)
+                    print(" Let's try that again.\n")
+
+                    time_sim(secs=1)
+                    request = 0
+                else:
+                    try:
+                        # convert the list of split strings into a list of integers
+                        chosen_list[t] = int(chosen_list[t])
+                        if chosen_list[t] > 100 or chosen_list[t] < 1:
+                            print("You entered a number out of range")
+
+                            time_sim(secs=1)
+                            print(" Let's try it again.\n")
+
+                            time_sim(secs=1)
+                            request = 0
+                        # Build the human's ID
+                        chosen_list[int(t)] = "Human" + "_" + str(chosen_list[t])
+                    except ValueError:
+                        print("I think you entered a fishy character.\n")
+                        time_sim(secs=1)
+                        print(" Let's try that again.\n")
+                        time_sim(secs=1)
+                        request = 0
+
+            # Check that each human selected is actually employed in the facility
+            for chosen in chosen_list:
+                if chosen not in b_dict:
+                    print("Your selection doesn't correspond to the peons you employ. \n"
+                          "Maybe you didn't hire as many as you thought you did. \n")
+
+                    time_sim(secs=1)
+                    print(" Who do you think you are: - Sir Alan Sugar ?!\n")
+
+                    time_sim(secs=1)
+                    request = 0
+            # check if all humans to be shifted across have same status as the first
+            base_status = b_dict[chosen_list[0]]
+            for chosen in chosen_list:
+                if x_dict[chosen] != base_status:
+                    print("\n I don't think all the humans you selected had the same status.\n\n"
+                          " I suggest you have another pop at it.\n")
+                    time_sim(secs=1)
+                    request = 0
+            # Grammar checking: has only a single human been selected?
+            if len(chosen_list) == 1:
+                print(""" Please enter the task you wish to direct them to,
+                                 from the following list:\n""")
+                print(f"    {tasks[0][task][1]:task in tasks if task != 0 and task != 11}", end="")
+                print(f" -- --> {task:task in tasks if task != 0 and task != 11} \n")
+            elif len(chosen_list) > 1:
+                print(""" Please enter the task you wish to direct them to,
+                                                     from the following list:\n""")
+            print(f"          {tasks[0][task][1]:task in tasks if task != 0 and task != 11}", end="")
+            print(f" -- --> {task:task in tasks if task != 0 and task != 11} \n")
+            print("Or press X to return to the main menu.\n")
+            chosen_task = 0
+            while not chosen_task:
+                chosen_task = input()
+            time_sim(secs=1)
+            if chosen_task == "X":
+                print(" Re-assignmnent abandoned. Returning to the main menu.\n")
+                time_sim(secs=2)
+                return b_dict, tasks
+
+            # Check whether input was one character long
+            if get_length(chosen_task, 1):
+                try:
+                    # Check whether input was an integer
+                    chosen_task = int(chosen_task)
+                    if chosen_task < 1 or chosen_task > 10:
+                        print(" That number isn't going to work.\n"
+                              " Please try again or press X to return to the main menu.")
+                        time_sim(secs=2)
+                        request = 0
+                    elif 1 <= chosen_task <= 10:
+                        print(f" You have opted to change them from IDLE"
+                              f" to {tasks[0][chosen_task][1]}.\n")
+                        for chosen in chosen_list:
+                            x_dict[chosen] = chosen_task
+                            print(f"{chosen} has been changed to {tasks[0][chosen_task][1]}.\n")
+                            break
+
+                except ValueError:
+                    print(" Your input was sour.\n")
+                    print(" Try again from the main menu. \n")
+                    time_sim(secs=2)
+                    return b_dict, tasks
+
+        # while not loop has been ended by break statement
+        #  Update tasks:
+        for chosen in chosen_list:
+            # Increment list of humans working on this task
+            tasks[2][chosen_task] += 1
+            # Decrement list of IDLE humans
+            tasks[2][0] -= 1
+            # Remove human's ID from IDLE list kept at tasks[4][0]
+            try:
+                tasks[4][0].pop(chosen)
+            except:
+                print(" Your Human Resources manager just noticed a discrepancy "
+                      "in your Personnel Records.\n"
+                      " You may want to check the LOG next (L from main menu)\n"
+                      "           or TRACK progress of tasks (T from main menu)\n")
+                input("Press ENTER to continue.\n")
+                time_sim(secs=2)
+                # Find human's ID in Task Log
+                pass
+            # Add human's ID to list for that task at tasks[3][_]
+            # But check first it isn't already there
+            for i in range(12):
+                search_list = len(tasks[4][i])
+                for human in search_list:
+                    if human == chosen:
+                        tasks[4][task].remove(human)
+            tasks[4][chosen_task].append(chosen)
+            return b_dict, tasks, log
 
 
 # Log tasks
