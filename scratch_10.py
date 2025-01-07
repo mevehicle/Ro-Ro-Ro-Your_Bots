@@ -1,17 +1,30 @@
 # ------------------------------------------------------------ Task codes are:
 def show_log():
-    task_tuple = (("IDLE     ", "IDLE                          "), #--> 00
-                  ("SCREWing ", "SCREWing arms on              "), #--> 01
-                  ("WELDing  ", "WELDing legs on               "), #--> 02
-                  ("HAMMERing", "HAMMERing heads on            "), #--> 03
-                  ("POLISHing", "POLISHing eyes                "), #--> 04
-                  ("DRILLing ", "DRILLing ears                 "), #--> 05
-                  ("ATTACHing", "ATTACHing waste hoses         "), #--> 06
-                  ("TESTing  ", "TESTing the functioning       "), #--> 07
-                  ("UNLOADing", "UNLOADing trucks with forklift"), #--> 08
-                  ("BOXing   ", "BOXing and shipping product   "), #--> 09
-                  ("FETCHing ", "FETCHing cups of tea          "), #--> 10
-                  ("FINISHED ", "FINISHED_TASK                 ")) #--> 11
+    task_tuple = (("IDLE     "),  # --> 00
+                  ("SCREWing "),  # --> 01
+                  ("WELDing  "),  # --> 02
+                  ("HAMMERing"),  # --> 03
+                  ("POLISHing"),  # --> 04
+                  ("DRILLing "),  # --> 05
+                  ("ATTACHing"),  # --> 06
+                  ("TESTing  "),  # --> 07
+                  ("UNLOADing"),  # --> 08
+                  ("BOXing   "),  # --> 09
+                  ("FETCHing "),  # --> 10
+                  ("FINISHED "))  # --> 11
+
+    task_tuple_long = (("IDLE                          "),  # --> 00
+                       ("SCREWing arms on              "),  # --> 01
+                       ("WELDing legs on               "),  # --> 02
+                       ("HAMMERing heads on            "),  # --> 03
+                       ("POLISHing eyes                "),  # --> 04
+                       ("DRILLing ears                 "),  # --> 05
+                       ("ATTACHing waste hoses         "),  # --> 06
+                       ("TESTing the functioning       "),  # --> 07
+                       ("UNLOADing trucks with forklift"),  # --> 08
+                       ("BOXing and shipping product   "),  # --> 09
+                       ("FETCHing cups of tea          "),  # --> 10
+                       ("FINISHED_TASK                 "))  # --> 11
 
     # -------------------the Task Log ----------------------------
 
