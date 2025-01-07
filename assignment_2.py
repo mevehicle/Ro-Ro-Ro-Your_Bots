@@ -4,6 +4,9 @@
 
 # Import modules
 
+import curses
+from curses import wrapper
+
 from time import sleep
 # Use this to get program to pause for 1 second --> sleep(1)
 
@@ -199,137 +202,130 @@ def intro_function():
     input("\n\n  Press Enter to continue... ")
     clear_screen()
 
-    #  As each WORKING robot or worker is assigned to a specific task,
-    # a lengthier mirror of the dictionaries containing their statuses
-    # contains the codes of these tasks
-    # and is itself contained within the encyclopedic task_log
-
-    # Its task codes can be deciphered by
-    #  using them as the index numbers of a tuple
-    #   called task_tuple, containing corresponding activities
-
-    # To print the short version of the code,
-    #  access index 0 of the nested tuple (eg. task_tuple[4[0]] )
-    # Or to print the long version of the code,
-    #  access index 1 of the nested tuple (eg. task_tuple[4][1] )
-
-    # -------------------------- Task codes are:
-    task_tuple = (("IDLE     "), #--> 00
-                  ("SCREWing "), #--> 01
-                  ("WELDing  "), #--> 02
-                  ("HAMMERing"), #--> 03
-                  ("POLISHing"), #--> 04
-                  ("DRILLing "), #--> 05
-                  ("ATTACHing"), #--> 06
-                  ("TESTing  "), #--> 07
-                  ("UNLOADing"), #--> 08
-                  ("BOXing   "), #--> 09
-                  ("FETCHing "), #--> 10
-                  ("FINISHED ")) #--> 11
-
-    task_tuple_long = (("IDLE                          "), #--> 00
-                       ("SCREWing arms on              "), #--> 01
-                       ("WELDing legs on               "), #--> 02
-                       ("HAMMERing heads on            "), #--> 03
-                       ("POLISHing eyes                "), #--> 04
-                       ("DRILLing ears                 "), #--> 05
-                       ("ATTACHing waste hoses         "), #--> 06
-                       ("TESTing the functioning       "), #--> 07
-                       ("UNLOADing trucks with forklift"), #--> 08
-                       ("BOXing and shipping product   "), #--> 09
-                       ("FETCHing cups of tea          "), #--> 10
-                       ("FINISHED_TASK                 ")) #--> 11
-
-
     # -------------------the Task Log ----------------------------
 
     # task_log is a multi-dimensional list showing, for each task,
     # how many repetitions of that task have been completed
     # and whether any workers or robots are currently engaged in it
+
     #  It contains:
-    #  - - - - - [0] = a dictionary of twelve keys, one for each task code:
-    #  - - - - -    each value denotes how many robots are engaged in the task
-    #               (or engaged in the IDLE-ness, for task codes 0 & 11
-    #  - - - - - [1] = another dictionary, a mirror of it where
-    #  - - - - -    each value denotes how many humans are engaged in the task
+    # -------------> at index [0] => TASK CODES
+    #  As each WORKING robot or worker is assigned to a specific task,
+
+
+    #   Its task codes can be deciphered by
+    #  using them as the index numbers of a tuple array
+    #  containing corresponding activities,
+    # as well as IDLE status at task code 0
+    # and FINISHED at task code 11
+
+    #  This means that it can be used to work out the status
+    # of each human or robot, as any other code (1 - 10)
+    # will come under the status of WORKING
+
+    #   To print the short version of the code,
+    #  access index 0 of the nested tuple,
+    #  eg. "HAMMERing" = task_log[0][4][0]
+    # Or to print the long version of the code,
+    #  access index 1 of the nested tuple
+    #  eg. "HAMMERing heads on            " = task_log[0][4][1])
 
     task_log = []
-    for i in range(0, 2):
+    # ----------------------------------------------------- Task codes are:
+    task_log[0] = (("IDLE     ", "IDLE                          "), #--> 00
+                   ("SCREWing ", "SCREWing arms on              "), #--> 01
+                   ("WELDing  ", "WELDing legs on               "), #--> 02
+                   ("HAMMERing", "HAMMERing heads on            "), #--> 03
+                   ("POLISHing", "POLISHing eyes                "), #--> 04
+                   ("DRILLing ", "DRILLing ears                 "), #--> 05
+                   ("ATTACHing", "ATTACHing waste hoses         "), #--> 06
+                   ("TESTing  ", "TESTing the functioning       "), #--> 07
+                   ("UNLOADing", "UNLOADing trucks with forklift"), #--> 08
+                   ("BOXing   ", "BOXing and shipping product   "), #--> 09
+                   ("FETCHing ", "FETCHing cups of tea          "), #--> 10
+                   ("FINISHED ", "FINISHED_TASK                 ")) #--> 11
+
+    # a lengthier mirror of the dictionaries containing the tasks
+    # being worked on by each human and robot
+    # contains the codes of these tasks
+    # and is itself contained within the encyclopedic task_log
+    #  - - - - - [1] = a dictionary of twelve keys, one for each task code:
+    #  - - - - -    each value denotes how many robots are engaged in the task
+    #               (or engaged in the IDLE-ness, for task codes 0 & 11
+    #  - - - - - [2] = another dictionary, a mirror of it where
+    #  - - - - -    each value denotes how many humans are engaged in the task
+
+    for i in range(1, 3):
         task_log.append({})
         for j in range(0, 12):
             task_log[i][j] = 0
 
     # Task log also contains:
-    #  - - - - - [2] = a dictionary of 12 lists,
+    #  - - - - - [3] = a dictionary of 12 lists,
     #  - - - - - - - -  each list holding the IDs of the
     #  - - - - - - -  individual robots engaged in each task
-    #  - - - - - [3] = another dictionary of 12 lists, each holding
+    #  - - - - - [4] = another dictionary of 12 lists, each holding
     #  - - - - - - -  **SURPRISE**: the IDs of the humans
     #  - - - - - - - - - - - - - - - engaged in that task
 
-    for i in range(2, 4):
+    for i in range(3, 5):
         task_log.append({})
         for j in range(0, 12):
             task_log[i][j] = []
 
-    #  - - - - - [4] = a dictionary of twelve keys, one for each task code:
+    #  - - - - - [5] = a dictionary of twelve keys, one for each task code:
     #  - - - - -    each value holds its own dictionary, this time of
     #  - - - - -    three keys, the values being:
     #  - - - - -    number of tasks not started / in progress / completed
 
     task_log.append({})
-    task_log[4] = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+    task_log[5] = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
     for i in range(0, 12):
-        task_log[4][i] =  {
+        task_log[5][i] =  {
                            "NOT STARTED": 0,
                            "IN PROGRESS": 0,
                            " COMPLETED ": 0,
                           }
 
-    #  - - - - - [5] = a tuple with 12 (TASK, VALUE) pairs
+    #  - - - - - [6] = a tuple with 12 (TASK, VALUE) pairs
     #  - - - - -    containing the amount of time needed to perform it.
     #  - - - - -     As "tasks" 0 and 11 actually represent IDLE
     #  - - - - -    and finished respectively, their value is zero
 
-    task_log.append(((task_tuple[0], 0),
-                     (task_tuple[1], 3),
-                     (task_tuple[2], 3),
-                     (task_tuple[3], 3),
-                     (task_tuple[4], 2),
-                     (task_tuple[5], 2),
-                     (task_tuple[6], 2),
-                     (task_tuple[7], 2),
-                     (task_tuple[8], 10),
-                     (task_tuple[9], 1),
-                     (task_tuple[10], 1),
-                     (task_tuple[11], 0)))
+    task_log.append(((task_log[0][0][0], 0),
+                     (task_log[0][0][1], 3),
+                     (task_log[0][0][2], 3),
+                     (task_log[0][0][3], 3),
+                     (task_log[0][0][4], 2),
+                     (task_log[0][0][5], 2),
+                     (task_log[0][0][6], 2),
+                     (task_log[0][0][7], 2),
+                     (task_log[0][0][8], 10),
+                     (task_log[0][0][9], 1),
+                     (task_log[0][0][10], 1),
+                     (task_log[0][0][11], 0)))
 
-    #  - - - - - [6] = finally another 12 values paired to tasks,
+    #  - - - - - [7] = finally another 12 values paired to tasks,
     #  - - - - -    showing how many repetitions of that task are
     #  - - - - -    needed to fulfil Head Office's directives
 
-    task_log.append(((task_tuple_long[0], 0),
-                     (task_tuple_long[1], 10),
-                     (task_tuple_long[2], 10),
-                     (task_tuple_long[3], 10),
-                     (task_tuple_long[4], 10),
-                     (task_tuple_long[5], 10),
-                     (task_tuple_long[6], 10),
-                     (task_tuple_long[7], 5),
-                     (task_tuple_long[8], 1),
-                     (task_tuple_long[9], 5),
-                     (task_tuple_long[10] 50),
-                     (task_tuple_long[11], 0)))
-
-    # Note:
-    #  In effect, task_log[5][{TASK}][0] replaces task_tuple
-    #         and task_log[6][{TASK}][0] replaces task_tuple
-    # This means not having to pass loads of arguments between functions
+    task_log.append(((task_log[0][0][0], 0),
+                     (task_log[0][0][1], 10),
+                     (task_log[0][0][2], 10),
+                     (task_log[0][0][3], 10),
+                     (task_log[0][0][4], 10),
+                     (task_log[0][0][5], 10),
+                     (task_log[0][0][6], 10),
+                     (task_log[0][0][7], 5),
+                     (task_log[0][0][8], 1),
+                     (task_log[0][0][9], 5),
+                     (task_log[0][0][10], 50),
+                     (task_log[0][0][11], 0)))
 
     clear_screen()
 
     # Return primary variables to main body of program
-    return n, m, n_dict, m_dict, next_n, next_m, task_tuple, task_log
+    return n, m, n_dict, m_dict, next_n, next_m, task_log
 
 
 # Helper function to check input is a single character
@@ -460,7 +456,7 @@ def show_task_options(option_keys):
     time_sim(secs=1)
     print('\n These are the options for the tasks:    \n')
     for o in range(1, len(option_keys) + 1):
-        print(f' - Press [{o}] for {task_tuple_long[o]}\n')
+        print(f' - Press [{o}] for {task_log[0][o][0]}\n')
     return
 
 # Function for SCREWing arms on
@@ -468,7 +464,6 @@ def show_task_options(option_keys):
 # Creates a task_code of 1
 def screw_arms():
     print("You have selected SCREW arms on.\n")
-    if task_log[]
     task_code = 1
     return task_code
 
@@ -549,7 +544,8 @@ def fetch_tea():
 
 
 # Helper function to determine what task
-def what_task(phrase="worker", dict="m_dict", tasks="task_log"):
+def what_task(tasks
+              ):
     options = ("O", "S", "W", "H", "P", "D", "A", "T", "U", "B", "F", "X")
     selected = False
     while selected == False:
@@ -562,22 +558,25 @@ def what_task(phrase="worker", dict="m_dict", tasks="task_log"):
                 next_task = options.index(next_task)
 
                 #  Show how many staff are already engaged in the task
-                # And adjust the task code for what_task function
+                # {tasks[1][_]} for robots, {tasks[2][_]} for humans
+                # And adjust the task code for what_task(tasks) function
+
                 if next_task == 0:
                     # Show OPTIONS
                     # Call show_task_options function
                     show_task_options(options)
                     selected = False
                 else:
-                    print(f"\n You have selected \"{tasks[5][next_task][0]}\". \n")
+                    print(f"\n You have selected \"{tasks[0][next_task][0]}\". \n")
                     # Adjust for semantics of sentence
-                    if tasks[0][next_task] or tasks[1][next_task]:
-                        print(f" You already have {tasks[0][next_task]} robots", end="")
-                        print(f"and {tasks[1][next_task]} humans {tasks[6][next_task][0]}")
+                    if tasks[1][next_task] or tasks[2][next_task]:
+                        print(f" You already have {tasks[1][next_task]} robots", end="")
+                        print(f"and {tasks[2][next_task]} humans {tasks[0][next_task][1]}")
                     else:
                         print(" You don't currently have any employees engaged in this task.")
                     # task_code changes
                     return next_task
+
 
 #  Function to loop through robots or humans
 # and display the tasks they're working on
@@ -616,7 +615,7 @@ def return_status(drone):
 
 #  Function to loop through robots or humans
 # and display their status, based on the value
-# stored in the dictionary, cross-referenced with task_tuple
+# stored in the dictionary, cross-referenced with task_log[0]
 #  The status will print as either
 # IDLE, WORKING or FINISHED
 def status_printer(x_dict):
@@ -688,20 +687,25 @@ def show_log():
                     stage = "IN PROGRESS"
                 case 73:
                     stage = " COMPLETED "
-            print(f"\u001b[{j};{i}H{task_log[4][(j-5)//2][stage]}", end="")
+            print(f"\u001b[{j};{i}H{task_log[5][(j-5)//2][stage]}", end="")
 
     # Print how many robots are working on each task at column 86
+    #   - Access the list of robots per task at task_log[1]
     # Print how many humans are working on each task at column 99
+    #   - Access the list of humans per task at task_log[2]
     for i in range(86, 100, 13):
             match i:
                 case 86:
-                    flesh = 0
+                    body_type = 1
                 case 99:
-                    flesh = 1
+                    body_type = 2
                 case _:
-                    flesh = 0
+                    body_type = 1
+
+#  If you don't know if it's a robot or a human, it's probably a robot !!
+
             for j in range(7, 26, 2):
-                print(f"\u001b[{j};{i}H{task_log[flesh][(j-5)//2]}", end="")
+                print(f"\u001b[{j};{i}H{task_log[organism][(j-5)//2]}", end="")
 
     # Return cursor to foot of screen
     print(f"\u001b[38;2H")
@@ -961,7 +965,7 @@ def change_status(x_dict):
                         " using their serial numbers SEPARATED BY COMMAS.\n\n"
                         "  Alternatively, press X to return to the main menu.")
 
-        time_sim(secs=)
+        time_sim(secs=1)
         if request == "X":
             return x_dict
         # Remove any spaces from the query
@@ -1070,6 +1074,7 @@ def program_robot(a_dict, tasks, log):
     print("\n You have selected \"PROGRAM a robot to execute a task\" \n")
     time_sim(secs=1)
     # Check if any robots are IDLE
+    # IDLE robots are numbered at task_log[1][0]
     idle = sum(1 for value in a_dict.values() if value == 0)
     finished = sum(1 for value in a_dict.values() if value == 2)
     if not idle and finished:
@@ -1081,7 +1086,7 @@ def program_robot(a_dict, tasks, log):
         print("\n You will have to switch some from the tasks they're WORKING on \n"
               "or wait til they're FINISHED. \n")
         time_sim(secs=3)
-        return a_dict, tasks, statuses
+        return a_dict, tasks, log
     else:
         if idle == 1:
             print("\n You have 1 robot IDLE. \n")
@@ -1226,14 +1231,15 @@ def program_robot(a_dict, tasks, log):
                         time_sim(secs=2)
                         return a_dict, tasks, log
                 #######################################################
-                #  Need to remove {robot_ID} from list at task_log[2] #
-                # and also to decrement task_log[0][0]                #
-                # while incrementing task_log[0][next_task]
+                #  Need to remove {robot_ID} from list at task_log[3] #
+                # and also to decrement task_log[1][0], the list
+                # of IDLE robots #
+                # while incrementing task_log[1][next_task]
+                # to add it onto the list working on the new task
+                #    y = how_many_labourers(phrase="robots", phrase_2="would you like to re-program?")
+                #    next_task = what_task(tasks)
                 #
-                #             y = how_many_labourers(phrase="robots", phrase_2="would you like to re-program?")
-                #             next_task = what_task("robot", tasks)
-                #
-                #             # Need to create a temp_list of robot IDs chosen#
+                #    # Need to create a temp_list of robot IDs chosen#
                 #######################################################
 
 
@@ -1533,13 +1539,13 @@ def order_worker(x_dict, tasks):
     elif m_dict.count(0) == 1:
         print(f" You only have 1 IDLE human to assign a task to.\n")
         time_sim(secs=0.5)
-        m_dict.insert(what_task("human", m_dict, tasks, ))
+        m_dict.insert(what_task(tasks))
         m_dict.remove(0)
         return
     elif m_dict.count(0) > 1:
         print(f" You currently have {m_dict.count(0)} IDLE humans to assign tasks to.\n")
         z = how_many_labourers(phrase="humans", phrase_2="would you like to order to do something?", max=idle)
-        next_task = what_task("human", tasks)
+        next_task = what_task(tasks)
 
 
 # Log tasks
@@ -1730,10 +1736,10 @@ print("\u001b[43m")
 print("\u001b[30m")
 
 # Intro
-n, m, n_dict, m_dict, next_n, next_m, task_tuple, task_log = intro_function()
+n, m, n_dict, m_dict, next_n, next_m, task_log = intro_function()
 
 # Display Main Options initially
 main_options()
 
 # Call function to ask for user action
-what_next(n, m, n_dict, m_dict, next_n, next_m, task_log, task_log)
+what_next(n, m, n_dict, m_dict, next_n, next_m, task_log)
