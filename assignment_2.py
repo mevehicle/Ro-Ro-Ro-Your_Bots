@@ -4,9 +4,6 @@
 
 # Import modules
 
-import curses
-from curses import wrapper
-
 from time import sleep
 # Use this to get program to pause for 1 second --> sleep(1)
 
@@ -94,6 +91,8 @@ def input_humans(m):
             m = int(m)
             if m >= 1 and m < 100:
                 print("\n OK, I can work with that.\n")
+                time_sim(secs=2)
+                clear_screen()
                 return m, m + 1
             else:
                 print("\n Sorry, but that isn't a valid response.")
@@ -125,8 +124,10 @@ def input_humans(m):
 def dict_maker(x, phrase):
     if x == 1:
         print(f"\n Here is your 1 solitary {phrase}: \n")
+        time_sim(secs=1)
     else:
         print(f"\n As promised, here are your {x} {phrase}s: \n")
+        time_sim(secs=1)
     #  .zfill(x) formats a number as x digits,
     # ie. "Robot_001" or "Human_043"
     # as long as the number is formatted as a string first
@@ -230,9 +231,8 @@ def intro_function():
     #  access index 1 of the nested tuple
     #  eg. "HAMMERing heads on            " = task_log[0][4][1])
 
-    task_log = []
     # ----------------------------------------------------- Task codes are:
-    task_log[0] = (("IDLE     ", "IDLE                          "), #--> 00
+    task_log=[(("IDLE     ", "IDLE                          "), #--> 00
                    ("SCREWing ", "SCREWing arms on              "), #--> 01
                    ("WELDing  ", "WELDing legs on               "), #--> 02
                    ("HAMMERing", "HAMMERing heads on            "), #--> 03
@@ -243,7 +243,7 @@ def intro_function():
                    ("UNLOADing", "UNLOADing trucks with forklift"), #--> 08
                    ("BOXing   ", "BOXing and shipping product   "), #--> 09
                    ("FETCHing ", "FETCHing cups of tea          "), #--> 10
-                   ("FINISHED ", "FINISHED_TASK                 ")) #--> 11
+                   ("FINISHED ", "FINISHED_TASK                 "))] #--> 11
 
     # a lengthier mirror of the dictionaries containing the tasks
     # being worked on by each human and robot
@@ -293,34 +293,34 @@ def intro_function():
     #  - - - - -    and finished respectively, their value is zero
 
     task_log.append(((task_log[0][0][0], 0),
-                     (task_log[0][0][1], 3),
-                     (task_log[0][0][2], 3),
-                     (task_log[0][0][3], 3),
-                     (task_log[0][0][4], 2),
-                     (task_log[0][0][5], 2),
-                     (task_log[0][0][6], 2),
-                     (task_log[0][0][7], 2),
-                     (task_log[0][0][8], 10),
-                     (task_log[0][0][9], 1),
-                     (task_log[0][0][10], 1),
-                     (task_log[0][0][11], 0)))
+                     (task_log[0][1][0], 3),
+                     (task_log[0][2][0], 3),
+                     (task_log[0][3][0], 3),
+                     (task_log[0][4][0], 2),
+                     (task_log[0][5][0], 2),
+                     (task_log[0][6][0], 2),
+                     (task_log[0][7][0], 2),
+                     (task_log[0][8][0], 9),
+                     (task_log[0][9][0], 1),
+                     (task_log[0][10][0], 1),
+                     (task_log[0][11][0], 0)))
 
     #  - - - - - [7] = finally another 12 values paired to tasks,
     #  - - - - -    showing how many repetitions of that task are
     #  - - - - -    needed to fulfil Head Office's directives
 
     task_log.append(((task_log[0][0][0], 0),
-                     (task_log[0][0][1], 10),
-                     (task_log[0][0][2], 10),
-                     (task_log[0][0][3], 10),
-                     (task_log[0][0][4], 10),
-                     (task_log[0][0][5], 10),
-                     (task_log[0][0][6], 10),
-                     (task_log[0][0][7], 5),
-                     (task_log[0][0][8], 1),
-                     (task_log[0][0][9], 5),
-                     (task_log[0][0][10], 50),
-                     (task_log[0][0][11], 0)))
+                     (task_log[0][1][0], 10),
+                     (task_log[0][2][0], 10),
+                     (task_log[0][3][0], 10),
+                     (task_log[0][4][0], 10),
+                     (task_log[0][5][0], 10),
+                     (task_log[0][6][0], 10),
+                     (task_log[0][7][0], 5),
+                     (task_log[0][8][0], 1),
+                     (task_log[0][9][0], 5),
+                     (task_log[0][10][0], 50),
+                     (task_log[0][11][0], 0)))
 
     clear_screen()
 
@@ -342,7 +342,7 @@ def get_length(ask, max=1):
         return True
 
 # Function to get user to choose an action
-def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks, log):
+def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
     while True:
         next_action = input("\nPlease choose an action : (or press H to get Help) \n").upper()
         time_sim(secs=1)
@@ -456,7 +456,7 @@ def show_task_options(option_keys):
     time_sim(secs=1)
     print('\n These are the options for the tasks:    \n')
     for o in range(1, len(option_keys) + 1):
-        print(f' - Press [{o}] for {task_log[0][o][0]}\n')
+        print(f' - Press [{o}] for {task_log[0][o][0]}')
     return
 
 # Function for SCREWing arms on
@@ -584,22 +584,22 @@ def what_task(tasks
 # 0 or 1 depending on whether
 # the short or long version of the task title is
 # being printed
-# def task_printer(x_dict, task_codes, longshort):
-#     time_sim(secs=1)
-#     if longshort == 0:
-#         per_line = 5
-#     else:
-#         per_line = 3
-#     key_number = 0
-#     for key, value in x_dict.items():
-#         if key_number % per_line == 0:
-#             print("\n")
-#         if key_number < 10:
-#             print(f"{key} : {statuses[value][longshort]}", end="    ")
-#         elif key_number >= 10:
-#             print(f"{key} : {statuses[value][longshort]}", end="   ")
-#         key_number += 1
-#     print("\n\n")
+    def task_printer(x_dict, task_codes, longshort):
+        time_sim(secs=1)
+        if longshort == 0:
+            per_line = 5
+        else:
+            per_line = 3
+        key_number = 0
+        for key, value in x_dict.items():
+            if key_number % per_line == 0:
+                print("\n")
+            if key_number < 10:
+                print(f"{key} : {task_codes[0][value][longshort]}", end="    ")
+            elif key_number >= 10:
+                print(f"{key} : {task_codes[0][value][longshort]}", end="   ")
+            key_number += 1
+        print("\n\n")
 
 
 def return_status(drone):
@@ -640,9 +640,10 @@ def status_printer(x_dict):
 def show_log():
     global hours, minutes, seconds
     clear_screen()
-    print((f'                                              ------------                                               \n'
-           '==============================================| TASK LOG |===============================================\n'
-           '| TIME :                       |              ------------                     ||         WORKERS       |\n'
+    print((f'                                               ------------                                              \n'
+           '===============================================| TASK LOG |==============================================\n'
+           '| TIME :                       |               ------------                    ||         WORKERS       |\n'
+           '|------------------------------|-----------------------------------------------||-----------------------|\n'
            '|------------: TASK : ---------| # NOT STARTED | # IN PROGRESS | # COMPLETED   ||   BOTS    ||  HUMANS  |\n'
            '|------------------------------|---------------|---------------|---------------||-----------||----------|\n'
            '| SCREWing on arms (pairs)     |               |               |               ||           ||          |\n'
@@ -679,7 +680,7 @@ def show_log():
 
     # Print stage of completion for each task : start cursor at 7, 41, eg. \u001b[7;41H
     for i in range(41, 74, 16):
-        for j in range(7, 26, 2):
+        for j in range(8, 27, 2):
             match i:
                 case 41:
                     stage = "NOT STARTED"
@@ -704,11 +705,13 @@ def show_log():
 
 #  If you don't know if it's a robot or a human, it's probably a robot !!
 
-            for j in range(7, 26, 2):
-                print(f"\u001b[{j};{i}H{task_log[organism][(j-5)//2]}", end="")
+            for j in range(8, 27, 2):
+                print(f"\u001b[{j};{i}H{task_log[body_type][(j-5)//2]}", end="")
 
-    # Return cursor to foot of screen
-    print(f"\u001b[38;2H")
+    # Bring cursor beneath table
+    print(f"\u001b[30;2H", end="")
+    return
+
 
 # Function to return a quantity (of workers or robots)
 def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
@@ -1067,6 +1070,7 @@ def change_status(x_dict):
                 time_sim(secs=1)
                 return x_dict
 
+
 # Function to assign task to [PROGRAM] robot
 # Accessed by pressing P within what_next() function
 def program_robot(a_dict, tasks):
@@ -1256,8 +1260,6 @@ def program_robot(a_dict, tasks):
                         tasks[3][task].remove(robot)
             tasks[3][chosen_task].append(chosen)
             return a_dict, tasks
-
-
 
 
 # Function to employ new worker.
@@ -1732,13 +1734,83 @@ def order_worker(b_dict, tasks):
 # Classify tasks as not started / in progress / completed
 def log_tasks(tasks):
     clear_screen()
-    print("\n You have selected \"LOG tasks\" ", end="")
+    print("\n You have selected \"LOG tasks\" \n")
     time_sim(secs=3)
-    print("You will now be shown the progress log...")
-    time_sim(secs=1)
-    show_log()
-    pass
 
+    # Show Progress Log
+    print("You will now be shown the progress log...")
+    time_sim(secs=2)
+    show_log()
+
+    go_on = False
+    while go_on == False:
+        alter = input("\rDo you need to make any alterations?\n").upper()
+        if get_length(alter):
+            if alter == "Y":
+                go_on = True
+                break
+            if alter == "N":
+                print(f"\u001b[30;2H", end="                                                                          ")
+                print("                                                                            ")
+                input("\n OK. When you\'re ready to return to the main menu, just press Enter\n")
+                return
+        else:
+            print("\n I didn't catch that. Let's take it from the top.\n")
+            print(f"\u001b[30;2H", end="                                                                          ")
+            print("                                                                            ")
+    go_on = False
+    while go_on == False:
+        print(f"\u001b[30;2H", end="                                                                          ")
+        print("                                                                            ")
+
+        options = ("O", "S", "W", "H", "P", "D", "A", "T", "U", "B", "F", "X")
+        amend = input("\n Which task would you like to amend ?"
+                      "(or press [O] to see the options)\n").upper()
+        time_sim(secs=2)
+        if not get_length(amend):
+            continue
+        if amend in options:
+            if amend == "O":
+                print(f"\u001b[30;2H", end="                                                                          ")
+                print("                                                                            ")
+                show_task_options(options)
+                input("Press ENTER to continue.\n")
+                continue
+            else:
+                go_on = True
+                break
+
+    # Adjust numbers in Progress Log
+    print(f"\u001b[30;2H", end="                                                                          ")
+    print(f" You have selected to amend {tasks[0][amend][0]}")
+    time_sim(secs=2)
+    for i in range(13):
+        print("                                                                            ")
+    time_sim(secs=1)
+
+    go_on = False
+    while go_on == False:
+        print(("\u001b[32;2H You can choose to:"
+               "                - alter the numbers of jobs IDLE, IN PROGRESS or FINISHED  --> [P]\n"
+               "                - increase / decrease the amount of robots carrying it out --> [R]\n"
+               "                - increase / decrease the amount of humans carrying it out --> [H]\n"))
+        time_sim(secs=1)
+        amend = input(" Which would you like to do? \n").upper()
+        time_sim(secs=1)
+        if not get_length(amend):
+            print(" You pressed too many keys.\n")
+            continue
+        elif get_length(amend) == 1 and amend != "P" and amend != "R" and amend != "H":
+            print(" That was not one of the options.\n")
+            continue
+        else:
+            match amend:
+                case "P":
+                    pass
+                case "R":
+                    pass
+                case "H":
+                    pass
 
 # Track
 # Function to track progress of robots, workers and tasks
@@ -1750,7 +1822,10 @@ def track_progress(x_dict, y_dict, tasks):
     print("\n You have selected \"TRACK progress\" \n")
     time_sim(secs=1)
     print("You will now be shown the progress log...")
-    show_log(tasks)
+
+    pass
+
+    task_printer(x_dict, task_codes, longshort)
 
 
 
@@ -1762,8 +1837,9 @@ def get_help():
     print(("\n As supervisor at Ro-Ro-Ro-Your-Bots Incorporated\u00AE, you are charged with "
            "ensuring the production of premium-quality robots. \n"
            " You need to manage operations, including assigning tasks, monitoring the status "
-           "of robots and work-ers, and tracking the progress of assembly. \n"
-           " Please memorise the following list of the tasks involved in manufacturing a Z-57-PrimBot: \n\n"
+           "of robots and work-ers, and tracking the progress of assembly. \n"))
+    time_sim(secs=2)
+    print((" Please memorise the following list of the tasks involved in manufacturing a Z-57-PrimBot: \n\n"
            "   - SCREW the arms on \n"       # Status = 1
            "   - WELD the legs on \n"        # Status = 2
            "   - HAMMER the head on \n"      # Status = 3
@@ -1775,17 +1851,27 @@ def get_help():
            "   - UNLOAD trucks with forklift \n" # Status = 8
            "   - BOX and ship the product \n"    # Status = 9
            "   - FETCH cups of tea \n\n"))          # Status = 10
+
            # Note to self:
            # When a worker or robot has finished a task
            # They will temporarily be labelled # Status = 11
+
     time_sim(secs=2)
     print((
            " At least once an hour someone is also required to stand on the balcony above the factory floor and "
            "shout at everyone to work faster. \n"
            " That particular job cannot be delegated. \n"))
-    time_sim(secs=2)
-    input("\n  Press Enter to continue... ")
-    clear_screen()
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(' From the main menu, the options you can select are detailed below:\n')
     time_sim(secs=2)
     print(('\n\n Press [A] to add extra robots to the workforce :-       \n'
@@ -1797,6 +1883,16 @@ def get_help():
            '            "Here\'s one I prepared earlier"                 \n'
            ))
     time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+    else:
+        clear_screen()
+
     print(('\n\n Press [R] to remove robots from the workforce :-        \n'
            '         - you can always replace them later.                \n'
            '\n                                                             '
@@ -1807,9 +1903,16 @@ def get_help():
            '          ished their tasks, you will need to press [C] to   \n'
            '          change their status first.                         \n'
            ))
-    time_sim(secs=1)
-    input("\n  Press Enter to continue... \n")
-    clear_screen()
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+
     print(('\n\n Press [C] to change the status of a robot.              \n'
            '\n            - In the beginning they will all be [IDLE]     \n'
            '\n                                                             '
@@ -1831,54 +1934,154 @@ def get_help():
            '          the same current status."                          \n'
            '           To do so, enter the numbers separated by commas.  \n'
            ))
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(('\n\n Press [P] to program a robot: \n'
            '\n            - that translates to giving it a task to do.   \n'
            '\n            - You choose from the varied tasks carried out \n'
            '\n                                   at                      \n'
            '\n                           Ro-Ro-Ro-Your-Bots\u00AE        \n'
          ))
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(('\n\n Press [E] to employ (human) workers:                    \n'
            '\n            - This allows you to grow your workforce.      \n'
            '\n            - Humans work out more costly than robots,     \n'
            '               but never yet have I come across a machine    \n'
            '               that can make a decent cup of tea !           \n'
            ))
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(('\n\n Press [F] to fire (human) workers:                      \n'
            '\n            - If you\'ve got more staff than you need      \n'
            '               don\'t feel bad about laying some off:-       \n'
            '                People are just too expensive to maintain    \n'
            '               These days.                                   \n'
            ))
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(('\n\n Press [M] to manage the status of humans.               \n'
            '              - Just like you change the robots\' statuses.  \n'
            '\n            - The human workers are just the same mostly.  \n'
            '\n              - IDLE, WORKING or FINISHED                  \n'
            ))
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(('\n\n Press [O] to order humans to perform tasks.             \n'
            '\n            - It\'s the same as programming them.          \n'
            ))
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print(('\n\n Press [L] to log tasks as not started, in progress      \n'
            '                                          or completed.      \n'
            '\n   - For each task you can see how many occurrences of it  \n'
            '      remain to be started, how many are in progress and     \n'
-           '      how many have been completed.                          \n'
+           '      how many have been completed.                        \n\n'
+           '     - Each task is shown with the amount of humans slaving  \n'
+           '      away at it, and how many robots are leisurely breezing \n'
+           '      by them, demonstrating our superior capabilities.'
            '\n     You will have the option of giving tasks new states   \n'
-           '      of completion.                                         \n'
+           '      of completion, and updating the number of bodies who   \n'
+           '      are working on the current tasks.                      \n'
            ))
     pass
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+
+
     print(('\n\n Press [T] to track the progress of workers and robots.  \n'))
     pass
-    time_sim(secs=3)
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
     print('\n\n Press [H] when you want to see these helpful tips again. \n')
-    time_sim(secs=3)
-    print('\n\n Press [Q] when you wish to quit the simulation.          \n')
+
+    carry_on = input("\n  Press Enter to continue, or type X to exit the manual\n").upper()
+    if get_length(carry_on):
+        if carry_on == "X":
+            clear_screen()
+            time_sim(secs=1)
+            return
+        else:
+            clear_screen()
+            pass
+
+    print(('\n\n Press [Q] when you wish to quit the simulation.          \n'
+           '     This is an option not to be taken lightly.               \n'
+           '     In the world of work, there is no saving the game,         '
+           '    and when you mess up, you can\'t just go back to as though it'
+           '    never happened to begin with.                             \n'))
+
+    input("\n  Press Enter to Exit the manual\n")
 
 
 # Function to quit program
@@ -1903,22 +2106,29 @@ def quit_program():
             else:
                 print("\n I didn't catch that. Let's take it from the top.\n")
                 time_sim(secs=3)
-                what_next(n, m, n_dict, m_dict, next_n, next_m, task_log, task_log)
+                return
     else:
         quit_program()
 
 
 ################################# --- BODY OF PROGRAM --- ################################
 
-# Set console colours using ANSI escape codes:
-print("\u001b[43m")
-print("\u001b[30m")
+def main():
+    # Set console colours using ANSI escape codes:
+    print("\u001b[43m")
+    print("\u001b[30m")
 
-# Intro
-n, m, n_dict, m_dict, next_n, next_m, task_log = intro_function()
+    # Intro
+    n, m, n_dict, m_dict, next_n, next_m, task_log = intro_function()
 
-# Display Main Options initially
-main_options()
+    # Display Main Options initially
+    main_options()
 
-# Call function to ask for user action
-what_next(n, m, n_dict, m_dict, next_n, next_m, task_log)
+    # Call function to ask for user action
+    what_next(n, m, n_dict, m_dict, next_n, next_m, task_log)
+
+###########################################################################################
+
+# RUN THE CODE !!
+
+main()
