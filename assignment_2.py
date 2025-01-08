@@ -13,18 +13,24 @@ seconds = 0
 minutes = 0
 hours = 0
 
-# This function pauses the program for {secs} seconds
-# and increments the virtual clock for the simulation
-def time_sim(secs):
+# Time Sim function pauses the program for {secs} seconds
+# and increments the virtual clock for the simulation,
+# checking if the factory day has finished.
+# time_sim also calls the updater(in_progress) function
+def time_sim(progres_log, secs):
     global seconds, minutes, hours, total_time
     sleep(secs)
     total_time += 15
+
+    updater(log_update)
+
     if total_time == 86400:
         clear_screen()
         print("\n\n\n")
         print("A whole day of factory time has ended.\n"
               "You have run out of time to complete any more tasks.\n")
         end_sequence()
+
     else:
         return
 
@@ -35,116 +41,6 @@ def clear_screen():
     # Cursor to home using ANSI escape sequence
     print("\u001b[H")
     time_sim(secs=1)
-
-
-
-# Function to ask user how many robots they intend to employ (n):
-# ---- & check the value entered for n is valid :
-def input_robots(n):
-    time_sim(secs=1)
-    while True:
-        while not n:
-            print("\n How many robot workers do you want for your factory?\n\n")
-            n = input("  Please choose a number between 1 and 99. \n\n")
-            time_sim(secs=1)
-            if not n:
-                print("\n Excuse me, but I asked you a question! \n")
-                break
-            try:
-                n = int(n)
-                if n >= 1 and n < 100:
-                    return n, n + 1
-                else:
-                    print("\n Sorry, but that isn't a valid response. \n")
-                    if n < 0:
-                        print("\n How can we have a negative amount? We don't owe nobody our robots !!\n")
-                    elif n == 0:
-                        print("\n We can't build robots with no robots to build them. \n")
-                    elif n > 99:
-                        print("\n We can't risk having that many droids onsite. \n")
-                        time_sim(secs=1)
-                        print("\n      HAVE YOU NEVER SEEN BLADE RUNNER? \n")
-                    n = 0
-                    time_sim(secs=3)
-                    clear_screen()
-            except ValueError:
-                print("\n Sorry, but that isn't a valid response. \n")
-                print("\n Maybe you entered letters or symbols instead of just a number. \n")
-                n = 0
-                time_sim(secs=2)
-                clear_screen()
-
-
-# Function to ask user how many humans they intend to employ (m):
-# ---- & check the value entered for m is valid :
-def input_humans(m):
-    time_sim(secs=1)
-    while True:
-        while not m:
-            print("\n\n How many human workers do you intend to employ? \n")
-            m = input("  Please choose a number between 1 and 99. \n\n")
-            time_sim(secs=2)
-            if not m:
-                print("\n Speak into the microphone, please - \n I can't hear you ! \n")
-                break
-        try:
-            m = int(m)
-            if m >= 1 and m < 100:
-                print("\n OK, I can work with that.\n")
-                time_sim(secs=2)
-                clear_screen()
-                return m, m + 1
-            else:
-                print("\n Sorry, but that isn't a valid response.")
-                if m < 0:
-                    print("\n DOES NOT COMPUTE !!!")
-                elif m == 0:
-                    print("\n We need at least one human worker to prevent a droid revolt.")
-                elif m > 99:
-                    print("\n You can't afford to pay out wages for 100 workers. ")
-                m = 0
-                time_sim(secs=2)
-                clear_screen()
-        except ValueError:
-            print("\n Sorry, but that isn't a valid response. \n")
-            print("\n Maybe you entered letters or symbols instead of just a number. \n")
-            m = 0
-            time_sim(secs=2)
-            clear_screen()
-
-# Function to make dictionaries of robots or humans {n} or {m}
-# Parameter {phrase} will state whether {Robot} or {Human}
-#  "   "    {x_dict} will hold either {n_dict} --> robots
-#                                  or {m_dict} --> as an argument
-# Each worker will be given an initial status of 0 (eg. IDLE)
-#  This will change to 1 when they are WORKING
-# and to 2 when they are FINISHED
-
-
-def dict_maker(x, phrase):
-    if x == 1:
-        print(f"\n Here is your 1 solitary {phrase}: \n")
-        time_sim(secs=1)
-    else:
-        print(f"\n As promised, here are your {x} {phrase}s: \n")
-        time_sim(secs=1)
-    #  .zfill(x) formats a number as x digits,
-    # ie. "Robot_001" or "Human_043"
-    # as long as the number is formatted as a string first
-    x_list = [phrase + "_" + str(counter).zfill(3) for counter in range(1, x + 1)]
-    x_dict = {phrase: 0 for phrase in x_list}
-    time_sim(secs=1)
-    return x_dict
-
-# Function to print dictionary of either humans or robots
-def dict_printer(x, x_dict):
-    key_number = 0
-    for key in x_dict:
-        if key_number % 5 == 0:
-            print("\n")
-        print(" " + key, end=" ")
-        key_number += 1
-    return
 
 def intro_function():
     #################################### Introduction ###########################################
@@ -293,39 +189,166 @@ def intro_function():
     #  - - - - -    and finished respectively, their value is zero
 
     task_log.append(((task_log[0][0][0], 0),
-                     (task_log[0][1][0], 3),
-                     (task_log[0][2][0], 3),
-                     (task_log[0][3][0], 3),
-                     (task_log[0][4][0], 2),
+                     (task_log[0][1][0], 4),
+                     (task_log[0][2][0], 4),
+                     (task_log[0][3][0], 4),
+                     (task_log[0][4][0], 4),
                      (task_log[0][5][0], 2),
                      (task_log[0][6][0], 2),
                      (task_log[0][7][0], 2),
-                     (task_log[0][8][0], 9),
-                     (task_log[0][9][0], 1),
+                     (task_log[0][8][0], 8),
+                     (task_log[0][9][0], 4),
                      (task_log[0][10][0], 1),
                      (task_log[0][11][0], 0)))
 
-    #  - - - - - [7] = finally another 12 values paired to tasks,
+    #  - - - - - [7] = Another 12 values for respective tasks,
     #  - - - - -    showing how many repetitions of that task are
-    #  - - - - -    needed to fulfil Head Office's directives
+    #  - - - - -    needed to fulfil Head Office's directives.
 
-    task_log.append(((task_log[0][0][0], 0),
-                     (task_log[0][1][0], 10),
-                     (task_log[0][2][0], 10),
-                     (task_log[0][3][0], 10),
-                     (task_log[0][4][0], 10),
-                     (task_log[0][5][0], 10),
-                     (task_log[0][6][0], 10),
-                     (task_log[0][7][0], 5),
-                     (task_log[0][8][0], 1),
-                     (task_log[0][9][0], 5),
-                     (task_log[0][10][0], 50),
-                     (task_log[0][11][0], 0)))
+    task_log.append(((task_log[0][0][1], 0),
+                     (task_log[0][1][1], 10),
+                     (task_log[0][2][1], 10),
+                     (task_log[0][3][1], 10),
+                     (task_log[0][4][1], 10),
+                     (task_log[0][5][1], 10),
+                     (task_log[0][6][1], 10),
+                     (task_log[0][7][1], 5),
+                     (task_log[0][8][1], 1),
+                     (task_log[0][9][1], 5),
+                     (task_log[0][10][1], 50),
+                     (task_log[0][11][1], 0)))
+
+    #  - - - - - [8] = Another 12 values for respective tasks,
+    #  - - - - -    in a list this time (so it's mutable),
+    #  - - - - -    showing for each task in progress
+    #  - - - - -    its percentage til completion
+
+    task_log.append([[task_log[0][0][1], 0],
+                    [task_log[0][1][1], 0],
+                    [task_log[0][2][1], 0],
+                    [task_log[0][3][1], 0],
+                    [task_log[0][4][1], 0],
+                    [task_log[0][5][1], 0],
+                    [task_log[0][6][1], 0],
+                    [task_log[0][7][1], 0],
+                    [task_log[0][8][1], 0],
+                    [task_log[0][9][1], 0],
+                    [task_log[0][10][1],0],
+                    [task_log[0][11][1],0]])
 
     clear_screen()
 
     # Return primary variables to main body of program
     return n, m, n_dict, m_dict, next_n, next_m, task_log
+
+
+# Function to ask user how many robots they intend to employ (n):
+# ---- & check the value entered for n is valid :
+def input_robots(n):
+    time_sim(secs=1)
+    while True:
+        while not n:
+            print("\n How many robot workers do you want for your factory?\n\n")
+            n = input("  Please choose a number between 1 and 99. \n\n")
+            time_sim(secs=1)
+            if not n:
+                print("\n Excuse me, but I asked you a question! \n")
+                break
+            try:
+                n = int(n)
+                if n >= 1 and n < 100:
+                    return n, n + 1
+                else:
+                    print("\n Sorry, but that isn't a valid response. \n")
+                    if n < 0:
+                        print("\n How can we have a negative amount? We don't owe nobody our robots !!\n")
+                    elif n == 0:
+                        print("\n We can't build robots with no robots to build them. \n")
+                    elif n > 99:
+                        print("\n We can't risk having that many droids onsite. \n")
+                        time_sim(secs=1)
+                        print("\n      HAVE YOU NEVER SEEN BLADE RUNNER? \n")
+                    n = 0
+                    time_sim(secs=3)
+                    clear_screen()
+            except ValueError:
+                print("\n Sorry, but that isn't a valid response. \n")
+                print("\n Maybe you entered letters or symbols instead of just a number. \n")
+                n = 0
+                time_sim(secs=2)
+                clear_screen()
+
+
+# Function to ask user how many humans they intend to employ (m):
+# ---- & check the value entered for m is valid :
+def input_humans(m):
+    time_sim(secs=1)
+    while True:
+        while not m:
+            print("\n\n How many human workers do you intend to employ? \n")
+            m = input("  Please choose a number between 1 and 99. \n\n")
+            time_sim(secs=2)
+            if not m:
+                print("\n Speak into the microphone, please - \n I can't hear you ! \n")
+                break
+        try:
+            m = int(m)
+            if m >= 1 and m < 100:
+                print("\n OK, I can work with that.\n")
+                time_sim(secs=2)
+                clear_screen()
+                return m, m + 1
+            else:
+                print("\n Sorry, but that isn't a valid response.")
+                if m < 0:
+                    print("\n DOES NOT COMPUTE !!!")
+                elif m == 0:
+                    print("\n We need at least one human worker to prevent a droid revolt.")
+                elif m > 99:
+                    print("\n You can't afford to pay out wages for 100 workers. ")
+                m = 0
+                time_sim(secs=2)
+                clear_screen()
+        except ValueError:
+            print("\n Sorry, but that isn't a valid response. \n")
+            print("\n Maybe you entered letters or symbols instead of just a number. \n")
+            m = 0
+            time_sim(secs=2)
+            clear_screen()
+
+# Function to make dictionaries of robots or humans {n} or {m}
+# Parameter {phrase} will state whether {Robot} or {Human}
+#  "   "    {x_dict} will hold either {n_dict} --> robots
+#                                  or {m_dict} --> as an argument
+# Each worker will be given an initial status of 0 (eg. IDLE)
+#  This will change to 1 when they are WORKING
+# and to 2 when they are FINISHED
+
+
+def dict_maker(x, phrase):
+    if x == 1:
+        print(f"\n Here is your 1 solitary {phrase}: \n")
+        time_sim(secs=1)
+    else:
+        print(f"\n As promised, here are your {x} {phrase}s: \n")
+        time_sim(secs=1)
+    #  .zfill(x) formats a number as x digits,
+    # ie. "Robot_001" or "Human_043"
+    # as long as the number is formatted as a string first
+    x_list = [phrase + "_" + str(counter).zfill(3) for counter in range(1, x + 1)]
+    x_dict = {phrase: 0 for phrase in x_list}
+    time_sim(secs=1)
+    return x_dict
+
+# Function to print dictionary of either humans or robots
+def dict_printer(x, x_dict):
+    key_number = 0
+    for key in x_dict:
+        if key_number % 5 == 0:
+            print("\n")
+        print(" " + key, end=" ")
+        key_number += 1
+    return
 
 
 # Helper function to check input is a single character
@@ -713,7 +736,22 @@ def show_log():
     return
 
 
-# Function to return a quantity (of workers or robots)
+#  Function to call from time_sim.
+# This function updates the percentage towards completion
+# of each task in progress
+def updater(log_update):
+    for task in log_update[5][task]:
+        if task == "IN PROGRESS":
+            log_update[8][task] += (25 // log_update[[6][task][1], task])
+        #  Check if task is complete, and if so,
+        # add a repetition of it to task_log[7]
+        if log_update[8][task] >= 100:
+            log_update[7][task] += 1
+            log_update[8][task] = 0
+    return log_update
+
+
+# Function to return a[8][taskq += (5 *antity (of workers or robots)
 def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
     l = 0
     while True:
