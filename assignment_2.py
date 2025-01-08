@@ -16,13 +16,11 @@ hours = 0
 # Time Sim function pauses the program for {secs} seconds
 # and increments the virtual clock for the simulation,
 # checking if the factory day has finished.
-# time_sim also calls the updater(in_progress) function
-def time_sim(progres_log, secs):
+
+def time_sim(secs):
     global seconds, minutes, hours, total_time
     sleep(secs)
     total_time += 15
-
-    updater(log_update)
 
     if total_time == 86400:
         clear_screen()
@@ -40,7 +38,7 @@ def clear_screen():
     print("\u001b[2J")
     # Cursor to home using ANSI escape sequence
     print("\u001b[H")
-    time_sim(secs=1)
+
 
 def intro_function():
     #################################### Introduction ###########################################
@@ -369,6 +367,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
     while True:
         next_action = input("\nPlease choose an action : (or press H to get Help) \n").upper()
         time_sim(secs=1)
+        tasks = updater(tasks)
         # check only 1 character was input
         if get_length(next_action):
             match next_action:
@@ -424,8 +423,10 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
                 case _:
                     print("Sorry, I don't think that's a valid option.\n")
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     print("Any feedback should be directed to our team.\n")
                     time_sim(secs=2)
+                    tasks = updater(tasks)
                     break
 
 
@@ -567,14 +568,14 @@ def fetch_tea():
 
 
 # Helper function to determine what task
-def what_task(tasks
-              ):
+def what_task(tasks):
     options = ("O", "S", "W", "H", "P", "D", "A", "T", "U", "B", "F", "X")
     selected = False
     while selected == False:
         next_task = input((" What task would you like to assign to them? \n "
                            "              (Press [O] to see the options)\n"))
         time_sim(secs=1)
+        tasks = updater(tasks)
         if get_length(next_task):
             if next_task in options:
                 selected = True
@@ -609,6 +610,7 @@ def what_task(tasks
 # being printed
     def task_printer(x_dict, task_codes, longshort):
         time_sim(secs=1)
+        task_codes = updater(task_codes)
         if longshort == 0:
             per_line = 5
         else:
@@ -660,7 +662,7 @@ def status_printer(x_dict):
 
 
 # Task log screen display
-def show_log():
+def show_log(task_log):
     global hours, minutes, seconds
     clear_screen()
     print((f'                                               ------------                                              \n'
@@ -690,6 +692,7 @@ def show_log():
            '| FETCHed cups of tea (100s)   |               |               |               ||           ||          |\n'
            '=========================================================================================================\n'
            ))
+
     # Use escape codes to send cursor to different screen positions
     #       \u001b[{line};{column}H
     #  OR   \u001b[{line};{column}f
@@ -736,6 +739,36 @@ def show_log():
     return
 
 
+def show_tracker(n, m, n_dict, m_dict, task_log):
+    print((f'                                              ----------------                                            \n'
+           '==============================================| TASK TRACKER |============================================\n' 
+           '| TIME :                  | TOTAL    | BOTS  ----------------  || TOTAL      | HUMANS   |  HUMANS       |\n' 
+           '|-------------------------| BOTS:    | IDLE:    | FINISHED:    || HUMANS:    | IDLE:    | FINISHED:     |\n'
+           '| % OF DAY REMAINING :    |-----------------------------------------------------------------------------|\n'
+           '|-------------------------|  # NOT  ||  # IN    |  PROGRESS: || # TIMES   | % OF ||   BOTS   ||  HUMANS |\n'
+           '|----------: TASK : ------| STARTED || PROGRESS | % COMPLETE || COMPLETED | GOAL || ON TASK  || ON TASK |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| SCREWing on arms (pairs)|         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| WELDing on legs (pairs) |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| HAMMERing on heads      |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| POLISHed eyes           |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| DRILLed ears            |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| ATTACHed waste hoses    |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| TESTed products         |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| UNLOADed trucks         |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| BOXes shipped           |         ||          |            ||           |      ||          ||         |\n' 
+           '|-------------------------|---------||----------|------------||-----------|------||----------||---------|\n' 
+           '| FETCHed 100s cups of tea|         ||          |            ||           |      ||          ||         |\n' 
+           '==========================================================================================================\n'
+           ))
 #  Function to call from time_sim.
 # This function updates the percentage towards completion
 # of each task in progress
@@ -782,6 +815,15 @@ def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
 # Function to ask user whether they want to
 #  change status of robots or workers
 #   from finished to idle
+
+################################
+################################
+
+# NOTE NEED TO UPDATE TASK_LOG !!!!!!!!!!!!!!!!!!!!!!!
+
+################################
+################################
+
 def ask_finished_to_idle(x_dict, phrase="worker"):
     yesno == "Maybe"
     time_sim(secs=1)
@@ -835,6 +877,13 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
 # Adds an IDLE robot (0 status code)
 # Number of robots n is passed in as parameter {x}
 def add_robot(x, x_dict, next_x):
+    ################################
+    ################################
+
+    # NOTE NEED TO UPDATE TASK_LOG !!!!!!!!!!!!!!!!!!!!!!!
+
+    ################################
+    ################################
     clear_screen()
     print("\n You have selected \"ADD a robot\" \n")
     time_sim(secs=1)
@@ -873,6 +922,13 @@ def add_robot(x, x_dict, next_x):
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
 def remove_robot(x, x_dict, next_x):
+    ################################
+    ################################
+
+    # NOTE NEED TO UPDATE TASK_LOG !!!!!!!!!!!!!!!!!!!!!!!
+
+    ################################
+    ################################
     yesno = "Maybe"
     clear_screen()
     print("\n You have selected \"REMOVE a robot\" \n")
@@ -1115,6 +1171,7 @@ def program_robot(a_dict, tasks):
     clear_screen()
     print("\n You have selected \"PROGRAM a robot to execute a task\" \n")
     time_sim(secs=1)
+    tasks = updater(tasks)
 
     # Check if any robots are IDLE
     # IDLE robots are numbered at task_log[1][0]
@@ -1129,6 +1186,7 @@ def program_robot(a_dict, tasks):
             print("\n You will have to switch some from the tasks they're WORKING on \n"
                   "or wait til they're FINISHED. \n")
             time_sim(secs=3)
+            tasks = updater(tasks)
             return a_dict, tasks
         # Suggest user switches some statuses from FINISHED to IDLE
         ask_finished_to_idle(a_dict, "Robot")
@@ -1137,6 +1195,7 @@ def program_robot(a_dict, tasks):
         print("\n You have 1 robot IDLE. \n")
         idle_list = []
         time_sim(secs=1)
+        tasks = updater(tasks)
         # Identify IDLE robot
         print("Here's the IDLE robot -->", end="")
         for key, value in a_dict.items():
@@ -1147,6 +1206,7 @@ def program_robot(a_dict, tasks):
     elif idle > 1:
         print(f" You currently have {idle} IDLE robots to assign tasks to.\n")
         time_sim(secs=1)
+        tasks = updater(tasks)
         # Identify IDLE robots
         print(f" These are the {idle} IDLE robots :\n")
         a = 1  # Create a counter to print the robots' names
@@ -1160,6 +1220,7 @@ def program_robot(a_dict, tasks):
         print("  If you ask me, they should be lined up against the wall"
               " and shut down.")
         time_sim(secs=1)
+        tasks = updater(tasks)
         request = 0
         while not request:
             request = input("\n  Please select the robot(s) who you wish to re-program,\n"
@@ -1167,6 +1228,7 @@ def program_robot(a_dict, tasks):
                             "  Alternatively, press X to return to the main menu.")
 
             time_sim(secs=1)
+            tasks = updater(tasks)
             if request == "X":
                 return a_dict, tasks
             # Remove any spaces from the query
@@ -1181,9 +1243,11 @@ def program_robot(a_dict, tasks):
                     print("I think you entered an invalid character.\n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     print(" Let's try that again.\n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     request = 0
                 else:
                     try:
@@ -1193,15 +1257,19 @@ def program_robot(a_dict, tasks):
                             print("You entered a value out of range")
 
                             time_sim(secs=1)
+                            tasks = updater(tasks)
+
                             print(" Let's try that again.\n")
 
                             time_sim(secs=1)
+                            tasks = updater(tasks)
                             request = 0
                         # Build the robot's ID
                         chosen_list[int(t)] = "Robot" + "_" + str(chosen_list[t])
                     except ValueError:
                         print("I think you entered an invalid character.\n")
                         time_sim(secs=1)
+                        tasks = updater(tasks)
                         print(" Let's try that again.\n")
                         time_sim(secs=1)
                         request = 0
@@ -1213,9 +1281,11 @@ def program_robot(a_dict, tasks):
                           "Maybe you thought you owned more than you do. \n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     print(" Let's try that again.\n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     request = 0
             # check if all robots to be switched have same status as the first
             base_status = a_dict[chosen_list[0]]
@@ -1223,7 +1293,8 @@ def program_robot(a_dict, tasks):
                 if a_dict[chosen] != base_status:
                     print("\n I don't think all the robots you selected had the same status.\n\n"
                           " I suggest you try again.\n")
-                    time_sim(secs=1)
+                    time_sim(secs=1
+                    tasks = updater(tasks)
                     request = 0
             # Grammar checking: has only a single robot been selected?
             if len(chosen_list) == 1:
@@ -1241,9 +1312,11 @@ def program_robot(a_dict, tasks):
             while not chosen_task:
                 chosen_task = input()
             time_sim(secs=1)
+            tasks = updater(tasks)
             if chosen_task == "X":
                 print(" Action aborted. Returning to the main menu.\n")
                 time_sim(secs=2)
+                tasks = updater(tasks)
                 return a_dict, tasks
 
             # Check whether input was one character long
@@ -1255,6 +1328,7 @@ def program_robot(a_dict, tasks):
                         print(" That number isn't going to work.\n"
                               " Please try again or press X to return to the main menu.")
                         time_sim(secs=2)
+                        tasks = updater(tasks)
                         request = 0
                     elif 1 <= chosen_task <= 10:
                         print(f" You have opted to switch them from IDLE"
@@ -1268,6 +1342,7 @@ def program_robot(a_dict, tasks):
                     print(" Your input was invalid.\n")
                     print(" Go back to the main menu and do better.")
                     time_sim(secs=2)
+                    tasks = updater(tasks)
                     return a_dict, tasks, log
 
         # while not loop has been ended by break statement
@@ -1287,6 +1362,7 @@ def program_robot(a_dict, tasks):
                   "           or TRACK progress of tasks (T from main menu)\n")
                 input("Press ENTER to continue.\n")
                 time_sim(secs=2)
+                tasks = updater(tasks)
                 # Find robot's ID in Task Log
                 pass
             # Add robot's ID to list for that task at tasks[3][_]
@@ -1583,6 +1659,7 @@ def order_worker(b_dict, tasks):
     clear_screen()
     print("\n You have selected \"ORDER\" a human to perform a task. \n")
     time_sim(secs=1)
+    tasks = updater(tasks)
 
     # Check if any humans are IDLE
     # IDLE humans are numbered at task_log[2][0]
@@ -1597,6 +1674,7 @@ def order_worker(b_dict, tasks):
             print("\n You will have to switch some from the tasks they're WORKING on, \n"
                   "or wait til they've FINISHED what they're doing. \n")
             time_sim(secs=3)
+            tasks = updater(tasks)
             return b_dict, tasks, log
         # Suggest user switches some statuses from FINISHED to IDLE
         ask_finished_to_idle(b_dict, "Human")
@@ -1605,6 +1683,7 @@ def order_worker(b_dict, tasks):
         print("\n You have 1 human IDLE. \n")
         idle_list = []
         time_sim(secs=1)
+        tasks = updater(tasks)
         # Identify IDLE human
         print("Here's the IDLE human -->", end="")
         for key, value in b_dict.items():
@@ -1614,6 +1693,7 @@ def order_worker(b_dict, tasks):
     elif idle > 1:
         print(f" You currently have {idle} IDLE humans to order to do tasks.\n")
         time_sim(secs=1)
+        tasks = updater(tasks)
         # Identify IDLE humans
         print(f" These are the {idle} IDLE humans :\n")
         a = 1  # Create a counter to print the humans' names
@@ -1627,6 +1707,7 @@ def order_worker(b_dict, tasks):
         print("  If you ask me, they should be lined up against the wall"
               " and shut down.")
         time_sim(secs=1)
+        tasks = updater(tasks)
         request = 0
         while not request:
             request = input("\n  Please select the human(s) who you wish to boss around,\n"
@@ -1634,6 +1715,7 @@ def order_worker(b_dict, tasks):
                             "  Alternatively, press X to return to the main menu.")
 
             time_sim(secs=1)
+            tasks = updater(tasks)
             if request == "X":
                 return b_dict, tasks, log
             # Remove any spaces from the query
@@ -1648,9 +1730,11 @@ def order_worker(b_dict, tasks):
                     print("I think you entered a dodgy character.\n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     print(" Let's try that again.\n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     request = 0
                 else:
                     try:
@@ -1660,17 +1744,21 @@ def order_worker(b_dict, tasks):
                             print("You entered a number out of range")
 
                             time_sim(secs=1)
+                            tasks = updater(tasks)
                             print(" Let's try it again.\n")
 
                             time_sim(secs=1)
+                            tasks = updater(tasks)
                             request = 0
                         # Build the human's ID
                         chosen_list[int(t)] = "Human" + "_" + str(chosen_list[t])
                     except ValueError:
                         print("I think you entered a fishy character.\n")
                         time_sim(secs=1)
+                        tasks = updater(tasks)
                         print(" Let's try that again.\n")
                         time_sim(secs=1)
+                        tasks = updater(tasks)
                         request = 0
 
             # Check that each human selected is actually employed in the facility
@@ -1680,9 +1768,11 @@ def order_worker(b_dict, tasks):
                           "Maybe you didn't hire as many as you thought you did. \n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     print(" Who do you think you are: - Sir Alan Sugar ?!\n")
 
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     request = 0
             # check if all humans to be shifted across have same status as the first
             base_status = b_dict[chosen_list[0]]
@@ -1691,6 +1781,7 @@ def order_worker(b_dict, tasks):
                     print("\n I don't think all the humans you selected had the same status.\n\n"
                           " I suggest you have another pop at it.\n")
                     time_sim(secs=1)
+                    tasks = updater(tasks)
                     request = 0
             # Grammar checking: has only a single human been selected?
             if len(chosen_list) == 1:
@@ -1708,9 +1799,11 @@ def order_worker(b_dict, tasks):
             while not chosen_task:
                 chosen_task = input()
             time_sim(secs=1)
+            tasks = updater(tasks)
             if chosen_task == "X":
                 print(" Re-assignmnent abandoned. Returning to the main menu.\n")
                 time_sim(secs=2)
+                tasks = updater(tasks)
                 return b_dict, tasks
 
             # Check whether input was one character long
@@ -1722,6 +1815,7 @@ def order_worker(b_dict, tasks):
                         print(" That number isn't going to work.\n"
                               " Please try again or press X to return to the main menu.")
                         time_sim(secs=2)
+                        tasks = updater(tasks)
                         request = 0
                     elif 1 <= chosen_task <= 10:
                         print(f" You have opted to change them from IDLE"
@@ -1735,6 +1829,7 @@ def order_worker(b_dict, tasks):
                     print(" Your input was sour.\n")
                     print(" Try again from the main menu. \n")
                     time_sim(secs=2)
+                    tasks = updater(tasks)
                     return b_dict, tasks
 
         # while not loop has been ended by break statement
@@ -1754,6 +1849,7 @@ def order_worker(b_dict, tasks):
                       "           or TRACK progress of tasks (T from main menu)\n")
                 input("Press ENTER to continue.\n")
                 time_sim(secs=2)
+                tasks = updater(tasks)
                 # Find human's ID in Task Log
                 pass
             # Add human's ID to list for that task at tasks[3][_]
@@ -1774,10 +1870,12 @@ def log_tasks(tasks):
     clear_screen()
     print("\n You have selected \"LOG tasks\" \n")
     time_sim(secs=3)
+    tasks = updater(tasks)
 
     # Show Progress Log
     print("You will now be shown the progress log...")
     time_sim(secs=2)
+    tasks = updater(tasks)
     show_log()
 
     go_on = False
@@ -1805,6 +1903,7 @@ def log_tasks(tasks):
         amend = input("\n Which task would you like to amend ?"
                       "(or press [O] to see the options)\n").upper()
         time_sim(secs=2)
+        tasks = updater(tasks)
         if not get_length(amend):
             continue
         if amend in options:
@@ -1822,9 +1921,11 @@ def log_tasks(tasks):
     print(f"\u001b[30;2H", end="                                                                          ")
     print(f" You have selected to amend {tasks[0][amend][0]}")
     time_sim(secs=2)
+    tasks = updater(tasks)
     for i in range(13):
         print("                                                                            ")
     time_sim(secs=1)
+    tasks = updater(tasks)
 
     go_on = False
     while go_on == False:
@@ -1833,8 +1934,10 @@ def log_tasks(tasks):
                "                - increase / decrease the amount of robots carrying it out --> [R]\n"
                "                - increase / decrease the amount of humans carrying it out --> [H]\n"))
         time_sim(secs=1)
+        tasks = updater(tasks)
         amend = input(" Which would you like to do? \n").upper()
         time_sim(secs=1)
+        tasks = updater(tasks)
         if not get_length(amend):
             print(" You pressed too many keys.\n")
             continue
@@ -1859,6 +1962,7 @@ def track_progress(x_dict, y_dict, tasks):
     clear_screen()
     print("\n You have selected \"TRACK progress\" \n")
     time_sim(secs=1)
+    tasks = updater(tasks)
     print("You will now be shown the progress log...")
 
     pass
