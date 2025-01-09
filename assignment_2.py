@@ -402,7 +402,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
 
              # REMOVE
                 case "R":
-                    a, a_dict, next_a, tasks = remove_robot(r=a, r_dict=a_dict, next_r=next_a, r_data=tasks)
+                    a, a_dict, next_a, tasks = remove_robot(a, a_dict, next_a, tasks)
                     break
 
              # CHANGE
@@ -754,7 +754,7 @@ def show_log(task_log):
 
     seconds = total_time - (hours * 3600) - (minutes * 60)
     # Print clock on line 4
-    print(f"\u001b[4;12H{str(hours).zfill(2)} / {str(minutes).zfill(2)} / {str(seconds).zfill(2)} ")
+    print(f"\u001b[4;12H{str(hours).zfill(2)} : {str(minutes).zfill(2)} : {str(seconds).zfill(2)} ")
 
     # Print number of tasks at each stage of completion for each particular job
     # : start cursor at 7, 41, eg. \u001b[7;41H
@@ -1085,10 +1085,10 @@ def add_robot(x, x_dict, next_x):
         return x, x_dict, next_x
 
     elif additional > 1:
-        print(f"\n You have added {to_add} extra 'bots to the crew. \n")
+        print(f"\n You have added {additional} extra 'bots to the crew. \n")
         print(f"Their names are: \n")
         time_sim(secs=1)
-        for i in range(to_add):
+        for i in range(additional):
             x_dict["Robot_" + str(next_x + i)] = 0
             if (next_x + i) % 5 == 0:
                 print("\n")
@@ -1099,8 +1099,8 @@ def add_robot(x, x_dict, next_x):
         time_sim(secs=2)
         print("\n")
 
-        x += to_add
-        next_x += to_add
+        x += additional
+        next_x += additional
         time_sim(secs=1)
 
         print(" But there's no time to congratulate yourself:\n"
@@ -1113,21 +1113,23 @@ def add_robot(x, x_dict, next_x):
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
-def remove_robot(r=a, r_dict=a_dict, next_r=next_a, r_data=tasks):
+def remove_robot(x, x_dict, next_x, tasks):
     yesno = "Maybe"
     clear_screen()
-    print("\n You have selected \"REMOVE a robot\" \n")
+    print("\n You have selected \"REMOVE robot\" \n")
     time_sim(secs=1)
+    tasks = updater(tasks)
 
     # Check the factory has enough robots for any to be removed
-    if r == 1:
+    if x == 1:
         print(("\n You only have one teeny-weeny robot left - \n\n"
-              " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "))
+               " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "))
         time_sim(secs=1)
+        tasks = updater(tasks)
         print("So sorry, no, you can't remove that last poor lonely robot.")
-        return r, r_dict, next_r, r_data
+        return x, x_dict, next_x, tasks
 
-    elif r < 1:
+    elif x < 1:
         print("\n It seems there has been a g-g-g-glitch - \n\n48@0*y3h£}{t870¬0o\n\n")
         print((" You have no robots to remove.\n\n"
                " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "
@@ -1137,128 +1139,206 @@ def remove_robot(r=a, r_dict=a_dict, next_r=next_a, r_data=tasks):
                ))
 
         time_sim(secs=1)
-        r = 99
+        tasks = updater(tasks)
+        x = 99
 
         # Update Task Log and print robot names
-        r_data[1][0] = 99
+        x_data[1][0] = 99
         print(f"Their names are: \n")
         time_sim(secs=1)
-        for i in range(next_r, next_r + 99):
-            r_dict["Robot_" + str(next_r + i).zfill(3)] = 0
-            r_data[3][0].append("Robot_" + str(next_r + i)).zfill(3)
+        for i in range(next_x, next_x + 99):
+            x_dict["Robot_" + str(next_x + i).zfill(3)] = 0
+            x_data[3][0].append("Robot_" + str(next_r + i)).zfill(3)
 
-            if (next_r + i) % 5 == 0:
+            if (next_x + i) % 5 == 0:
                 print("\n")
-            if (next_r + i) < 10:
-                print(["Robot_" + str(next_r + i).zfill(3)], end="  ")
+            if (next_x + i) < 10:
+                print(["Robot_" + str(next_x + i).zfill(3)], end="  ")
             else:
-                print(["Robot_" + str(next_r + i).zfill(3)], end=" ")
+                print(["Robot_" + str(next_x + i).zfill(3)], end=" ")
         time_sim(secs=2)
+        tasks = updater(tasks)
 
-        clear_screen()
         print(("\n\n Oh - I just realised :\n\n"
                " You were trying to remove robots before all this kerfuffle, "
                "and now I've just given you 99 fresh ones! \n\n"
                " So I guess you'll want to send some to the trash compacter straight away! \n\n"
                " Let's give it another try then, shall we?\n\n"))
-        time_sim(secs=1)
-
-        remove_robot(r, r_dict, next_r, r_data)
-
-        return r, r_dict, next_r, r_data
-    elif r == 2:
-        # loop backwards through n_dict to remove the last IDLE robot
-        k = False
-        for key, value in reversed(r_dict.items()):
-            if value == 0:
-                k = True
-                break
-        if not k:
-            print(("\n  You can't scrap an android while they're all carrying out tasks. \n"
-                   "  Switch one off first, then you won't have to look it in the sensors\n"                                      
-                   " when you consign it to the junkyard. \n\n"))
-        else:
-            print(("\n You have 2 robots, so you can only remove 1, \n"
-               "because you need at least 1 droid for your robotic cell to function. \n\n"
-               ))
 
         time_sim(secs=1)
+        tasks = updater(tasks)
+        return x, x_dict, next_x, tasks
 
-        while yesno != "Y" and yesno != "N":
-            yesno = input("So, press [Y] if you want to drop down to the minimum.\n"
-                          "Else, press [N].\n").upper()
-
+    elif x == 2:
+        # find whether there's an IDLE robot
+        if tasks[1][0] == 0:
             time_sim(secs=1)
-            if get_length(yesno):
-                if yesno == "Y":
-                        del r_dict[k]
-                        r == 1
-                        print("\n OK, you're down to your last robot now. \n\n")
-                        return r, r_dict, next_r, r_data
+            tasks = updater(tasks)
+            # check whether a robot has FINISHED its task and can be re-classified as IDLE
+            if tasks[1][11]  == 0:
+                 print(("\n  Both your bots are busy. \n"
+                        "  If you want to remove one from the robotic cell,\n"
+                        " at the very least, unplug it from the wall first. \n\n"
+                        "   Try pressing [C] for CHANGE status from the main menu.\n"))
+                 time_sim(secs=1)
 
-                elif yesno == "N":
-                        print("\nStop wasting time then!! \n")
-                        return r, r_dict, next_r, r_data
-                else:
-                    simple_error()
-                    return r, r_dict, next_r, r_data
+            else:
+                ask_finished_to_idle(x_dict, "Robot")
+                if tasks[1][0] == 0:
+                    print(" You can't dismantle your droids until they stop moving.\n"
+                          " Choose another option.\n")
+                    return x, x_dict, next_x, tasks
 
-        # loop through n_dict to find how many robots are IDLE
-        idle = 0
-        for value in r_dict.values():
-            if value == 0:
-                idle += 1
+                elif tasks[1][0] == 1:
+                    print(("\n You have 2 robots, so you can only remove 1, \n"
+                           "because you need at least 1 droid for your robotic cell to function. \n\n"
+                           ))
+                    time_sim(secs=1)
+                    tasks = updater(tasks)
+
+                    while yesno != "Y" and yesno != "N":
+                        yesno = input("So, press [Y] if you want to drop down to the minimum.\n"
+                                      "Else, press [N].\n")
+
+                        time_sim(secs=1)
+                        tasks = updater(tasks)
+
+                        if get_length(yesno):
+                            if yesno == "Y":
+                                # Find which robot is IDLE
+                                for k in x_dict:
+                                    if x_dict[k] == 0:
+                                        del x_dict[k]
+                                        x == 1
+                                        tasks[1][0] -= 0
+                                        tasks[3].pop("Robot_" + str(k).zfill(3))
+                                        print("\n OK, you're down to your last robot now. \n\n")
+                                        return x, x_dict, next_x, tasks
+                                    # If this section of code is reached, something has malfunctioned
+                                    simple_error()
+                                    return x, x_dict, next_x, tasks
+                            elif yesno == "N":
+                                   print("\nStop wasting time then!! \n")
+                                   return x, x_dict, next_x, tasks
+                            else:
+                                   simple_error()
+                                   return x, x_dict, next_x, tasks
+
+    elif x > 2:
+
+        #  find how many robots are IDLE
+        idle = tasks[1][0]
 
         if idle < 1:
-            print(("\n  You can't scrap an android while they're all carrying out tasks. \n"
-                   "  Switch one off first, then you won't have to look it in the sensors\n"                                      
-                   " when you consign it to the junkyard.\n\n"
-                   "  Press C from the main menu to Change the status of robots.  \n\n"))
-            return r, r_dict, next_r, r_data
+            # Check if any robots have FINISHED their tasks:
+            finished = tasks[1][11]
 
-        elif idle ==1:
+            if not finished:
+                print("\n You will have to switch some from the tasks they're WORKING on \n"
+                      "or wait til they're FINISHED. \n")
+                time_sim(secs=3)
+                tasks = updater(tasks)
+                return x_dict, x_dict, next_x, tasks
+
+            # Suggest user switches some statuses from FINISHED to IDLE
+            ask_finished_to_idle(a_dict, "Robot")
+            if tasks[1][0] == 0:
+                print(" You can't delete droids while they're doing stuff.\n"
+                      " Choose another option.\n")
+                return x, x_dict, next_x, tasks
+
+            elif tasks[1][0] == 1:
+                print("\n You have 1 IDLE robot now,")
+                input(" so do you want to melt it down for its raw metals?\n").upper()
+                time_sim(secs=1)
+                tasks = updater(tasks)
+
+                while yesno != "Y" and yesno != "N":
+                    yesno = input("Press [Y] if you want to drop down to the minimum.\n"
+                                  "Else, press [N].\n").upper()
+
+                    time_sim(secs=1)
+                    tasks = updater(tasks)
+
+                if get_length(yesno):
+                    if yesno == "Y":
+                        # Find which robot is IDLE
+                        for k in x_dict:
+                            if x_dict[k] == 0:
+                                del x_dict[k]
+                                x == 1
+                                tasks[1][0] -= 0
+                                tasks[3].pop("Robot_" + str(k).zfill(3))
+                                print("\n You've only got one robot left now. \n"
+                                      "That's still plenty enough to cause you bother, mind.")
+                                return x, x_dict, next_x, tasks
+
+                            # This code section should not execute
+                            simple_error()
+                            return x, x_dict, next_x, tasks
+
+                    elif yesno == "N":
+                        print("\n OK, I can deal with it.\n"
+                              " Back to the main menu, then...\n")
+                        return x, x_dict, next_x, tasks
+                    else:
+                        simple_error()
+                        return x, x_dict, next_x, tasks
+
+        if idle == 1:
             print("\nYou have 1 IDLE robot to remove.\n\n"
                   "That should send out a signal to the others.")
+            while yesno != "Y" and yesno != "N":
+                yesno = input("So, press [Y] if you want to drop down to the minimum.\n"
+                              "Else, press [N].\n").upper()
 
-            time_sim(secs=1)
-            for key, value in reversed(r_dict.items()):
-                if value == 0:
-                    k = key
-                    break
+                time_sim(secs=1)
+                tasks = updater(tasks)
+                if get_length(yesno):
+                    if yesno == "Y":
+                        # Find which robot is IDLE
+                        for k in x_dict:
+                            if x_dict[k] == 0:
+                                del x_dict[k]
+                                x == 1
+                                tasks[1][0] -= 0
+                                tasks[3].pop("Robot_" + str(k).zfill(3))
+                                print("\n You've only got one robot left now. \n"
+                                      "That's still plenty enough to cause you bother, mind.")
+                                return x, x_dict, next_x, tasks
 
-            try:
-                del r_dict[k]
-                print(f"{r_dict[k]} was removed!\n")
-                return r, r_dict, next_r, r_data
+                            # This code section should not execute
+                            simple_error()
+                            return x, x_dict, next_x, tasks
 
-            except KeyError:
-                simple_error()
-                print("\n You will not be punished for this error.\n")
-                return r, r_dict, next_r, r_data
+                    elif yesno == "N":
+                        print("\n Try another option then,"
+                              " or just keep wasting time."
+                              " It's not my life that's precious. \n")
+                        return x, x_dict, next_x, tasks
+                    else:
+                        simple_error()
+                        return x, x_dict, next_x, tasks
 
         elif idle > 1:
-            to_remove = how_many_labourers("robot", " would you like to remove?", idle)
+            to_remove = how_many_labourers("Robot", " would you like to remove?", idle)
             # loop backwards through n_dict to remove IDLE robots
             key_list = []
+
             while to_remove:
-                for key, value in reversed(r_dict.items()):
+                for key, value in reversed(x_dict.items()):
                     if value == 0 and to_remove:
                         key_list.append(key)
                         to_remove -= 1
 
             for key in key_list:
-                del r_dict[key]
-                print(f"\n{r_dict[key]} has been deleted.")
+                del x_dict[key]
+                print(f"\n{x_dict[key]} has been deleted.")
 
                 time_sim(secs=1)
-            return r, r_dict, next_r, r_data
+            return x, x_dict, next_x, tasks
 
 
-# Function to change status of a robot:
-# Accessed by pressing C within what_next() function
-# statuses available: 0 = idle
-#                     1 = working
-#                     2 = finished task
 def change_status(x_dict):
     clear_screen()
     print("\n You have selected \"CHANGE a robot's status\" \n")
@@ -1754,8 +1834,8 @@ def fire_human(x, x_dict, next_x):
                     k = key
                     break
             try:
-                del m_dict[k]
-                print(f"{m_dict[k]} was fired !\n")
+                del x_dict[k]
+                print(f"{x_dict[k]} was fired !\n")
                 print("\n Give him his P45 \n"
                       " and that's one more benefit claimant for the DWP to deal with ! \n\n")
                 return x, x_dict, next_x
@@ -2166,24 +2246,26 @@ def log_tasks(tasks):
         print(f"\u001b[30;2H")
         print(f"\u001b[0J)")
 
-        options = ("O", "S", "W", "H", "P", "D", "A", "T", "U", "B", "F", "X")
+        options = range(1, 11)
         amend = input("\n Which task would you like to amend ?"
                       "(or press [O] to see the options)\n").upper()
         time_sim(secs=2)
         tasks = updater(tasks)
         if not get_length(amend):
             continue
-
-        if amend in options:
-            if amend == "O":
-                print(f"\u001b[30;2H")
-                print(f"\u001b[0J")
-                show_task_options(options, tasks[0])
-                input("Press ENTER to continue.\n")
-                continue
-            else:
+        if amend == "O":
+            print(f"\u001b[30;2H")
+            print(f"\u001b[0J")
+            show_task_options(options, tasks[0])
+            input("Press ENTER to continue.\n")
+            continue
+        else:
+            try:
+                amend = int(amend)
                 go_on = True
-                break
+            except:
+                print("There's something wrong here...\n"
+                      "Try again:")
 
     # Adjust numbers in Progress Log
     print(f"\u001b[30;2H")
