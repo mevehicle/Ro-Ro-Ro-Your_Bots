@@ -159,9 +159,7 @@ print(f"\u001b[3;12H{str(hours).zfill(2)} / {str(minutes).zfill(2)} / {str(secon
 percent_of_day = total_time / 100
 print(f"\u001b[5;24H{str(percent_of_day).zfill(2)}% ")
 
-# Print total number of robots
-# at row 4, column 35
-print(f"\u001b[4;35H{n}")
+
 
 # Use column_printer helper function to
 
@@ -183,3 +181,4 @@ column_printer(task_log[5][(j - 5) // 2]["IN PROGRESS"], column=21)
 column_printer(task_log[5][(j - 5) // 2]["NOT STARTED"], column=48)
 ############################
 
+print(task_log[3])

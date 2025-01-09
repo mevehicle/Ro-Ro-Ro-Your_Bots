@@ -422,7 +422,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
 
              # FIRE
                 case "F":
-                    b, b_dict = fire_human(b, b_dict, next_b)
+                    b, b_dict, next_b= fire_human(b, b_dict, next_b)
                     break
 
              # MANAGE
@@ -1322,21 +1322,40 @@ def remove_robot(x, x_dict, next_x, tasks):
 
         elif idle > 1:
             to_remove = how_many_labourers("Robot", " would you like to remove?", idle)
-            # loop backwards through n_dict to remove IDLE robots
-            key_list = []
 
-            while to_remove:
-                for key, value in reversed(x_dict.items()):
-                    if value == 0 and to_remove:
-                        key_list.append(key)
-                        to_remove -= 1
-
-            for key in key_list:
-                del x_dict[key]
-                print(f"\n{x_dict[key]} has been deleted.")
+            # checksum against task_log
+            if to_remove > tasks[1][0]:
+                print(" This number is a bit too high.\n"
+                      " Perhaps you need to check the inventory.\n")
 
                 time_sim(secs=1)
-            return x, x_dict, next_x, tasks
+                tasks = updater(tasks)
+
+                return x, x_dict, next_x, tasks
+
+            else:
+                 # loop backwards through n_dict to remove IDLE robots
+
+                key_list = []
+                while to_remove:
+                    for key, value in reversed(x_dict.items()):
+                        if value == 0 and to_remove:
+                            key_list.append(key)
+                            to_remove -= 1
+
+                for key in key_list:
+                    del x_dict[key]
+                    # Update Task Log
+                    tasks[1][0] -= 1
+                    if key in tasks[3][0]:
+                        tasks[3][0].remove(key)
+
+                    print(f"\n{key} has been deleted.")
+
+                    time_sim(secs=1)
+                    tasks = updater(tasks)
+
+                return x, x_dict, next_x, tasks
 
 
 def change_status(x_dict):
@@ -1849,13 +1868,13 @@ def fire_human(x, x_dict, next_x):
             # loop backwards through m_dict to remove IDLE humans
             key_list = []
             while to_fire:
-                for key, value in reversed(m_dict.items()):
+                for key, value in reversed(x_dict.items()):
                     if value == 0 and to_fire:
                         key_list.append(key)
                         to_fire -= 1
             for key in key_list:
                 del x_dict[key]
-                print(f"\n{x_dict[key]} has been fired.")
+                print(f"\n{key} has been fired.")
 
                 time_sim(secs=1)
             return x, x_dict, next_x
