@@ -72,10 +72,8 @@ def intro_function():
     clear_screen()
 
     # Call function to ask user how many robots they want
+    # and create variable to label additional robot later
     n, next_n = input_robots(n)
-
-    # Create variable to label additional robot later
-    next_n = (n + 1)
 
     # Output initial number of robot workers (n)
     n_dict = dict_maker(n, "Robot")
@@ -85,10 +83,9 @@ def intro_function():
     clear_screen()
 
     # Call function to ask user how many humans they want
+    # and create variable to number additional employee later
     m, next_m = input_humans(m)
 
-    # Create variable to number additional employee later
-    next_m = m + 1
     time_sim(secs=1)
 
     # ----Output initial number of human workers (m)
@@ -238,6 +235,15 @@ def intro_function():
 
     clear_screen()
 
+    # Add initial numbers of humans and robots to Task Log
+    task_log[1][0], task_log[2][0] = n, m
+
+    for robot in n_dict:
+        task_log[3][0].append(n_dict[robot])
+
+    for human in m_dict:
+        task_log[4][0].append(n_dict[robot])
+
     # Return primary variables to main body of program
     return n, m, n_dict, m_dict, next_n, next_m, task_log
 
@@ -346,6 +352,7 @@ def dict_maker(x, phrase):
     # as long as the number is formatted as a string first
     x_list = [phrase + "_" + str(counter).zfill(3) for counter in range(1, x + 1)]
     x_dict = {phrase: 0 for phrase in x_list}
+
     time_sim(secs=1)
     return x_dict
 
@@ -405,7 +412,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
 
              # PROGRAM
                 case "P":
-                    a_dict, tasks, log = program_robot(a_dict, tasks)
+                    a_dict, tasks = program_robot(a_dict, tasks)
                     break
 
              # EMPLOY
@@ -2562,8 +2569,7 @@ def quit_program():
 
 def main():
     # Set console colours using ANSI escape codes:
-    print("\u001b[43m")
-    print("\u001b[30m")
+    print("\u001b[43;30m")
 
     # Intro
     n, m, n_dict, m_dict, next_n, next_m, task_log = intro_function()
