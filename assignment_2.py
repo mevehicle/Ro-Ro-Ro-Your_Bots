@@ -402,7 +402,7 @@ def what_next(a, b, a_dict, b_dict, next_a, next_b, tasks):
 
              # REMOVE
                 case "R":
-                    a, a_dict, next_a = remove_robot(a, a_dict, next_a)
+                    a, a_dict, next_a, tasks = remove_robot(r=a, r_dict=a_dict, next_r=next_a, r_data=tasks)
                     break
 
              # CHANGE
@@ -902,30 +902,33 @@ def binary_choice(choice_a="increase", choice_b="decrease"):
 # Function to return a quantity (of workers or robots)
 def how_many_labourers(phrase="worker", phrase_2="do you want", max=2):
     l = 0
-    while True:
-        while not l:
-            l = input(f"\n\n How many {phrase}s {phrase_2}?"
-                      f" \n\n Please choose a number between 1 and {max}. \n")
+    while not l:
+        l = input(f"\n\n How many {phrase}s {phrase_2}?"
+                  f" \n\n Please choose a number between 1 and {max}. \n")
+        time_sim(secs=1)
+        if not l:
+            print("\n Was I meant to take that as an answer? \n")
             time_sim(secs=1)
-            if not l:
-                print("\n Was I meant to take that as an answer? \n")
-                time_sim(secs=1)
-                continue
-        try:
-            l = int(l)
-            if l > max:
-                print("\n I thought I told you what the maximum amount was... ? \n")
-                time_sim(secs=2)
-                continue
-            elif l < 1:
-                print(f"\n That is NOT between 1 and {max}. \n")
-                time_sim(secs=2)
-                continue
-            else:
-                return l
-        except ValueError:
-            print("\n Sorry, but that isn't a valid response. \n")
-            print("\n Maybe you entered letters or symbols instead of just a number. \n")
+        else:
+            if get_length(l, max=2):
+                try:
+                    l = int(l)
+                    if l > max:
+                        print("\n I thought I told you what the maximum amount was... ? \n")
+                        time_sim(secs=2)
+                        l = 0
+                    elif l < 1:
+                        print(f"\n That is NOT between 1 and {max}. \n")
+                        time_sim(secs=2)
+                        l = 0
+                    else:
+                        return l
+                except ValueError:
+                    print("\n Sorry, but that isn't a valid response. \n")
+                    time_sim(secs=1)
+                    print("\n Maybe you entered letters or symbols instead of just a number. \n")
+                    time_sim(secs=2)
+                    l = 0
 
 
 # Function to ask user whether they want to
@@ -948,7 +951,7 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
         finished = 0
         j = len(x_dict)
         for i in range(j):
-            if x_dict[phrase + "_" + str(i - 1)]  == 2:
+            if x_dict[phrase + "_" + str(i - 1).zfill(3)]  == 2:
                 finished += 1
 
         if finished == 1:
@@ -962,15 +965,15 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
                     if yesno == "Y":
                         # Find the one that's finished
                         for swap in range(0, len(x_dict), -1):
-                            if x_dict[phrase + "_" + str(swap)] == 2:
-                                x_dict[phrase + "_" + str(swap)] = 0
+                            if x_dict[phrase + "_" + str(swap).zfill(3)] == 2:
+                                x_dict[phrase + "_" + str(swap).zfill(3)] = 0
 
                                 # Update task_log
                                 if phrase == "Robot":
                                     task_log[1][11] -= 1
                                     task_log[1][0] += 1
                                     try:
-                                        task_log[3][0] = task_log[3][11].pop(phrase + "_" + str(swap))
+                                        task_log[3][0] = task_log[3][11].pop(phrase + "_" + str(swap).zfill(3))
                                     except IndexError:
                                         print(" Some kind of book-keeping error occurred,"
                                               " But if you don't mention it, neither will I.\n")
@@ -980,7 +983,7 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
                                     task_log[2][11] -= 1
                                     task_log[2][0] += 1
                                     try:
-                                        task_log[4][0] = task_log[4][11].pop(phrase + "_" + str(swap))
+                                        task_log[4][0] = task_log[4][11].pop(phrase + "_" + str(swap).zfill(3))
                                     except IndexError:
                                         print(" I couldn't find that person in the records,"
                                               " But if we fired them by mistake, well,\n"
@@ -1011,8 +1014,8 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
                         #  status 0 (IDLE) to status 2 (FINISHED)
                         while x:
                                 for swap in range(0, x):
-                                    if x_dict[phrase + "_" + str(swap)] == 2:
-                                        x_dict[phrase + "_" + str(swap)] = 0
+                                    if x_dict[phrase + "_" + str(swap).zfill(3)] == 2:
+                                        x_dict[phrase + "_" + str(swap).zfill(3)] = 0
                                         x -= 1
 
                                         # Update task_log
@@ -1020,7 +1023,7 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
                                             task_log[1][11] -= 1
                                             task_log[1][0] += 1
                                             try:
-                                                task_log[3][0] = task_log[3][11].pop(phrase + "_" + str(swap))
+                                                task_log[3][0] = task_log[3][11].pop(phrase + "_" + str(swap).zfill(3))
                                             except IndexError:
                                                 print(" This is an error message.\n"
                                                       " If you see many of these, I'm embarrassed.\n")
@@ -1030,7 +1033,7 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
                                             task_log[2][11] -= 1
                                             task_log[2][0] += 1
                                             try:
-                                                task_log[4][0] = task_log[4][11].pop(phrase + "_" + str(swap))
+                                                task_log[4][0] = task_log[4][11].pop(phrase + "_" + str(swap).zfill(3))
 
                                             except IndexError:
                                                 print(" There's an entry missing in the personnel records.\n"
@@ -1051,18 +1054,17 @@ def ask_finished_to_idle(x_dict, phrase="worker"):
 # Adds an IDLE robot (0 status code)
 # Number of robots n is passed in as parameter {x}
 def add_robot(x, x_dict, next_x):
-
     clear_screen()
     print("\n You have selected \"ADD a robot\" \n")
     time_sim(secs=1)
     print("\n Here are the robots you currently have:-- \n\n")
     dict_printer(x, x_dict)
     time_sim(secs=1)
-    to_add = how_many_labourers(phrase="robot", phrase_2="do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
+    additional = how_many_labourers(phrase="robot", phrase_2="do you want to add to the Ro-Ro-Ro-Your-Bots\u00AE workforce?",
                                    max=99 - x)
     time_sim(secs=1)
 
-    if to_add == 1:
+    if additional == 1:
         x_dict["Robot_" + str(next_x)] = 0
 
         x += 1
@@ -1073,14 +1075,19 @@ def add_robot(x, x_dict, next_x):
         task_log[3][0].append("Robot_" + str(x))
 
         print("\n You have added an extra 'bot to the crew.\n")
-        print(f"Its name is {x_dict["Robot_" + str(next_x)]} - cute, huh ? \n")
-        print(" --Press C to CHANGE their status and get them mechanised ! \n")
+        print(f" Its name is {x_dict["Robot_" + str(next_x)]} - cute, huh ? \n")
         time_sim(secs=1)
+        print(" Go back to the main menu,\n"
+              " Do not pass \"GO\"\n"
+              " --Press C to CHANGE its status and get it mechanised ! \n")
+        time_sim(secs=1)
+        input(" Press ENTER to get backl to the grind !\n")
         return x, x_dict, next_x
 
-    elif to_add > 1:
+    elif additional > 1:
         print(f"\n You have added {to_add} extra 'bots to the crew. \n")
         print(f"Their names are: \n")
+        time_sim(secs=1)
         for i in range(to_add):
             x_dict["Robot_" + str(next_x + i)] = 0
             if (next_x + i) % 5 == 0:
@@ -1089,65 +1096,80 @@ def add_robot(x, x_dict, next_x):
                 print(["Robot_" + str(next_x + i)], end="  ")
             else:
                 print(["Robot_" + str(next_x + i)], end=" ")
-        print(" --Press C to CHANGE their status and get them mechanised ! \n")
+        time_sim(secs=2)
+        print("\n")
+
         x += to_add
         next_x += to_add
+        time_sim(secs=1)
+
+        print(" But there's no time to congratulate yourself:\n"
+              " Go back to the main menu;\n"
+              " --Press C to CHANGE their status and get them mechanised ! \n")
+        input("Press ENTER to continue production !\n")
+
         return x, x_dict, next_x
 
 
 # Function to remove robot.
 # Accessed by pressing R within what_next() function
-def remove_robot(x, x_dict, next_x):
-    ################################
-    ################################
-
-    # NOTE NEED TO UPDATE TASK_LOG !!!!!!!!!!!!!!!!!!!!!!!
-
-    ################################
-    ################################
+def remove_robot(r=a, r_dict=a_dict, next_r=next_a, r_data=tasks):
     yesno = "Maybe"
     clear_screen()
     print("\n You have selected \"REMOVE a robot\" \n")
     time_sim(secs=1)
 
     # Check the factory has enough robots for any to be removed
-    if x == 1:
+    if r == 1:
         print(("\n You only have one teeny-weeny robot left - \n\n"
               " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "))
         time_sim(secs=1)
         print("So sorry, no, you can't remove that last poor lonely robot.")
-        return x, x_dict
+        return r, r_dict, next_r, r_data
 
-    elif x < 1:
+    elif r < 1:
         print("\n It seems there has been a g-g-g-glitch - \n\n48@0*y3h£}{t870¬0o\n\n")
         print((" You have no robots to remove.\n\n"
                " You need at least 1 robot for this robotic cell to even BE a robotic cell. \n\n "
                " Tell you what : to compensate for the error, we'll top up your team to its maximum"
-               "of 100 robots.\n\n "
+               "of 99 robots.\n\n "
                " Here you go : \n\n"
                ))
 
         time_sim(secs=1)
-        x = 100
+        r = 99
 
-        ######################## Need to update task log ! ################################
-        ###################################################################################
-        dict_maker(x,"Robot")
-        dict_printer(x, x_dict)
+        # Update Task Log and print robot names
+        r_data[1][0] = 99
+        print(f"Their names are: \n")
+        time_sim(secs=1)
+        for i in range(next_r, next_r + 99):
+            r_dict["Robot_" + str(next_r + i).zfill(3)] = 0
+            r_data[3][0].append("Robot_" + str(next_r + i)).zfill(3)
+
+            if (next_r + i) % 5 == 0:
+                print("\n")
+            if (next_r + i) < 10:
+                print(["Robot_" + str(next_r + i).zfill(3)], end="  ")
+            else:
+                print(["Robot_" + str(next_r + i).zfill(3)], end=" ")
+        time_sim(secs=2)
+
+        clear_screen()
         print(("\n\n Oh - I just realised :\n\n"
                " You were trying to remove robots before all this kerfuffle, "
-               "and now I've just given you 100 fresh ones! \n\n"
+               "and now I've just given you 99 fresh ones! \n\n"
                " So I guess you'll want to send some to the trash compacter straight away! \n\n"
                " Let's give it another try then, shall we?\n\n"))
-
         time_sim(secs=1)
-        remove_robot(x, x_dict, next_x)
-        return x, x_dict
 
-    elif n == 2:
+        remove_robot(r, r_dict, next_r, r_data)
+
+        return r, r_dict, next_r, r_data
+    elif r == 2:
         # loop backwards through n_dict to remove the last IDLE robot
         k = False
-        for key, value in reversed(x_dict.items()):
+        for key, value in reversed(r_dict.items()):
             if value == 0:
                 k = True
                 break
@@ -1169,21 +1191,21 @@ def remove_robot(x, x_dict, next_x):
             time_sim(secs=1)
             if get_length(yesno):
                 if yesno == "Y":
-                        del x_dict[k]
-                        n == 1
+                        del r_dict[k]
+                        r == 1
                         print("\n OK, you're down to your last robot now. \n\n")
-                        return x, x_dict
+                        return r, r_dict, next_r, r_data
 
                 elif yesno == "N":
                         print("\nStop wasting time then!! \n")
-                        return x, x_dict
+                        return r, r_dict, next_r, r_data
                 else:
                     simple_error()
-                    return x, x_dict
+                    return r, r_dict, next_r, r_data
 
         # loop through n_dict to find how many robots are IDLE
         idle = 0
-        for value in n_dict.values():
+        for value in r_dict.values():
             if value == 0:
                 idle += 1
 
@@ -1192,44 +1214,44 @@ def remove_robot(x, x_dict, next_x):
                    "  Switch one off first, then you won't have to look it in the sensors\n"                                      
                    " when you consign it to the junkyard.\n\n"
                    "  Press C from the main menu to Change the status of robots.  \n\n"))
-            return x
+            return r, r_dict, next_r, r_data
 
         elif idle ==1:
             print("\nYou have 1 IDLE robot to remove.\n\n"
                   "That should send out a signal to the others.")
 
             time_sim(secs=1)
-            for key, value in reversed(x_dict.items()):
+            for key, value in reversed(r_dict.items()):
                 if value == 0:
                     k = key
                     break
 
             try:
-                del x_dict[k]
-                print(f"{x_dict[k]} was removed!\n")
-                return x, x_dict
+                del r_dict[k]
+                print(f"{r_dict[k]} was removed!\n")
+                return r, r_dict, next_r, r_data
 
             except KeyError:
                 simple_error()
                 print("\n You will not be punished for this error.\n")
-                return x, x_dict
+                return r, r_dict, next_r, r_data
 
         elif idle > 1:
             to_remove = how_many_labourers("robot", " would you like to remove?", idle)
             # loop backwards through n_dict to remove IDLE robots
             key_list = []
             while to_remove:
-                for key, value in reversed(n_dict.items()):
+                for key, value in reversed(r_dict.items()):
                     if value == 0 and to_remove:
                         key_list.append(key)
                         to_remove -= 1
 
             for key in key_list:
-                del x_dict[key]
-                print(f"\n{x_dict[key]} has been deleted.")
+                del r_dict[key]
+                print(f"\n{r_dict[key]} has been deleted.")
 
                 time_sim(secs=1)
-            return x, x_dict
+            return r, r_dict, next_r, r_data
 
 
 # Function to change status of a robot:
@@ -1468,7 +1490,7 @@ def program_robot(a_dict, tasks):
                             tasks = updater(tasks)
                             request = 0
                         # Build the robot's ID
-                        chosen_list[int(t)] = "Robot" + "_" + str(chosen_list[t])
+                        chosen_list[int(t)] = "Robot" + "_" + str(chosen_list[t]).zfill(3)
 
                     except ValueError:
                         print("I think you entered an invalid character.\n")
@@ -1609,6 +1631,7 @@ def employ_worker(x, x_dict, next_x):
         print(" Bet you've forgotten it already!\n")
         print(" --Press M to MANAGE their status and get them toiling ! \n")
         time_sim(secs=1)
+        input(" Press ENTER to get backl to the grind !\n")
         return x, x_dict, next_x
 
     elif to_add > 1:
@@ -1623,9 +1646,15 @@ def employ_worker(x, x_dict, next_x):
             else:
                 print(["Human_" + str(next_x + i)], end=" ")
             print("\n")
-        print(" --Press M to MANAGE their statuses and get them toiling ! \n")
+
+        time_sim(secs=2)
+
         x += to_add
         next_x += to_add
+        print(" Now it's back to the main menu:"
+              " --Press M to MANAGE their statuses and get them toiling ! \n")
+        input("Press ENTER to continue production !\n")
+
         return x, x_dict, next_x
 
 
@@ -1658,7 +1687,11 @@ def fire_human(x, x_dict, next_x):
         time_sim(secs=1)
         x = 1
         x_dict[next_x] = 0
+
+        # Update Task Log
+
         next_x += 1
+
         print("Congratulations ! You're legally an employer again.\n")
         print("Let's not mention this little hiccup to anyone, eh?\n")
         dict_printer(x, x_dict)
@@ -1790,7 +1823,7 @@ def manage_worker(x_dict):
             for t in range(len(desired_list)):
                 desired_list[t] = int(desired_list[t])
                 # convert to text keys to match against dictionary
-                desired_list[int(t)] = "Human" + "_" + str(desired_list[t])
+                desired_list[int(t)] = "Human" + "_" + str(desired_list[t]).zfill(3)
 
         except ValueError:
             print("I think you entered an invalid character.\n")
@@ -1978,7 +2011,7 @@ def order_worker(b_dict, tasks):
                             tasks = updater(tasks)
                             request = 0
                         # Build the human's ID
-                        chosen_list[int(t)] = "Human" + "_" + str(chosen_list[t])
+                        chosen_list[int(t)] = "Human" + "_" + str(chosen_list[t]).zfill(3)
 
                     except ValueError:
                         print("I think you entered a fishy character.\n")
@@ -2564,7 +2597,13 @@ def quit_program():
     else:
         quit_program()
 
-
+def end_sequence():
+    clear_screen()
+    print("\n Wow ! You finished all your tasks !\n"
+          "I don't know how, but you did it.\n\n"
+          " You certainly earned your promotion;\n"
+          " You're now an honourary robot !")
+    exit(0)
 ################################# --- BODY OF PROGRAM --- ################################
 
 def main():
@@ -2574,11 +2613,12 @@ def main():
     # Intro
     n, m, n_dict, m_dict, next_n, next_m, task_log = intro_function()
 
-    # Display Main Options initially
-    main_options()
+    while True:
+        # Display Main Options initially
+        main_options()
 
-    # Call function to ask for user action
-    what_next(n, m, n_dict, m_dict, next_n, next_m, task_log)
+        # Call function to ask for user action
+        what_next(n, m, n_dict, m_dict, next_n, next_m, task_log)
 
 ###########################################################################################
 
